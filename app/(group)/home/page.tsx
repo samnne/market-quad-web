@@ -39,26 +39,36 @@ const Home = () => {
       },
     );
   }, []);
-
+  const initial = {
+    init: {
+      opacity: 0,
+    },
+  };
   return (
     <motion.main ref={scope} className="flex flex-col gap-4 p-2">
-      <motion.section className="home flex flex-col gap-2  justify-between">
-        <SectionHeader title="Today's Listings" />
+      <motion.section
+        variants={initial}
+        className="home flex flex-col gap-2  justify-between"
+        initial={"init"}
+      >
+        <SectionHeader  type="listings" title="Today's Listings" />
         <DataCard dataList={listings} href="listings" />
       </motion.section>
       <motion.section
         transition={{
           delay: 0.2,
         }}
+        variants={initial}
+        initial={"init"}
         className="home gap-2"
       >
         <div className="max-h-2/3 flex flex-col justify-between gap-2   h-2/3">
-          <SectionHeader title="Messages" />
+          <SectionHeader type="messages" title="Messages" />
           <DataCard dataList={[1, 2, 4, 5, 67, 8]} href="conversations" />
         </div>
         <div className="max-h-1/3 h-1/3 flex relative flex-col overflow-x-hidden mt-2">
           <motion.div>
-            <SectionHeader title="Actions" />
+            <SectionHeader type="null" title="Actions" />
           </motion.div>
           <motion.div
             initial={{

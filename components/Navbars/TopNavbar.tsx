@@ -8,16 +8,14 @@ import { FaMagnifyingGlass } from 'react-icons/fa6';
 const TopNavbar = () => {
     const pathname = usePathname()
     const [path, setPath] = useState(pathname.substring(1, pathname.length))
-    // useEffect(()=>{
-    //     let temp = ""
-    //     for (let c of pathname){
-    //         if (c !== "/"){
-    //             temp+= c;
-    //         }
-            
-    //     }
-    //     setPath(temp);
-    // }, [pathname])
+    useEffect(()=>{
+        const segments = pathname.split('/');
+        if (segments.length > 2){
+          setPath(segments[2]);
+        } else {
+          setPath(segments[1])
+        }
+    }, [pathname])
   return (
     <nav className='sticky w-screen p-4 '>
         <section className='flex justify-between '>

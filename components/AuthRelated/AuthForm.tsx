@@ -8,6 +8,7 @@ import { BsEye, BsEyeSlash } from "react-icons/bs";
 import { CiMail } from "react-icons/ci";
 import { useType } from "../../app/store/zustand";
 import ErrorMessage from "../Modals/ErrorMessage";
+import { cleanUP } from "@/app/client-utils/functions";
 
 interface LoginUserForm {
   email: string;
@@ -42,7 +43,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
     const res = await signup(formData);
     console.log(res);
     if (res?.uid){
-
+      
       redirect("/listings");
     }
   };

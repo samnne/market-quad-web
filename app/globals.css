@@ -162,8 +162,8 @@ body {
   }
   main {
     @apply h-[85vh] overflow-auto;
-    section {
-      @apply w-full h-1/2 drop-shadow-2xl drop-shadow-black/50;  
-    }
+  }
+  section.home {
+    @apply w-full max-h-1/2 h-1/2  p-4 rounded-4xl;  
   }
 }

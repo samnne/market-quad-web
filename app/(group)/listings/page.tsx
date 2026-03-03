@@ -1,40 +1,26 @@
 "use client";
 
 import { useListings } from "@/app/store/zustand";
-import ListingModal from "@/components/Listings/ListingByID";
-import {
-  getClientListings,
-  getClientListingsNotUsers,
-} from "@/lib/listing.lib";
+
 import { type Listing } from "@/src/generated/prisma/client";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { getSession } from "@/lib/lib";
+
+import { fetchListings } from "@/app/client-utils/functions";
+import { redirect } from "next/navigation";
+
 
 const Listing = () => {
-  const { listings, setListings, selectedListing, setSelectedListing } =
+  const { listings, setListings} =
     useListings();
   const [loading, setLoading] = useState(true);
-  const fetchListings = async () => {
-    const session = await getSession();
-    if (!session) {
-      const temp = await getClientListings();
-      setListings(temp?.listings);
-
-      return temp;
-    } else {
-      const temp = await getClientListingsNotUsers(session?.uid);
-      setListings(temp?.listings);
-      
-      return temp;
-    }
-  };
+  
   useEffect(() => {
     try {
       setLoading(true);
       if (listings.length === 0) {
-        fetchListings();
+        fetchListings({setter: setListings});
       }
     } catch (error) {
       console.log(error);
@@ -43,7 +29,7 @@ const Listing = () => {
     }
   }, []);
   function openListingModal(listing: Listing) {
-    setSelectedListing(listing);
+    redirect(`/listings/${listing?.lid}`)
   }
   return (
     <main className=" h-[85vh]  overflow-auto">
@@ -139,7 +125,7 @@ const Listing = () => {
           </>
         )}
       </section>
-      <ListingModal listing={selectedListing}></ListingModal>
+
     </main>
   );
 };

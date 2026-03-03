@@ -1,16 +1,17 @@
 import { useListings, useUser } from "@/app/store/zustand";
 import { type Listing } from "@/src/generated/prisma/client";
-import { type ListingInclude } from "@/src/generated/prisma/models";
+
 import { motion, useAnimate, usePresence } from "motion/react";
 import Image from "next/image";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
-import { AiFillMessage, AiOutlineMessage } from "react-icons/ai";
+import { ChangeEvent, useEffect, useState } from "react";
+
 import { BsThreeDots } from "react-icons/bs";
 
 import { IoClose, IoSearch } from "react-icons/io5";
 
 import StarRating from "../StarRating";
 import ListingMap from "./ListingMap";
+import { redirect } from "next/navigation";
 
 const getRandomFirstMessage = (): string => {
   const randomMessages = [
@@ -64,10 +65,11 @@ const ListingModal = ({ listing }: { listing: Listing }) => {
   async function closeModal() {
     await animate(sectionRef.current, { y: 50, scale: 0, opacity: 0 });
     setSelectedListing({});
+    redirect('/listings')
   }
   return (
     <>
-      {listing.title ? (
+      {listing?.title ? (
         <motion.section
           ref={sectionRef}
           initial={{

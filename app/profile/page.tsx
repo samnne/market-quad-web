@@ -25,6 +25,8 @@ const Profile = () => {
   async function mountSession() {
     const serverSession = await getSession();
     if (!serverSession) {
+      cleanUP({ reset: lisReset }, { reset: userReset });
+
       redirect("/sign-in");
     }
 
@@ -88,12 +90,12 @@ const Profile = () => {
             <ProfileSections
               sideIcon={<CiViewList />}
               displayText="Your Listings"
-              props={{ userListings, type: 'ulist' }}
+              props={{ userListings, type: "ulist" }}
             />
             <ProfileSections
               sideIcon={<IoChatbubbleOutline />}
               displayText="Your Messages"
-              props={{type: 'messages'}}
+              props={{ type: "messages" }}
             />
           </ul>
         </section>

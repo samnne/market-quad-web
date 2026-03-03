@@ -12,12 +12,13 @@ import {
 import * as z from "zod";
 
 import { MdAddToPhotos } from "react-icons/md";
-import { useUser } from "@/app/store/zustand";
+import { useListings, useUser } from "@/app/store/zustand";
 import { decrypt, getSession } from "@/lib/lib";
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import { FaTimes } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
+import { cleanUP } from "@/app/client-utils/functions";
 
 const ListingForm = z.object({
   title: z.string().min(1, "Title Too Short"),
@@ -38,11 +39,13 @@ type ImageEntry = {
 };
 
 const NewListingPage = () => {
-  const { user, setUser } = useUser();
+  const { user, setUser , reset: userReset} = useUser();
   const [rows, setInputRows] = useState(1);
   const [selectedFiles, setSelectedFiles] = useState<ImageEntry[]>([]);
   // Listing form data inferred by ZOD
   const [previews, setPreviews] = useState<string[]>([]);
+ 
+  const { reset: lisReset } = useListings();
   const [listingFormData, setListingFormData] = useState<
     z.infer<typeof ListingForm>
   >({
@@ -57,6 +60,8 @@ const NewListingPage = () => {
     const session = await getSession();
 
     if (!session) {
+      cleanUP({ reset: lisReset }, { reset: userReset });
+
       redirect("/sign-in");
     }
     setUser(session);
@@ -123,14 +128,13 @@ const NewListingPage = () => {
             condition,
             latitude: 0,
             longitude: 0,
-            imageUrls: selectedFiles.map(img=> img.file),
+            imageUrls: selectedFiles.map((img) => img.file),
             sellerId: user.uid,
           },
           user?.uid,
         );
         console.log(newListing);
       } else {
-        
         return;
       }
     }

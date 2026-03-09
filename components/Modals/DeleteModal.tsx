@@ -2,7 +2,8 @@
 import { cleanUP } from "@/app/client-utils/functions";
 import { UserSession } from "@/app/types";
 
-import { deleteUserForReals, logout } from "@/lib/lib";
+import { deleteUserForReals } from "@/lib/lib";
+import { supabase } from "@/supabase/authHelper";
 import { motion, useAnimate } from "motion/react";
 import { redirect } from "next/navigation";
 
@@ -39,8 +40,8 @@ const DeleteModal = ({
   }
 
   async function handleDeleteUser() {
-    if (session?.uid) {
-      await deleteUserForReals(session?.uid);
+    if (session?.id) {
+      await supabase.auth.admin.deleteUser(session?.uid)
     }
     cleanUP({ reset: lisReset }, { reset: userReset });
     await logout();

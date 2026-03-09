@@ -23,6 +23,7 @@ import { cleanUP } from "@/app/client-utils/functions";
 import { motion, stagger, useAnimate } from "motion/react";
 import { uploadImages } from "@/app/client-utils/functions";
 import { deleteImages } from "@/cloudinary/cloudinary";
+import { supabase } from "@/supabase/authHelper";
 
 const ListingForm = z.object({
   title: z.string().min(1, "Title Too Short"),
@@ -66,15 +67,15 @@ const ListingFormPage = ({ type }: { type: "new" | "edit" }) => {
   });
 
   async function mountUser() {
-    const session = await getSession();
-
-    if (!session) {
-      cleanUP({ reset: lisReset }, { reset: userReset });
+    const { data, error } = await supabase.auth.getUser();
+    if (error) {
       setError(true);
       redirect("/sign-in");
     }
-    setUser(session);
+   
+    setUser(data.user);
   }
+ 
   useEffect(() => {
     if (!scope.current) return;
     animate(
@@ -186,27 +187,28 @@ const ListingFormPage = ({ type }: { type: "new" | "edit" }) => {
             latitude: 0,
             longitude: 0,
             imageUrls: uploadedUrls,
-            sellerId: user.uid,
+            sellerId: user?.id,
           },
-          user?.uid,
+          user?.id,
         );
         if (newListing?.success) {
           setSuccess(true);
           redirect(`/listings/`);
         } else {
+          console.log(newListing);
           setError(true);
         }
       } else if (user && type === "edit") {
         console.log(selectedFiles, selectedListing.imageUrls);
         const delImage = [];
         for (let image of selectedListing.imageUrls) {
-          if (!selectedFiles.find(file => file.preview === image)) {
+          if (!selectedFiles.find((file) => file.preview === image)) {
             delImage.push(image);
           }
         }
         await deleteImages(delImage);
         const uploadedUrls = await uploadImages(files);
-
+        
         const editListing = await editListingAction(
           {
             title,
@@ -217,9 +219,9 @@ const ListingFormPage = ({ type }: { type: "new" | "edit" }) => {
             latitude: 0,
             longitude: 0,
             imageUrls: uploadedUrls,
-            sellerId: user.uid,
+            sellerId: user?.id,
           },
-          user?.uid,
+          user?.id,
         );
         console.log(editListing);
         if (editListing?.success) {

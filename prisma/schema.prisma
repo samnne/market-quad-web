@@ -5,9 +5,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  
 }
-
 
 model Listing {
   lid         String   @id @default(uuid()) @db.Uuid
@@ -16,51 +14,63 @@ model Listing {
   price       Int
   imageUrls   String[]
 
-  sellerId String @db.Uuid
-  seller   User   @relation(fields: [sellerId], references: [uid], onDelete: Cascade)
-  sold Boolean  @default(false)
-  archived Boolean @default(false)
-  condition String?
-  latitude Float?
-  longitude Float? 
-  views Int @default(0)
-  createdAt DateTime @default(now())
-}
-
-model User {
-  uid          String   @id @default(uuid()) @db.Uuid
-  email        String   @unique
-  passwordHash String
-  name         String
-  profileURL   String
-  isVerified   Boolean  @default(false)
-  createdAt    DateTime @default(now())
-
-  listings      Listing[]
+  sellerId      String         @db.Uuid
+  seller        User           @relation(fields: [sellerId], references: [uid], onDelete: Cascade)
+  sold          Boolean        @default(false)
+  archived      Boolean        @default(false)
+  condition     String?
+  latitude      Float?
+  longitude     Float?
+  views         Int            @default(0)
+  createdAt     DateTime       @default(now())
   conversations Conversation[]
 }
 
-model Conversation {
-  cid   String @id @default(uuid()) @db.Uuid
-  title String
+model User {
+  uid   String @id @db.Uuid
+  email String @unique
 
-  listingId String @db.Uuid
-  
-  userUid String @db.Uuid
-  user    User   @relation(fields: [userUid], references: [uid], onDelete: Cascade)
+  name       String
+  profileURL String
+  isVerified Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  listings            Listing[]
+  buyerConversations  Conversation[] @relation("ConversationBuyer")
+  sellerConversations Conversation[] @relation("ConversationSeller")
+  messages            Message[]
+}
+
+model Conversation {
+  cid       String   @id @default(uuid()) @db.Uuid
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt 
+
+  listingId String  @db.Uuid
+  listing   Listing @relation(fields: [listingId], references: [lid], onDelete: Cascade)
+
+  buyerId String @db.Uuid
+  buyer   User   @relation("ConversationBuyer", fields: [buyerId], references: [uid])
+
+  sellerId String @db.Uuid
+  seller   User   @relation("ConversationSeller", fields: [sellerId], references: [uid])
 
   messages Message[]
+
+  @@unique([listingId, buyerId]) 
 }
 
 model Message {
-  mid String @id @default(uuid()) @db.Uuid
+  mid       String    @id @default(uuid()) @db.Uuid
+  text      String
+  createdAt DateTime  @default(now())
+  readAt    DateTime? 
+  edited    Boolean   @default(false)
+  updatedAt DateTime  @updatedAt
 
-  text    String
-  created DateTime @default(now())
-  read    DateTime? 
-  edited  Boolean @default(false)
-  updated DateTime @default(now())
+  senderId String @db.Uuid
+  sender   User   @relation(fields: [senderId], references: [uid])
 
-  conversationID String       @db.Uuid
-  conversation   Conversation @relation(fields: [conversationID], references: [cid], onDelete: Cascade)
+  conversationId String       @db.Uuid
+  conversation   Conversation @relation(fields: [conversationId], references: [cid], onDelete: Cascade)
 }

@@ -77,7 +77,7 @@ export async function login(formData: FormData) {
       }),
     }).then((res) => res.json());
 
-    if (response?.uid) {
+    if (response?.id) {
       (await cookies()).set("session", response?.session, {
         httpOnly: true,
         secure: true,
@@ -119,7 +119,7 @@ export async function signup(formData: FormData) {
       }),
     }).then((res) => res.json());
 
-    if (response?.uid) {
+    if (response?.id) {
       (await cookies()).set("session", response?.session, {
         httpOnly: true,
         secure: true,
@@ -136,9 +136,6 @@ export async function signup(formData: FormData) {
   } catch (error) {}
 }
 
-export async function logout() {
-  (await cookies()).set("session", "", { expires: new Date(0) });
-}
 
 export async function updateSession(request: NextRequest) {
   const session = request.cookies.get("session")?.value;

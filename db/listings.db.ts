@@ -14,6 +14,7 @@ export async function getListings(): Promise<Listing[]> {
     },
     include: {
       seller: true,
+      conversations: true
     },
   });
 
@@ -32,6 +33,7 @@ export async function getOthersListings(uid: string): Promise<Listing[]> {
       }
     },
     include: {
+      conversations: true,
       seller: true,
     },
   });
@@ -49,6 +51,7 @@ export async function getUserListings(uid: string): Promise<Listing[]> {
     },
     include: {
       seller: true,
+      conversations: true
     },
   });
   return listings
@@ -63,6 +66,7 @@ export async function getListingByID(
     },
     include: {
       seller: true,
+      conversations: true
     },
   });
   if (!listing) {

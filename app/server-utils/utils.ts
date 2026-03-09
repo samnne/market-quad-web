@@ -6,7 +6,7 @@ import { SafeUser } from "../types";
 
 export function simplifyUserData(user: User & UserInclude): SafeUser {
   return {
-    uid: user.uid,
+    uid: userid,
     email: user.email,
     name: user.name,
     profileURL: user.profileURL,

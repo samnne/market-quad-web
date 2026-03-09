@@ -6,6 +6,7 @@ import { uploadImages } from "@/cloudinary/cloudinary";
 import { type Listing } from "@/src/generated/prisma/client";
 import { encrypt } from "./lib";
 import { cookies } from "next/headers";
+import { supabase } from "@/supabase/authHelper";
 
 export const getClientListings = async () => {
   const response = await fetch(`${BASEURL}/api/listings/`, {
@@ -29,9 +30,7 @@ export const newListingAction = async (
   newListing: listingFormData,
   sellerId: string,
 ) => {
-  const session = (await cookies()).get("session")?.value;
-  if (!session) return;
-  console.log(sellerId)
+
   const response = await fetch(`${BASEURL}/api/listings/`, {
     method: "post",
     body: JSON.stringify({ ...newListing, sellerId }),
@@ -43,12 +42,12 @@ export const editListingAction = async (
   listingToEdit: listingFormData,
   sellerId: string,
 ) => {
-  const session = (await cookies()).get("session")?.value;
-  if (!session) return;
-
+  
+ 
+  
   const response = await fetch(`${BASEURL}/api/listings/${listingToEdit.lid}`, {
     headers: {
-      Authorization: session,
+      Authorization: sellerId,
     },
     method: "PUT",
     body: JSON.stringify({ ...listingToEdit, sellerId }),

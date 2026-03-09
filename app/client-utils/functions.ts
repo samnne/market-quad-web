@@ -2,24 +2,27 @@
 
 import { getCloudinarySignature } from "@/cloudinary/cloudinary";
 import { getSession } from "@/lib/lib";
-import { getClientListings, getClientListingsNotUsers } from "@/lib/listing.lib";
+import {
+  getClientListings,
+  getClientListingsNotUsers,
+} from "@/lib/listing.lib";
+import { supabase } from "@/supabase/authHelper";
 import pLimit from "p-limit";
 
 export function cleanUP(listingStore, userStore) {
-    
   userStore.reset();
   listingStore.reset();
 }
 
-export const fetchListings = async ({setter}: {setter: Function}) => {
-  const session = await getSession();
-  if (!session) {
+export const fetchListings = async ({ setter }: { setter: Function }) => {
+  const {data, error} = await supabase.auth.getUser()
+  if (!data.user) {
     const temp = await getClientListings();
     setter(temp?.listings);
 
     return temp;
   } else {
-    const temp = await getClientListingsNotUsers(session?.uid);
+    const temp = await getClientListingsNotUsers(data.user?.id);
     setter(temp?.listings);
 
     return temp;
@@ -34,7 +37,7 @@ export async function uploadImages(
   const imagesToUpload = images.map((image) => {
     return limit(async () => {
       if (typeof image !== "string") {
-        return await uploadImage(image)
+        return await uploadImage(image);
         // const buffer = Buffer.from(await image.arrayBuffer());
 
         // return new Promise<string>((resolve, rej) => {
@@ -73,5 +76,8 @@ async function uploadImage(file: File) {
   );
 
   const data = await res.json();
-  return data.secure_url; // ✅ save this to your DB
+  return data.secure_url;
 }
+
+
+

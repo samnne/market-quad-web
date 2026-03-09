@@ -1,4 +1,4 @@
-import { useListings, useUser } from "@/app/store/zustand";
+import { useListings, useMessage, useUser } from "@/app/store/zustand";
 import { type Listing } from "@/src/generated/prisma/client";
 
 import {
@@ -7,7 +7,7 @@ import {
   useAnimate,
   usePresence,
 } from "motion/react";
-import Image from "next/image";
+
 import { ChangeEvent, useEffect, useState } from "react";
 
 import { BsThreeDots } from "react-icons/bs";
@@ -18,9 +18,11 @@ import StarRating from "../StarRating";
 import ListingMap from "./ListingMap";
 import { redirect } from "next/navigation";
 import { deleteListingAction } from "@/lib/listing.lib";
-import { getSession } from "@/lib/lib";
-import { deleteImages } from "@/cloudinary/cloudinary";
+
 import Carousel from "../Carousel";
+import { ListingInclude } from "@/src/generated/prisma/models";
+import { createConvo } from "@/lib/conversations.lib";
+import { supabase } from "@/supabase/authHelper";
 
 const getRandomFirstMessage = (): string => {
   const randomMessages = [
@@ -36,12 +38,13 @@ const getRandomFirstMessage = (): string => {
   return message;
 };
 
-const ListingModal = ({ listing }: { listing: Listing }) => {
+const ListingModal = ({ listing }: { listing: Listing & ListingInclude }) => {
   const [sectionRef, animate] = useAnimate();
   const [scope, animateDots] = useAnimate();
   const { setSelectedListing } = useListings();
   const [optionsModal, setOptionsModal] = useState(false);
   const { user, setUser } = useUser();
+  const { setError } = useMessage();
   const [date, setDate] = useState("No Time Available");
   const [message, setMessage] = useState<string>("");
   function getTimeElapsed() {
@@ -87,6 +90,22 @@ const ListingModal = ({ listing }: { listing: Listing }) => {
     bounceDamping: 5,
     duration: 0.2,
   };
+
+  async function createConversation() {
+    const {data, error} = await supabase.auth.getUser()
+    if (error) {
+      setError(true);
+      redirect("/sign-in");
+    }
+    const created = await createConvo({
+      listingId: listing.lid,
+      buyerId: data.user.id,
+      sellerId: listing.sellerId,
+      initialMessage: message,
+    });
+    console.log(created)
+    redirect(`/conversations`)
+  }
   async function toggleListingOptions() {
     if (optionsModal === true) {
       await animateDots(
@@ -126,14 +145,12 @@ const ListingModal = ({ listing }: { listing: Listing }) => {
           initial={{
             y: 50,
 
-        
             opacity: 0,
           }}
           animate={{
-          
-            x: [-100,0],
-         
-            opacity: [0,1],
+            x: [-100, 0],
+
+            opacity: [0, 1],
           }}
           whileInView={{}}
           transition={{
@@ -161,7 +178,7 @@ const ListingModal = ({ listing }: { listing: Listing }) => {
               </motion.span>
             </div>
           </nav>
-          {optionsModal && listing.sellerId === user.uid && (
+          {optionsModal && listing.sellerId === user.id && (
             <motion.div
               ref={scope}
               animate={{
@@ -210,7 +227,10 @@ const ListingModal = ({ listing }: { listing: Listing }) => {
                     value={message}
                     className="p-2 w-full outline-0  rounded-2xl bg-gray-200"
                   />
-                  <button className="font-bold bg-accent rounded-2xl px-2 text-white">
+                  <button
+                    onClick={(e) => createConversation()}
+                    className="font-bold bg-accent rounded-2xl px-2 text-white"
+                  >
                     Send
                   </button>
                 </form>

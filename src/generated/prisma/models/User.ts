@@ -27,7 +27,6 @@ export type AggregateUser = {
 export type UserMinAggregateOutputType = {
   uid: string | null
   email: string | null
-  passwordHash: string | null
   name: string | null
   profileURL: string | null
   isVerified: boolean | null
@@ -37,7 +36,6 @@ export type UserMinAggregateOutputType = {
 export type UserMaxAggregateOutputType = {
   uid: string | null
   email: string | null
-  passwordHash: string | null
   name: string | null
   profileURL: string | null
   isVerified: boolean | null
@@ -47,7 +45,6 @@ export type UserMaxAggregateOutputType = {
 export type UserCountAggregateOutputType = {
   uid: number
   email: number
-  passwordHash: number
   name: number
   profileURL: number
   isVerified: number
@@ -59,7 +56,6 @@ export type UserCountAggregateOutputType = {
 export type UserMinAggregateInputType = {
   uid?: true
   email?: true
-  passwordHash?: true
   name?: true
   profileURL?: true
   isVerified?: true
@@ -69,7 +65,6 @@ export type UserMinAggregateInputType = {
 export type UserMaxAggregateInputType = {
   uid?: true
   email?: true
-  passwordHash?: true
   name?: true
   profileURL?: true
   isVerified?: true
@@ -79,7 +74,6 @@ export type UserMaxAggregateInputType = {
 export type UserCountAggregateInputType = {
   uid?: true
   email?: true
-  passwordHash?: true
   name?: true
   profileURL?: true
   isVerified?: true
@@ -162,7 +156,6 @@ export type UserGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
 export type UserGroupByOutputType = {
   uid: string
   email: string
-  passwordHash: string
   name: string
   profileURL: string
   isVerified: boolean
@@ -193,25 +186,27 @@ export type UserWhereInput = {
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   uid?: Prisma.UuidFilter<"User"> | string
   email?: Prisma.StringFilter<"User"> | string
-  passwordHash?: Prisma.StringFilter<"User"> | string
   name?: Prisma.StringFilter<"User"> | string
   profileURL?: Prisma.StringFilter<"User"> | string
   isVerified?: Prisma.BoolFilter<"User"> | boolean
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   listings?: Prisma.ListingListRelationFilter
-  conversations?: Prisma.ConversationListRelationFilter
+  buyerConversations?: Prisma.ConversationListRelationFilter
+  sellerConversations?: Prisma.ConversationListRelationFilter
+  messages?: Prisma.MessageListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
   uid?: Prisma.SortOrder
   email?: Prisma.SortOrder
-  passwordHash?: Prisma.SortOrder
   name?: Prisma.SortOrder
   profileURL?: Prisma.SortOrder
   isVerified?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   listings?: Prisma.ListingOrderByRelationAggregateInput
-  conversations?: Prisma.ConversationOrderByRelationAggregateInput
+  buyerConversations?: Prisma.ConversationOrderByRelationAggregateInput
+  sellerConversations?: Prisma.ConversationOrderByRelationAggregateInput
+  messages?: Prisma.MessageOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -220,19 +215,19 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   OR?: Prisma.UserWhereInput[]
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
-  passwordHash?: Prisma.StringFilter<"User"> | string
   name?: Prisma.StringFilter<"User"> | string
   profileURL?: Prisma.StringFilter<"User"> | string
   isVerified?: Prisma.BoolFilter<"User"> | boolean
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   listings?: Prisma.ListingListRelationFilter
-  conversations?: Prisma.ConversationListRelationFilter
+  buyerConversations?: Prisma.ConversationListRelationFilter
+  sellerConversations?: Prisma.ConversationListRelationFilter
+  messages?: Prisma.MessageListRelationFilter
 }, "uid" | "email">
 
 export type UserOrderByWithAggregationInput = {
   uid?: Prisma.SortOrder
   email?: Prisma.SortOrder
-  passwordHash?: Prisma.SortOrder
   name?: Prisma.SortOrder
   profileURL?: Prisma.SortOrder
   isVerified?: Prisma.SortOrder
@@ -248,7 +243,6 @@ export type UserScalarWhereWithAggregatesInput = {
   NOT?: Prisma.UserScalarWhereWithAggregatesInput | Prisma.UserScalarWhereWithAggregatesInput[]
   uid?: Prisma.UuidWithAggregatesFilter<"User"> | string
   email?: Prisma.StringWithAggregatesFilter<"User"> | string
-  passwordHash?: Prisma.StringWithAggregatesFilter<"User"> | string
   name?: Prisma.StringWithAggregatesFilter<"User"> | string
   profileURL?: Prisma.StringWithAggregatesFilter<"User"> | string
   isVerified?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
@@ -256,57 +250,60 @@ export type UserScalarWhereWithAggregatesInput = {
 }
 
 export type UserCreateInput = {
-  uid?: string
+  uid: string
   email: string
-  passwordHash: string
   name: string
   profileURL: string
   isVerified?: boolean
   createdAt?: Date | string
   listings?: Prisma.ListingCreateNestedManyWithoutSellerInput
-  conversations?: Prisma.ConversationCreateNestedManyWithoutUserInput
+  buyerConversations?: Prisma.ConversationCreateNestedManyWithoutBuyerInput
+  sellerConversations?: Prisma.ConversationCreateNestedManyWithoutSellerInput
+  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
 }
 
 export type UserUncheckedCreateInput = {
-  uid?: string
+  uid: string
   email: string
-  passwordHash: string
   name: string
   profileURL: string
   isVerified?: boolean
   createdAt?: Date | string
   listings?: Prisma.ListingUncheckedCreateNestedManyWithoutSellerInput
-  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserInput
+  buyerConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutBuyerInput
+  sellerConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutSellerInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
 }
 
 export type UserUpdateInput = {
   uid?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   profileURL?: Prisma.StringFieldUpdateOperationsInput | string
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   listings?: Prisma.ListingUpdateManyWithoutSellerNestedInput
-  conversations?: Prisma.ConversationUpdateManyWithoutUserNestedInput
+  buyerConversations?: Prisma.ConversationUpdateManyWithoutBuyerNestedInput
+  sellerConversations?: Prisma.ConversationUpdateManyWithoutSellerNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
   uid?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   profileURL?: Prisma.StringFieldUpdateOperationsInput | string
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   listings?: Prisma.ListingUncheckedUpdateManyWithoutSellerNestedInput
-  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutUserNestedInput
+  buyerConversations?: Prisma.ConversationUncheckedUpdateManyWithoutBuyerNestedInput
+  sellerConversations?: Prisma.ConversationUncheckedUpdateManyWithoutSellerNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
 }
 
 export type UserCreateManyInput = {
-  uid?: string
+  uid: string
   email: string
-  passwordHash: string
   name: string
   profileURL: string
   isVerified?: boolean
@@ -316,7 +313,6 @@ export type UserCreateManyInput = {
 export type UserUpdateManyMutationInput = {
   uid?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   profileURL?: Prisma.StringFieldUpdateOperationsInput | string
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -326,7 +322,6 @@ export type UserUpdateManyMutationInput = {
 export type UserUncheckedUpdateManyInput = {
   uid?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   profileURL?: Prisma.StringFieldUpdateOperationsInput | string
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -341,7 +336,6 @@ export type UserScalarRelationFilter = {
 export type UserCountOrderByAggregateInput = {
   uid?: Prisma.SortOrder
   email?: Prisma.SortOrder
-  passwordHash?: Prisma.SortOrder
   name?: Prisma.SortOrder
   profileURL?: Prisma.SortOrder
   isVerified?: Prisma.SortOrder
@@ -351,7 +345,6 @@ export type UserCountOrderByAggregateInput = {
 export type UserMaxOrderByAggregateInput = {
   uid?: Prisma.SortOrder
   email?: Prisma.SortOrder
-  passwordHash?: Prisma.SortOrder
   name?: Prisma.SortOrder
   profileURL?: Prisma.SortOrder
   isVerified?: Prisma.SortOrder
@@ -361,7 +354,6 @@ export type UserMaxOrderByAggregateInput = {
 export type UserMinOrderByAggregateInput = {
   uid?: Prisma.SortOrder
   email?: Prisma.SortOrder
-  passwordHash?: Prisma.SortOrder
   name?: Prisma.SortOrder
   profileURL?: Prisma.SortOrder
   isVerified?: Prisma.SortOrder
@@ -382,40 +374,70 @@ export type UserUpdateOneRequiredWithoutListingsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutListingsInput, Prisma.UserUpdateWithoutListingsInput>, Prisma.UserUncheckedUpdateWithoutListingsInput>
 }
 
-export type UserCreateNestedOneWithoutConversationsInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutConversationsInput, Prisma.UserUncheckedCreateWithoutConversationsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutConversationsInput
+export type UserCreateNestedOneWithoutBuyerConversationsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutBuyerConversationsInput, Prisma.UserUncheckedCreateWithoutBuyerConversationsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutBuyerConversationsInput
   connect?: Prisma.UserWhereUniqueInput
 }
 
-export type UserUpdateOneRequiredWithoutConversationsNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutConversationsInput, Prisma.UserUncheckedCreateWithoutConversationsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutConversationsInput
-  upsert?: Prisma.UserUpsertWithoutConversationsInput
+export type UserCreateNestedOneWithoutSellerConversationsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSellerConversationsInput, Prisma.UserUncheckedCreateWithoutSellerConversationsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSellerConversationsInput
   connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutConversationsInput, Prisma.UserUpdateWithoutConversationsInput>, Prisma.UserUncheckedUpdateWithoutConversationsInput>
+}
+
+export type UserUpdateOneRequiredWithoutBuyerConversationsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutBuyerConversationsInput, Prisma.UserUncheckedCreateWithoutBuyerConversationsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutBuyerConversationsInput
+  upsert?: Prisma.UserUpsertWithoutBuyerConversationsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutBuyerConversationsInput, Prisma.UserUpdateWithoutBuyerConversationsInput>, Prisma.UserUncheckedUpdateWithoutBuyerConversationsInput>
+}
+
+export type UserUpdateOneRequiredWithoutSellerConversationsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSellerConversationsInput, Prisma.UserUncheckedCreateWithoutSellerConversationsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSellerConversationsInput
+  upsert?: Prisma.UserUpsertWithoutSellerConversationsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSellerConversationsInput, Prisma.UserUpdateWithoutSellerConversationsInput>, Prisma.UserUncheckedUpdateWithoutSellerConversationsInput>
+}
+
+export type UserCreateNestedOneWithoutMessagesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutMessagesInput, Prisma.UserUncheckedCreateWithoutMessagesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutMessagesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutMessagesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutMessagesInput, Prisma.UserUncheckedCreateWithoutMessagesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutMessagesInput
+  upsert?: Prisma.UserUpsertWithoutMessagesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutMessagesInput, Prisma.UserUpdateWithoutMessagesInput>, Prisma.UserUncheckedUpdateWithoutMessagesInput>
 }
 
 export type UserCreateWithoutListingsInput = {
-  uid?: string
+  uid: string
   email: string
-  passwordHash: string
   name: string
   profileURL: string
   isVerified?: boolean
   createdAt?: Date | string
-  conversations?: Prisma.ConversationCreateNestedManyWithoutUserInput
+  buyerConversations?: Prisma.ConversationCreateNestedManyWithoutBuyerInput
+  sellerConversations?: Prisma.ConversationCreateNestedManyWithoutSellerInput
+  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
 }
 
 export type UserUncheckedCreateWithoutListingsInput = {
-  uid?: string
+  uid: string
   email: string
-  passwordHash: string
   name: string
   profileURL: string
   isVerified?: boolean
   createdAt?: Date | string
-  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutUserInput
+  buyerConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutBuyerInput
+  sellerConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutSellerInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
 }
 
 export type UserCreateOrConnectWithoutListingsInput = {
@@ -437,83 +459,217 @@ export type UserUpdateToOneWithWhereWithoutListingsInput = {
 export type UserUpdateWithoutListingsInput = {
   uid?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   profileURL?: Prisma.StringFieldUpdateOperationsInput | string
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  conversations?: Prisma.ConversationUpdateManyWithoutUserNestedInput
+  buyerConversations?: Prisma.ConversationUpdateManyWithoutBuyerNestedInput
+  sellerConversations?: Prisma.ConversationUpdateManyWithoutSellerNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
 }
 
 export type UserUncheckedUpdateWithoutListingsInput = {
   uid?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   profileURL?: Prisma.StringFieldUpdateOperationsInput | string
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutUserNestedInput
+  buyerConversations?: Prisma.ConversationUncheckedUpdateManyWithoutBuyerNestedInput
+  sellerConversations?: Prisma.ConversationUncheckedUpdateManyWithoutSellerNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
 }
 
-export type UserCreateWithoutConversationsInput = {
-  uid?: string
+export type UserCreateWithoutBuyerConversationsInput = {
+  uid: string
   email: string
-  passwordHash: string
   name: string
   profileURL: string
   isVerified?: boolean
   createdAt?: Date | string
   listings?: Prisma.ListingCreateNestedManyWithoutSellerInput
+  sellerConversations?: Prisma.ConversationCreateNestedManyWithoutSellerInput
+  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
 }
 
-export type UserUncheckedCreateWithoutConversationsInput = {
-  uid?: string
+export type UserUncheckedCreateWithoutBuyerConversationsInput = {
+  uid: string
   email: string
-  passwordHash: string
   name: string
   profileURL: string
   isVerified?: boolean
   createdAt?: Date | string
   listings?: Prisma.ListingUncheckedCreateNestedManyWithoutSellerInput
+  sellerConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutSellerInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
 }
 
-export type UserCreateOrConnectWithoutConversationsInput = {
+export type UserCreateOrConnectWithoutBuyerConversationsInput = {
   where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutConversationsInput, Prisma.UserUncheckedCreateWithoutConversationsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutBuyerConversationsInput, Prisma.UserUncheckedCreateWithoutBuyerConversationsInput>
 }
 
-export type UserUpsertWithoutConversationsInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutConversationsInput, Prisma.UserUncheckedUpdateWithoutConversationsInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutConversationsInput, Prisma.UserUncheckedCreateWithoutConversationsInput>
+export type UserCreateWithoutSellerConversationsInput = {
+  uid: string
+  email: string
+  name: string
+  profileURL: string
+  isVerified?: boolean
+  createdAt?: Date | string
+  listings?: Prisma.ListingCreateNestedManyWithoutSellerInput
+  buyerConversations?: Prisma.ConversationCreateNestedManyWithoutBuyerInput
+  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+}
+
+export type UserUncheckedCreateWithoutSellerConversationsInput = {
+  uid: string
+  email: string
+  name: string
+  profileURL: string
+  isVerified?: boolean
+  createdAt?: Date | string
+  listings?: Prisma.ListingUncheckedCreateNestedManyWithoutSellerInput
+  buyerConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutBuyerInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+}
+
+export type UserCreateOrConnectWithoutSellerConversationsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutSellerConversationsInput, Prisma.UserUncheckedCreateWithoutSellerConversationsInput>
+}
+
+export type UserUpsertWithoutBuyerConversationsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutBuyerConversationsInput, Prisma.UserUncheckedUpdateWithoutBuyerConversationsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutBuyerConversationsInput, Prisma.UserUncheckedCreateWithoutBuyerConversationsInput>
   where?: Prisma.UserWhereInput
 }
 
-export type UserUpdateToOneWithWhereWithoutConversationsInput = {
+export type UserUpdateToOneWithWhereWithoutBuyerConversationsInput = {
   where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutConversationsInput, Prisma.UserUncheckedUpdateWithoutConversationsInput>
+  data: Prisma.XOR<Prisma.UserUpdateWithoutBuyerConversationsInput, Prisma.UserUncheckedUpdateWithoutBuyerConversationsInput>
 }
 
-export type UserUpdateWithoutConversationsInput = {
+export type UserUpdateWithoutBuyerConversationsInput = {
   uid?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   profileURL?: Prisma.StringFieldUpdateOperationsInput | string
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   listings?: Prisma.ListingUpdateManyWithoutSellerNestedInput
+  sellerConversations?: Prisma.ConversationUpdateManyWithoutSellerNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
 }
 
-export type UserUncheckedUpdateWithoutConversationsInput = {
+export type UserUncheckedUpdateWithoutBuyerConversationsInput = {
   uid?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.StringFieldUpdateOperationsInput | string
-  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   profileURL?: Prisma.StringFieldUpdateOperationsInput | string
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   listings?: Prisma.ListingUncheckedUpdateManyWithoutSellerNestedInput
+  sellerConversations?: Prisma.ConversationUncheckedUpdateManyWithoutSellerNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+}
+
+export type UserUpsertWithoutSellerConversationsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutSellerConversationsInput, Prisma.UserUncheckedUpdateWithoutSellerConversationsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutSellerConversationsInput, Prisma.UserUncheckedCreateWithoutSellerConversationsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutSellerConversationsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutSellerConversationsInput, Prisma.UserUncheckedUpdateWithoutSellerConversationsInput>
+}
+
+export type UserUpdateWithoutSellerConversationsInput = {
+  uid?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  profileURL?: Prisma.StringFieldUpdateOperationsInput | string
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  listings?: Prisma.ListingUpdateManyWithoutSellerNestedInput
+  buyerConversations?: Prisma.ConversationUpdateManyWithoutBuyerNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+}
+
+export type UserUncheckedUpdateWithoutSellerConversationsInput = {
+  uid?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  profileURL?: Prisma.StringFieldUpdateOperationsInput | string
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  listings?: Prisma.ListingUncheckedUpdateManyWithoutSellerNestedInput
+  buyerConversations?: Prisma.ConversationUncheckedUpdateManyWithoutBuyerNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+}
+
+export type UserCreateWithoutMessagesInput = {
+  uid: string
+  email: string
+  name: string
+  profileURL: string
+  isVerified?: boolean
+  createdAt?: Date | string
+  listings?: Prisma.ListingCreateNestedManyWithoutSellerInput
+  buyerConversations?: Prisma.ConversationCreateNestedManyWithoutBuyerInput
+  sellerConversations?: Prisma.ConversationCreateNestedManyWithoutSellerInput
+}
+
+export type UserUncheckedCreateWithoutMessagesInput = {
+  uid: string
+  email: string
+  name: string
+  profileURL: string
+  isVerified?: boolean
+  createdAt?: Date | string
+  listings?: Prisma.ListingUncheckedCreateNestedManyWithoutSellerInput
+  buyerConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutBuyerInput
+  sellerConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutSellerInput
+}
+
+export type UserCreateOrConnectWithoutMessagesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutMessagesInput, Prisma.UserUncheckedCreateWithoutMessagesInput>
+}
+
+export type UserUpsertWithoutMessagesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutMessagesInput, Prisma.UserUncheckedUpdateWithoutMessagesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutMessagesInput, Prisma.UserUncheckedCreateWithoutMessagesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutMessagesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutMessagesInput, Prisma.UserUncheckedUpdateWithoutMessagesInput>
+}
+
+export type UserUpdateWithoutMessagesInput = {
+  uid?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  profileURL?: Prisma.StringFieldUpdateOperationsInput | string
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  listings?: Prisma.ListingUpdateManyWithoutSellerNestedInput
+  buyerConversations?: Prisma.ConversationUpdateManyWithoutBuyerNestedInput
+  sellerConversations?: Prisma.ConversationUpdateManyWithoutSellerNestedInput
+}
+
+export type UserUncheckedUpdateWithoutMessagesInput = {
+  uid?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  profileURL?: Prisma.StringFieldUpdateOperationsInput | string
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  listings?: Prisma.ListingUncheckedUpdateManyWithoutSellerNestedInput
+  buyerConversations?: Prisma.ConversationUncheckedUpdateManyWithoutBuyerNestedInput
+  sellerConversations?: Prisma.ConversationUncheckedUpdateManyWithoutSellerNestedInput
 }
 
 
@@ -523,12 +679,16 @@ export type UserUncheckedUpdateWithoutConversationsInput = {
 
 export type UserCountOutputType = {
   listings: number
-  conversations: number
+  buyerConversations: number
+  sellerConversations: number
+  messages: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   listings?: boolean | UserCountOutputTypeCountListingsArgs
-  conversations?: boolean | UserCountOutputTypeCountConversationsArgs
+  buyerConversations?: boolean | UserCountOutputTypeCountBuyerConversationsArgs
+  sellerConversations?: boolean | UserCountOutputTypeCountSellerConversationsArgs
+  messages?: boolean | UserCountOutputTypeCountMessagesArgs
 }
 
 /**
@@ -551,28 +711,42 @@ export type UserCountOutputTypeCountListingsArgs<ExtArgs extends runtime.Types.E
 /**
  * UserCountOutputType without action
  */
-export type UserCountOutputTypeCountConversationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type UserCountOutputTypeCountBuyerConversationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.ConversationWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountSellerConversationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ConversationWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MessageWhereInput
 }
 
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   uid?: boolean
   email?: boolean
-  passwordHash?: boolean
   name?: boolean
   profileURL?: boolean
   isVerified?: boolean
   createdAt?: boolean
   listings?: boolean | Prisma.User$listingsArgs<ExtArgs>
-  conversations?: boolean | Prisma.User$conversationsArgs<ExtArgs>
+  buyerConversations?: boolean | Prisma.User$buyerConversationsArgs<ExtArgs>
+  sellerConversations?: boolean | Prisma.User$sellerConversationsArgs<ExtArgs>
+  messages?: boolean | Prisma.User$messagesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   uid?: boolean
   email?: boolean
-  passwordHash?: boolean
   name?: boolean
   profileURL?: boolean
   isVerified?: boolean
@@ -582,7 +756,6 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   uid?: boolean
   email?: boolean
-  passwordHash?: boolean
   name?: boolean
   profileURL?: boolean
   isVerified?: boolean
@@ -592,17 +765,18 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
 export type UserSelectScalar = {
   uid?: boolean
   email?: boolean
-  passwordHash?: boolean
   name?: boolean
   profileURL?: boolean
   isVerified?: boolean
   createdAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"uid" | "email" | "passwordHash" | "name" | "profileURL" | "isVerified" | "createdAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"uid" | "email" | "name" | "profileURL" | "isVerified" | "createdAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   listings?: boolean | Prisma.User$listingsArgs<ExtArgs>
-  conversations?: boolean | Prisma.User$conversationsArgs<ExtArgs>
+  buyerConversations?: boolean | Prisma.User$buyerConversationsArgs<ExtArgs>
+  sellerConversations?: boolean | Prisma.User$sellerConversationsArgs<ExtArgs>
+  messages?: boolean | Prisma.User$messagesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -612,12 +786,13 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   name: "User"
   objects: {
     listings: Prisma.$ListingPayload<ExtArgs>[]
-    conversations: Prisma.$ConversationPayload<ExtArgs>[]
+    buyerConversations: Prisma.$ConversationPayload<ExtArgs>[]
+    sellerConversations: Prisma.$ConversationPayload<ExtArgs>[]
+    messages: Prisma.$MessagePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     uid: string
     email: string
-    passwordHash: string
     name: string
     profileURL: string
     isVerified: boolean
@@ -1017,7 +1192,9 @@ readonly fields: UserFieldRefs;
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   listings<T extends Prisma.User$listingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$listingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ListingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  conversations<T extends Prisma.User$conversationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$conversationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  buyerConversations<T extends Prisma.User$buyerConversationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$buyerConversationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  sellerConversations<T extends Prisma.User$sellerConversationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sellerConversationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  messages<T extends Prisma.User$messagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1049,7 +1226,6 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
 export interface UserFieldRefs {
   readonly uid: Prisma.FieldRef<"User", 'String'>
   readonly email: Prisma.FieldRef<"User", 'String'>
-  readonly passwordHash: Prisma.FieldRef<"User", 'String'>
   readonly name: Prisma.FieldRef<"User", 'String'>
   readonly profileURL: Prisma.FieldRef<"User", 'String'>
   readonly isVerified: Prisma.FieldRef<"User", 'Boolean'>
@@ -1466,9 +1642,9 @@ export type User$listingsArgs<ExtArgs extends runtime.Types.Extensions.InternalA
 }
 
 /**
- * User.conversations
+ * User.buyerConversations
  */
-export type User$conversationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type User$buyerConversationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the Conversation
    */
@@ -1487,6 +1663,54 @@ export type User$conversationsArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.ConversationScalarFieldEnum | Prisma.ConversationScalarFieldEnum[]
+}
+
+/**
+ * User.sellerConversations
+ */
+export type User$sellerConversationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Conversation
+   */
+  select?: Prisma.ConversationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Conversation
+   */
+  omit?: Prisma.ConversationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ConversationInclude<ExtArgs> | null
+  where?: Prisma.ConversationWhereInput
+  orderBy?: Prisma.ConversationOrderByWithRelationInput | Prisma.ConversationOrderByWithRelationInput[]
+  cursor?: Prisma.ConversationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ConversationScalarFieldEnum | Prisma.ConversationScalarFieldEnum[]
+}
+
+/**
+ * User.messages
+ */
+export type User$messagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Message
+   */
+  select?: Prisma.MessageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Message
+   */
+  omit?: Prisma.MessageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MessageInclude<ExtArgs> | null
+  where?: Prisma.MessageWhereInput
+  orderBy?: Prisma.MessageOrderByWithRelationInput | Prisma.MessageOrderByWithRelationInput[]
+  cursor?: Prisma.MessageWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MessageScalarFieldEnum | Prisma.MessageScalarFieldEnum[]
 }
 
 /**

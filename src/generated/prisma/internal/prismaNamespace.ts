@@ -764,7 +764,6 @@ export type ListingScalarFieldEnum = (typeof ListingScalarFieldEnum)[keyof typeo
 export const UserScalarFieldEnum = {
   uid: 'uid',
   email: 'email',
-  passwordHash: 'passwordHash',
   name: 'name',
   profileURL: 'profileURL',
   isVerified: 'isVerified',
@@ -776,9 +775,11 @@ export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof User
 
 export const ConversationScalarFieldEnum = {
   cid: 'cid',
-  title: 'title',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
   listingId: 'listingId',
-  userUid: 'userUid'
+  buyerId: 'buyerId',
+  sellerId: 'sellerId'
 } as const
 
 export type ConversationScalarFieldEnum = (typeof ConversationScalarFieldEnum)[keyof typeof ConversationScalarFieldEnum]
@@ -787,11 +788,12 @@ export type ConversationScalarFieldEnum = (typeof ConversationScalarFieldEnum)[k
 export const MessageScalarFieldEnum = {
   mid: 'mid',
   text: 'text',
-  created: 'created',
-  read: 'read',
+  createdAt: 'createdAt',
+  readAt: 'readAt',
   edited: 'edited',
-  updated: 'updated',
-  conversationID: 'conversationID'
+  updatedAt: 'updatedAt',
+  senderId: 'senderId',
+  conversationId: 'conversationId'
 } as const
 
 export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeof MessageScalarFieldEnum]

@@ -1,6 +1,7 @@
-import { Listing, User } from "@/src/generated/prisma/client";
+import { Conversation, Listing, User } from "@/src/generated/prisma/client";
 import { create, StoreApi, UseBoundStore } from "zustand";
 import { SafeUser } from "../types";
+import { ConversationInclude } from "@/src/generated/prisma/models";
 interface Store {
   type: FormType;
   changeType: Function;
@@ -76,3 +77,16 @@ export const useMessage: UseBoundStore<StoreApi<MessagePopUp>> = create(
     };
   },
 );
+
+type ConvosState = {
+  convos: (Conversation & ConversationInclude)[];
+  setConvos: Function;
+  reset: Function;
+};
+export const useConvos: UseBoundStore<StoreApi<ConvosState>> = create((set) => {
+  return {
+    convos: [],
+    setConvos: (convos: Conversation[]) => set({ convos: convos }),
+    reset: () => set({ convos: [] }),
+  };
+});

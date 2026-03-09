@@ -3,7 +3,7 @@ import DeleteModal from "@/components/Modals/DeleteModal";
 import ProfileSections from "@/components/AuthRelated/ProfileSections";
 import { getUserListings } from "@/db/listings.db";
 
-import { getSession, logout } from "@/lib/lib";
+
 import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -14,6 +14,7 @@ import { MdOutlinePrivacyTip } from "react-icons/md";
 import { useListings, useUser } from "../store/zustand";
 
 import { cleanUP } from "../client-utils/functions";
+import { supabase } from "@/supabase/authHelper";
 
 const Profile = () => {
   const [deleteUser, setDeleteUser] = useState(false);
@@ -21,25 +22,21 @@ const Profile = () => {
   const { reset: lisReset, setSelectedListing } = useListings();
 
   async function mountSession() {
-    const serverSession = await getSession();
- 
-    if (!serverSession) {
-      cleanUP({ reset: lisReset }, { reset: userReset });
-
-      redirect("/sign-in");
-    }
-    setUser(serverSession)
+    const {data, error} = await supabase.auth.getUser()
+    const tempUser = data.user;
+    if (!tempUser) redirect('/sign-in')
+    setUser(tempUser)
   }
   async function mountUserListings() {
     // if (userListings.length !== 0) return;
     try {
-      const tempListings = await getUserListings(user?.uid);
+      const tempListings = await getUserListings(user?.id);
       if (!tempListings) {
         // TODO: Set Error Message
         return;
       }
 
-      if (user?.uid) {
+      if (user?.id) {
         setUserListings(tempListings);
       }
     } catch (error) {
@@ -56,7 +53,7 @@ const Profile = () => {
   }, [user]);
 
   const handleLogout = async () => {
-    await logout();
+    await supabase.auth.signOut()
     cleanUP({ reset: lisReset }, { reset: userReset });
 
     redirect("/sign-in");

@@ -289,6 +289,7 @@ export type ListingWhereInput = {
   views?: Prisma.IntFilter<"Listing"> | number
   createdAt?: Prisma.DateTimeFilter<"Listing"> | Date | string
   seller?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  conversations?: Prisma.ConversationListRelationFilter
 }
 
 export type ListingOrderByWithRelationInput = {
@@ -306,6 +307,7 @@ export type ListingOrderByWithRelationInput = {
   views?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   seller?: Prisma.UserOrderByWithRelationInput
+  conversations?: Prisma.ConversationOrderByRelationAggregateInput
 }
 
 export type ListingWhereUniqueInput = Prisma.AtLeast<{
@@ -326,6 +328,7 @@ export type ListingWhereUniqueInput = Prisma.AtLeast<{
   views?: Prisma.IntFilter<"Listing"> | number
   createdAt?: Prisma.DateTimeFilter<"Listing"> | Date | string
   seller?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  conversations?: Prisma.ConversationListRelationFilter
 }, "lid">
 
 export type ListingOrderByWithAggregationInput = {
@@ -382,6 +385,7 @@ export type ListingCreateInput = {
   views?: number
   createdAt?: Date | string
   seller: Prisma.UserCreateNestedOneWithoutListingsInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutListingInput
 }
 
 export type ListingUncheckedCreateInput = {
@@ -398,6 +402,7 @@ export type ListingUncheckedCreateInput = {
   longitude?: number | null
   views?: number
   createdAt?: Date | string
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutListingInput
 }
 
 export type ListingUpdateInput = {
@@ -414,6 +419,7 @@ export type ListingUpdateInput = {
   views?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   seller?: Prisma.UserUpdateOneRequiredWithoutListingsNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutListingNestedInput
 }
 
 export type ListingUncheckedUpdateInput = {
@@ -430,6 +436,7 @@ export type ListingUncheckedUpdateInput = {
   longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   views?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutListingNestedInput
 }
 
 export type ListingCreateManyInput = {
@@ -557,6 +564,11 @@ export type ListingOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type ListingScalarRelationFilter = {
+  is?: Prisma.ListingWhereInput
+  isNot?: Prisma.ListingWhereInput
+}
+
 export type ListingCreateimageUrlsInput = {
   set: string[]
 }
@@ -640,6 +652,20 @@ export type ListingUncheckedUpdateManyWithoutSellerNestedInput = {
   deleteMany?: Prisma.ListingScalarWhereInput | Prisma.ListingScalarWhereInput[]
 }
 
+export type ListingCreateNestedOneWithoutConversationsInput = {
+  create?: Prisma.XOR<Prisma.ListingCreateWithoutConversationsInput, Prisma.ListingUncheckedCreateWithoutConversationsInput>
+  connectOrCreate?: Prisma.ListingCreateOrConnectWithoutConversationsInput
+  connect?: Prisma.ListingWhereUniqueInput
+}
+
+export type ListingUpdateOneRequiredWithoutConversationsNestedInput = {
+  create?: Prisma.XOR<Prisma.ListingCreateWithoutConversationsInput, Prisma.ListingUncheckedCreateWithoutConversationsInput>
+  connectOrCreate?: Prisma.ListingCreateOrConnectWithoutConversationsInput
+  upsert?: Prisma.ListingUpsertWithoutConversationsInput
+  connect?: Prisma.ListingWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ListingUpdateToOneWithWhereWithoutConversationsInput, Prisma.ListingUpdateWithoutConversationsInput>, Prisma.ListingUncheckedUpdateWithoutConversationsInput>
+}
+
 export type ListingCreateWithoutSellerInput = {
   lid?: string
   title: string
@@ -653,6 +679,7 @@ export type ListingCreateWithoutSellerInput = {
   longitude?: number | null
   views?: number
   createdAt?: Date | string
+  conversations?: Prisma.ConversationCreateNestedManyWithoutListingInput
 }
 
 export type ListingUncheckedCreateWithoutSellerInput = {
@@ -668,6 +695,7 @@ export type ListingUncheckedCreateWithoutSellerInput = {
   longitude?: number | null
   views?: number
   createdAt?: Date | string
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutListingInput
 }
 
 export type ListingCreateOrConnectWithoutSellerInput = {
@@ -715,6 +743,86 @@ export type ListingScalarWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Listing"> | Date | string
 }
 
+export type ListingCreateWithoutConversationsInput = {
+  lid?: string
+  title: string
+  description: string
+  price: number
+  imageUrls?: Prisma.ListingCreateimageUrlsInput | string[]
+  sold?: boolean
+  archived?: boolean
+  condition?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  views?: number
+  createdAt?: Date | string
+  seller: Prisma.UserCreateNestedOneWithoutListingsInput
+}
+
+export type ListingUncheckedCreateWithoutConversationsInput = {
+  lid?: string
+  title: string
+  description: string
+  price: number
+  imageUrls?: Prisma.ListingCreateimageUrlsInput | string[]
+  sellerId: string
+  sold?: boolean
+  archived?: boolean
+  condition?: string | null
+  latitude?: number | null
+  longitude?: number | null
+  views?: number
+  createdAt?: Date | string
+}
+
+export type ListingCreateOrConnectWithoutConversationsInput = {
+  where: Prisma.ListingWhereUniqueInput
+  create: Prisma.XOR<Prisma.ListingCreateWithoutConversationsInput, Prisma.ListingUncheckedCreateWithoutConversationsInput>
+}
+
+export type ListingUpsertWithoutConversationsInput = {
+  update: Prisma.XOR<Prisma.ListingUpdateWithoutConversationsInput, Prisma.ListingUncheckedUpdateWithoutConversationsInput>
+  create: Prisma.XOR<Prisma.ListingCreateWithoutConversationsInput, Prisma.ListingUncheckedCreateWithoutConversationsInput>
+  where?: Prisma.ListingWhereInput
+}
+
+export type ListingUpdateToOneWithWhereWithoutConversationsInput = {
+  where?: Prisma.ListingWhereInput
+  data: Prisma.XOR<Prisma.ListingUpdateWithoutConversationsInput, Prisma.ListingUncheckedUpdateWithoutConversationsInput>
+}
+
+export type ListingUpdateWithoutConversationsInput = {
+  lid?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  price?: Prisma.IntFieldUpdateOperationsInput | number
+  imageUrls?: Prisma.ListingUpdateimageUrlsInput | string[]
+  sold?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  archived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  seller?: Prisma.UserUpdateOneRequiredWithoutListingsNestedInput
+}
+
+export type ListingUncheckedUpdateWithoutConversationsInput = {
+  lid?: Prisma.StringFieldUpdateOperationsInput | string
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  price?: Prisma.IntFieldUpdateOperationsInput | number
+  imageUrls?: Prisma.ListingUpdateimageUrlsInput | string[]
+  sellerId?: Prisma.StringFieldUpdateOperationsInput | string
+  sold?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  archived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  views?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 export type ListingCreateManySellerInput = {
   lid?: string
   title: string
@@ -743,6 +851,7 @@ export type ListingUpdateWithoutSellerInput = {
   longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   views?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  conversations?: Prisma.ConversationUpdateManyWithoutListingNestedInput
 }
 
 export type ListingUncheckedUpdateWithoutSellerInput = {
@@ -758,6 +867,7 @@ export type ListingUncheckedUpdateWithoutSellerInput = {
   longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   views?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutListingNestedInput
 }
 
 export type ListingUncheckedUpdateManyWithoutSellerInput = {
@@ -776,6 +886,35 @@ export type ListingUncheckedUpdateManyWithoutSellerInput = {
 }
 
 
+/**
+ * Count Type ListingCountOutputType
+ */
+
+export type ListingCountOutputType = {
+  conversations: number
+}
+
+export type ListingCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  conversations?: boolean | ListingCountOutputTypeCountConversationsArgs
+}
+
+/**
+ * ListingCountOutputType without action
+ */
+export type ListingCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ListingCountOutputType
+   */
+  select?: Prisma.ListingCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * ListingCountOutputType without action
+ */
+export type ListingCountOutputTypeCountConversationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ConversationWhereInput
+}
+
 
 export type ListingSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   lid?: boolean
@@ -792,6 +931,8 @@ export type ListingSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   views?: boolean
   createdAt?: boolean
   seller?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  conversations?: boolean | Prisma.Listing$conversationsArgs<ExtArgs>
+  _count?: boolean | Prisma.ListingCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["listing"]>
 
 export type ListingSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -847,6 +988,8 @@ export type ListingSelectScalar = {
 export type ListingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"lid" | "title" | "description" | "price" | "imageUrls" | "sellerId" | "sold" | "archived" | "condition" | "latitude" | "longitude" | "views" | "createdAt", ExtArgs["result"]["listing"]>
 export type ListingInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   seller?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  conversations?: boolean | Prisma.Listing$conversationsArgs<ExtArgs>
+  _count?: boolean | Prisma.ListingCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ListingIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   seller?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -859,6 +1002,7 @@ export type $ListingPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   name: "Listing"
   objects: {
     seller: Prisma.$UserPayload<ExtArgs>
+    conversations: Prisma.$ConversationPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     lid: string
@@ -1269,6 +1413,7 @@ readonly fields: ListingFieldRefs;
 export interface Prisma__ListingClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   seller<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  conversations<T extends Prisma.Listing$conversationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Listing$conversationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1704,6 +1849,30 @@ export type ListingDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inter
    * Limit how many Listings to delete.
    */
   limit?: number
+}
+
+/**
+ * Listing.conversations
+ */
+export type Listing$conversationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Conversation
+   */
+  select?: Prisma.ConversationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Conversation
+   */
+  omit?: Prisma.ConversationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ConversationInclude<ExtArgs> | null
+  where?: Prisma.ConversationWhereInput
+  orderBy?: Prisma.ConversationOrderByWithRelationInput | Prisma.ConversationOrderByWithRelationInput[]
+  cursor?: Prisma.ConversationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ConversationScalarFieldEnum | Prisma.ConversationScalarFieldEnum[]
 }
 
 /**

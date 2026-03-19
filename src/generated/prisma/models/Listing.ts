@@ -45,6 +45,7 @@ export type ListingMinAggregateOutputType = {
   title: string | null
   description: string | null
   price: number | null
+  category: string | null
   sellerId: string | null
   sold: boolean | null
   archived: boolean | null
@@ -60,6 +61,7 @@ export type ListingMaxAggregateOutputType = {
   title: string | null
   description: string | null
   price: number | null
+  category: string | null
   sellerId: string | null
   sold: boolean | null
   archived: boolean | null
@@ -76,6 +78,7 @@ export type ListingCountAggregateOutputType = {
   description: number
   price: number
   imageUrls: number
+  category: number
   sellerId: number
   sold: number
   archived: number
@@ -107,6 +110,7 @@ export type ListingMinAggregateInputType = {
   title?: true
   description?: true
   price?: true
+  category?: true
   sellerId?: true
   sold?: true
   archived?: true
@@ -122,6 +126,7 @@ export type ListingMaxAggregateInputType = {
   title?: true
   description?: true
   price?: true
+  category?: true
   sellerId?: true
   sold?: true
   archived?: true
@@ -138,6 +143,7 @@ export type ListingCountAggregateInputType = {
   description?: true
   price?: true
   imageUrls?: true
+  category?: true
   sellerId?: true
   sold?: true
   archived?: true
@@ -241,6 +247,7 @@ export type ListingGroupByOutputType = {
   description: string
   price: number
   imageUrls: string[]
+  category: string | null
   sellerId: string
   sold: boolean
   archived: boolean
@@ -280,6 +287,7 @@ export type ListingWhereInput = {
   description?: Prisma.StringFilter<"Listing"> | string
   price?: Prisma.IntFilter<"Listing"> | number
   imageUrls?: Prisma.StringNullableListFilter<"Listing">
+  category?: Prisma.StringNullableFilter<"Listing"> | string | null
   sellerId?: Prisma.UuidFilter<"Listing"> | string
   sold?: Prisma.BoolFilter<"Listing"> | boolean
   archived?: Prisma.BoolFilter<"Listing"> | boolean
@@ -298,6 +306,7 @@ export type ListingOrderByWithRelationInput = {
   description?: Prisma.SortOrder
   price?: Prisma.SortOrder
   imageUrls?: Prisma.SortOrder
+  category?: Prisma.SortOrderInput | Prisma.SortOrder
   sellerId?: Prisma.SortOrder
   sold?: Prisma.SortOrder
   archived?: Prisma.SortOrder
@@ -319,6 +328,7 @@ export type ListingWhereUniqueInput = Prisma.AtLeast<{
   description?: Prisma.StringFilter<"Listing"> | string
   price?: Prisma.IntFilter<"Listing"> | number
   imageUrls?: Prisma.StringNullableListFilter<"Listing">
+  category?: Prisma.StringNullableFilter<"Listing"> | string | null
   sellerId?: Prisma.UuidFilter<"Listing"> | string
   sold?: Prisma.BoolFilter<"Listing"> | boolean
   archived?: Prisma.BoolFilter<"Listing"> | boolean
@@ -337,6 +347,7 @@ export type ListingOrderByWithAggregationInput = {
   description?: Prisma.SortOrder
   price?: Prisma.SortOrder
   imageUrls?: Prisma.SortOrder
+  category?: Prisma.SortOrderInput | Prisma.SortOrder
   sellerId?: Prisma.SortOrder
   sold?: Prisma.SortOrder
   archived?: Prisma.SortOrder
@@ -361,6 +372,7 @@ export type ListingScalarWhereWithAggregatesInput = {
   description?: Prisma.StringWithAggregatesFilter<"Listing"> | string
   price?: Prisma.IntWithAggregatesFilter<"Listing"> | number
   imageUrls?: Prisma.StringNullableListFilter<"Listing">
+  category?: Prisma.StringNullableWithAggregatesFilter<"Listing"> | string | null
   sellerId?: Prisma.UuidWithAggregatesFilter<"Listing"> | string
   sold?: Prisma.BoolWithAggregatesFilter<"Listing"> | boolean
   archived?: Prisma.BoolWithAggregatesFilter<"Listing"> | boolean
@@ -377,6 +389,7 @@ export type ListingCreateInput = {
   description: string
   price: number
   imageUrls?: Prisma.ListingCreateimageUrlsInput | string[]
+  category?: string | null
   sold?: boolean
   archived?: boolean
   condition?: string | null
@@ -394,6 +407,7 @@ export type ListingUncheckedCreateInput = {
   description: string
   price: number
   imageUrls?: Prisma.ListingCreateimageUrlsInput | string[]
+  category?: string | null
   sellerId: string
   sold?: boolean
   archived?: boolean
@@ -411,6 +425,7 @@ export type ListingUpdateInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.IntFieldUpdateOperationsInput | number
   imageUrls?: Prisma.ListingUpdateimageUrlsInput | string[]
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sold?: Prisma.BoolFieldUpdateOperationsInput | boolean
   archived?: Prisma.BoolFieldUpdateOperationsInput | boolean
   condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -428,6 +443,7 @@ export type ListingUncheckedUpdateInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.IntFieldUpdateOperationsInput | number
   imageUrls?: Prisma.ListingUpdateimageUrlsInput | string[]
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sellerId?: Prisma.StringFieldUpdateOperationsInput | string
   sold?: Prisma.BoolFieldUpdateOperationsInput | boolean
   archived?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -445,6 +461,7 @@ export type ListingCreateManyInput = {
   description: string
   price: number
   imageUrls?: Prisma.ListingCreateimageUrlsInput | string[]
+  category?: string | null
   sellerId: string
   sold?: boolean
   archived?: boolean
@@ -461,6 +478,7 @@ export type ListingUpdateManyMutationInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.IntFieldUpdateOperationsInput | number
   imageUrls?: Prisma.ListingUpdateimageUrlsInput | string[]
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sold?: Prisma.BoolFieldUpdateOperationsInput | boolean
   archived?: Prisma.BoolFieldUpdateOperationsInput | boolean
   condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -476,6 +494,7 @@ export type ListingUncheckedUpdateManyInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.IntFieldUpdateOperationsInput | number
   imageUrls?: Prisma.ListingUpdateimageUrlsInput | string[]
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sellerId?: Prisma.StringFieldUpdateOperationsInput | string
   sold?: Prisma.BoolFieldUpdateOperationsInput | boolean
   archived?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -500,6 +519,7 @@ export type ListingCountOrderByAggregateInput = {
   description?: Prisma.SortOrder
   price?: Prisma.SortOrder
   imageUrls?: Prisma.SortOrder
+  category?: Prisma.SortOrder
   sellerId?: Prisma.SortOrder
   sold?: Prisma.SortOrder
   archived?: Prisma.SortOrder
@@ -522,6 +542,7 @@ export type ListingMaxOrderByAggregateInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   price?: Prisma.SortOrder
+  category?: Prisma.SortOrder
   sellerId?: Prisma.SortOrder
   sold?: Prisma.SortOrder
   archived?: Prisma.SortOrder
@@ -537,6 +558,7 @@ export type ListingMinOrderByAggregateInput = {
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
   price?: Prisma.SortOrder
+  category?: Prisma.SortOrder
   sellerId?: Prisma.SortOrder
   sold?: Prisma.SortOrder
   archived?: Prisma.SortOrder
@@ -590,12 +612,12 @@ export type ListingUpdateimageUrlsInput = {
   push?: string | string[]
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
-}
-
 export type NullableStringFieldUpdateOperationsInput = {
   set?: string | null
+}
+
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
 }
 
 export type NullableFloatFieldUpdateOperationsInput = {
@@ -672,6 +694,7 @@ export type ListingCreateWithoutSellerInput = {
   description: string
   price: number
   imageUrls?: Prisma.ListingCreateimageUrlsInput | string[]
+  category?: string | null
   sold?: boolean
   archived?: boolean
   condition?: string | null
@@ -688,6 +711,7 @@ export type ListingUncheckedCreateWithoutSellerInput = {
   description: string
   price: number
   imageUrls?: Prisma.ListingCreateimageUrlsInput | string[]
+  category?: string | null
   sold?: boolean
   archived?: boolean
   condition?: string | null
@@ -733,6 +757,7 @@ export type ListingScalarWhereInput = {
   description?: Prisma.StringFilter<"Listing"> | string
   price?: Prisma.IntFilter<"Listing"> | number
   imageUrls?: Prisma.StringNullableListFilter<"Listing">
+  category?: Prisma.StringNullableFilter<"Listing"> | string | null
   sellerId?: Prisma.UuidFilter<"Listing"> | string
   sold?: Prisma.BoolFilter<"Listing"> | boolean
   archived?: Prisma.BoolFilter<"Listing"> | boolean
@@ -749,6 +774,7 @@ export type ListingCreateWithoutConversationsInput = {
   description: string
   price: number
   imageUrls?: Prisma.ListingCreateimageUrlsInput | string[]
+  category?: string | null
   sold?: boolean
   archived?: boolean
   condition?: string | null
@@ -765,6 +791,7 @@ export type ListingUncheckedCreateWithoutConversationsInput = {
   description: string
   price: number
   imageUrls?: Prisma.ListingCreateimageUrlsInput | string[]
+  category?: string | null
   sellerId: string
   sold?: boolean
   archived?: boolean
@@ -797,6 +824,7 @@ export type ListingUpdateWithoutConversationsInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.IntFieldUpdateOperationsInput | number
   imageUrls?: Prisma.ListingUpdateimageUrlsInput | string[]
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sold?: Prisma.BoolFieldUpdateOperationsInput | boolean
   archived?: Prisma.BoolFieldUpdateOperationsInput | boolean
   condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -813,6 +841,7 @@ export type ListingUncheckedUpdateWithoutConversationsInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.IntFieldUpdateOperationsInput | number
   imageUrls?: Prisma.ListingUpdateimageUrlsInput | string[]
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sellerId?: Prisma.StringFieldUpdateOperationsInput | string
   sold?: Prisma.BoolFieldUpdateOperationsInput | boolean
   archived?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -829,6 +858,7 @@ export type ListingCreateManySellerInput = {
   description: string
   price: number
   imageUrls?: Prisma.ListingCreateimageUrlsInput | string[]
+  category?: string | null
   sold?: boolean
   archived?: boolean
   condition?: string | null
@@ -844,6 +874,7 @@ export type ListingUpdateWithoutSellerInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.IntFieldUpdateOperationsInput | number
   imageUrls?: Prisma.ListingUpdateimageUrlsInput | string[]
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sold?: Prisma.BoolFieldUpdateOperationsInput | boolean
   archived?: Prisma.BoolFieldUpdateOperationsInput | boolean
   condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -860,6 +891,7 @@ export type ListingUncheckedUpdateWithoutSellerInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.IntFieldUpdateOperationsInput | number
   imageUrls?: Prisma.ListingUpdateimageUrlsInput | string[]
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sold?: Prisma.BoolFieldUpdateOperationsInput | boolean
   archived?: Prisma.BoolFieldUpdateOperationsInput | boolean
   condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -876,6 +908,7 @@ export type ListingUncheckedUpdateManyWithoutSellerInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   price?: Prisma.IntFieldUpdateOperationsInput | number
   imageUrls?: Prisma.ListingUpdateimageUrlsInput | string[]
+  category?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sold?: Prisma.BoolFieldUpdateOperationsInput | boolean
   archived?: Prisma.BoolFieldUpdateOperationsInput | boolean
   condition?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -922,6 +955,7 @@ export type ListingSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   description?: boolean
   price?: boolean
   imageUrls?: boolean
+  category?: boolean
   sellerId?: boolean
   sold?: boolean
   archived?: boolean
@@ -941,6 +975,7 @@ export type ListingSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   description?: boolean
   price?: boolean
   imageUrls?: boolean
+  category?: boolean
   sellerId?: boolean
   sold?: boolean
   archived?: boolean
@@ -958,6 +993,7 @@ export type ListingSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   description?: boolean
   price?: boolean
   imageUrls?: boolean
+  category?: boolean
   sellerId?: boolean
   sold?: boolean
   archived?: boolean
@@ -975,6 +1011,7 @@ export type ListingSelectScalar = {
   description?: boolean
   price?: boolean
   imageUrls?: boolean
+  category?: boolean
   sellerId?: boolean
   sold?: boolean
   archived?: boolean
@@ -985,7 +1022,7 @@ export type ListingSelectScalar = {
   createdAt?: boolean
 }
 
-export type ListingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"lid" | "title" | "description" | "price" | "imageUrls" | "sellerId" | "sold" | "archived" | "condition" | "latitude" | "longitude" | "views" | "createdAt", ExtArgs["result"]["listing"]>
+export type ListingOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"lid" | "title" | "description" | "price" | "imageUrls" | "category" | "sellerId" | "sold" | "archived" | "condition" | "latitude" | "longitude" | "views" | "createdAt", ExtArgs["result"]["listing"]>
 export type ListingInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   seller?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   conversations?: boolean | Prisma.Listing$conversationsArgs<ExtArgs>
@@ -1010,6 +1047,7 @@ export type $ListingPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     description: string
     price: number
     imageUrls: string[]
+    category: string | null
     sellerId: string
     sold: boolean
     archived: boolean
@@ -1448,6 +1486,7 @@ export interface ListingFieldRefs {
   readonly description: Prisma.FieldRef<"Listing", 'String'>
   readonly price: Prisma.FieldRef<"Listing", 'Int'>
   readonly imageUrls: Prisma.FieldRef<"Listing", 'String[]'>
+  readonly category: Prisma.FieldRef<"Listing", 'String'>
   readonly sellerId: Prisma.FieldRef<"Listing", 'String'>
   readonly sold: Prisma.FieldRef<"Listing", 'Boolean'>
   readonly archived: Prisma.FieldRef<"Listing", 'Boolean'>

@@ -5,16 +5,16 @@ export async function GET(req: NextRequest) {
   try {
     const searchParams = req.nextUrl.searchParams;
     const query = searchParams.get("q");
+    const category = searchParams.get("cat");
     const userId = req.headers.get("authorization");
 
-    if (!query || query.trim().length === 0) {
+    if (!query || (query.trim().length === 0)) {
       return NextResponse.json(
         { message: "Search query is required", listings: [], success: false },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    // Search listings by title and description
     const listings = await prisma.listing.findMany({
       where: {
         archived: false,
@@ -29,6 +29,12 @@ export async function GET(req: NextRequest) {
           {
             description: {
               contains: query,
+              mode: "insensitive",
+            },
+          },
+          {
+            category: {
+              contains: category ? category : "",
               mode: "insensitive",
             },
           },
@@ -57,7 +63,7 @@ export async function GET(req: NextRequest) {
         listings: [],
         success: false,
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

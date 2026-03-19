@@ -6,14 +6,16 @@ import { PKAClient } from "@placekit/autocomplete-js";
 import placekit, { PKResult } from "@placekit/client-js";
 const API_KEY = process.env.NEXT_PUBLIC_PLACEKIT_API_KEY || "";
 const pk = placekit(API_KEY);
-const LocationInput = (props: { llSetter: Function, ll: number[] }) => {
+const inputClass =
+  "w-full bg-white border border-[#c8f5e8] rounded-xl px-3.5 py-2.5 text-sm text-[#011d16] placeholder:text-[#6b9e8a] outline-none focus:border-[#17f3b5] transition-colors";
+
+const LocationInput = (props: { llSetter: Function; ll: number[] }) => {
   const { target, client, state } = usePlaceKit(API_KEY, {
     maxResults: 3,
     timeout: 1000,
   });
   const [value, setValue] = useState("V8W 2Y2");
   const handleResultsPick = useCallback((item: PKResult) => {
-   
     const cordsString = item.coordinates;
     const cordsStringArr = cordsString.split(",");
     const cleanedStringArr = cordsStringArr.map((str) => str.trim());
@@ -24,9 +26,8 @@ const LocationInput = (props: { llSetter: Function, ll: number[] }) => {
     if (value.length < 3) return;
     const results = await pk.search(value, {
       maxResults: 2,
-      
     });
-    console.log(results)
+    console.log(results);
 
     if (results.results.length > 0) {
       const [lat, lng] = handleResultsPick(results.results[0]);
@@ -35,13 +36,13 @@ const LocationInput = (props: { llSetter: Function, ll: number[] }) => {
     }
   };
   useEffect(() => {
-
     handleSearch();
   }, [value]);
   return (
     <input
       type="text"
       value={value}
+      className={inputClass}
       onChange={(e) => setValue(e.target.value)}
       placeholder="V8<X>..."
     />

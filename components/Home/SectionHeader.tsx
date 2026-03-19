@@ -11,8 +11,8 @@ const SectionHeader = ({
   type: "listings" | "messages" | "null";
 }) => {
   return (
-    <div className="flex justify-between gap-2">
-      <h3 className="text-2xl">{title}</h3>
+    <div className="flex  justify-between gap-2">
+      <h3 className="text-2xl py-1 font-syne">{title}</h3>
       <button
         onClick={() => {
           switch (type) {

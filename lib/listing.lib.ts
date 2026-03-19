@@ -17,8 +17,17 @@ export const safeJson = async (response: Response) => {
   }
 };
 
+
+
 export const getClientListings = async () => {
   const response = await fetch(`${BASEURL}/api/listings/`, {
+    cache: "no-store",
+  });
+
+  return safeJson(response);
+};
+export const getClientListingsWithCategory = async (cat: string) => {
+  const response = await fetch(`${BASEURL}/api/listings/search?cat=${cat}`, {
     cache: "no-store",
   });
 

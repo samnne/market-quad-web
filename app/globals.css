@@ -49,6 +49,8 @@
   --color-primary: #17f3b5;
   --color-secondary: #d282f9;
   --color-accent: #f544bd;
+  --font-syne: var(--font-syne-sans);
+  --font-syne-mono: var(--font-syne-mono)
 
   /* --color-text: #f0f4f4;
   --color-background: #060909;

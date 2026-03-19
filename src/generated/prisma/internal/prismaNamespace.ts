@@ -748,6 +748,7 @@ export const ListingScalarFieldEnum = {
   description: 'description',
   price: 'price',
   imageUrls: 'imageUrls',
+  category: 'category',
   sellerId: 'sellerId',
   sold: 'sold',
   archived: 'archived',

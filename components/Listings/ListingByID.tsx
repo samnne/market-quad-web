@@ -55,7 +55,7 @@ const ListingModal = ({ listing }: { listing: Listing & ListingInclude }) => {
   const { setSelectedListing } = useListings();
   const [optionsModal, setOptionsModal] = useState(false);
   const { user, setUser } = useUser();
-  const { setSelectedConvo} = useConvos();
+  const { setSelectedConvo } = useConvos();
   const [expandDescription, setExpandDescription] = useState(false);
   const { setError } = useMessage();
   const [date, setDate] = useState("No Time Available");
@@ -123,7 +123,7 @@ const ListingModal = ({ listing }: { listing: Listing & ListingInclude }) => {
   };
   function goToConvos(convo: Conversation) {
     setSelectedConvo(convo);
-    
+
     redirect(`/conversations/${convo.cid}`);
   }
 
@@ -196,16 +196,14 @@ const ListingModal = ({ listing }: { listing: Listing & ListingInclude }) => {
             // }}
             initial={{
               y: 500,
-        
             }}
             animate={{
               y: [500, 50],
-            
             }}
             transition={{
               duration: 0.4,
             }}
-            className="absolute rounded-t-4xl flex flex-col min-h-screen w-screen inset-0 bg-white z-50"
+            className="absolute rounded-t-4xl flex flex-col min-h-screen w-screen inset-0 bg-white z-60"
           >
             <motion.nav className="flex relative  rounded-t-4xl z-60  top-0 w-full h-20 bg-white justify-between p-4">
               <button onClick={closeModal} className="w-6 h-6">
@@ -271,48 +269,53 @@ const ListingModal = ({ listing }: { listing: Listing & ListingInclude }) => {
                 <span className="text-lg">${listing?.price}</span>
                 <span className="text-gray-400 text-sm">{date}</span>
 
-                {listing.sellerId !== user?.id
-                  ? listing.conversations &&
-                    listing.conversations.length > 0 &&
-                    listing.conversations.map((convo: Conversation) => {
-                      return convo.buyerId !== user?.id ? (
-                        <div key={convo.cid} className="w-full h-25 rounded-2xl mt-4  bg-white drop-shadow-xl drop-shadow-black/20">
-                          <h4 className="pl-4 pt-4  w-full flex font-semibold text-sm ">
-                            Send a Message
-                          </h4>
-                          <form action="#" className="p-2 flex gap-2">
-                            <input
-                              type="text"
-                              placeholder="Send a Message!"
-                              onChange={handleInput}
-                              value={message}
-                              className="p-2 w-full outline-0  rounded-2xl bg-gray-200"
-                            />
-                            <button
-                              type="button"
-                              onClick={(e) => createConversation()}
-                              className="font-bold bg-accent rounded-2xl px-2 text-white"
-                            >
-                              Send
-                            </button>
-                          </form>
-                        </div>
-                      ) : (
-                        <div key={convo.cid} className="w-full h-25 rounded-2xl mt-4 flex justify-between items-center bg-white drop-shadow-xl drop-shadow-black/20">
-                          
-                          <form className="p-2 w-full flex items-center justify-center gap-2">
-                            <button
-                              type="button"
-                              onClick={(e) => goToConvos(convo)}
-                              className="font-bold text-sm bg-accent rounded-2xl p-2 text-white"
-                            >
-                              Go to Conversation
-                            </button>
-                          </form>
-                        </div>
-                      );
-                    })
-                  : ""}
+                {listing.sellerId !== user?.id ? (
+                  !listing.conversations?.find(
+                    (convo: Conversation) => convo.buyerId === user?.id,
+                  ) ? (
+                    <div className="w-full h-25 rounded-2xl mt-4  bg-white drop-shadow-xl drop-shadow-black/20">
+                      <h4 className="pl-4 pt-4  w-full flex font-semibold text-sm ">
+                        Send a Message
+                      </h4>
+                      <form action="#" className="p-2 flex gap-2">
+                        <input
+                          type="text"
+                          placeholder="Send a Message!"
+                          onChange={handleInput}
+                          value={message}
+                          className="p-2 w-full outline-0  rounded-2xl bg-gray-200"
+                        />
+                        <button
+                          type="button"
+                          onClick={(e) => createConversation()}
+                          className="font-bold bg-accent rounded-2xl px-2 text-white"
+                        >
+                          Send
+                        </button>
+                      </form>
+                    </div>
+                  ) : (
+                    listing.conversations.map(
+                      (convo: Conversation) =>
+                        convo.buyerId === user?.id ||
+                        (convo.sellerId === user?.id && (
+                          <div className="w-full h-25 rounded-2xl mt-4 flex justify-between items-center bg-white drop-shadow-xl drop-shadow-black/20">
+                            <form className="p-2 w-full flex items-center justify-center gap-2">
+                              <button
+                                type="button"
+                                onClick={(e) => goToConvos(convo)}
+                                className="font-bold text-sm bg-accent rounded-2xl p-2 text-white"
+                              >
+                                Go to Conversation
+                              </button>
+                            </form>
+                          </div>
+                        )),
+                    )
+                  )
+                ) : (
+                  ""
+                )}
                 <div className="mt-2  p-5 drop-shadow-xl drop-shadow-black/20 w-full bg-white rounded-2xl">
                   <h4 className="font-bold ">Description</h4>
 
@@ -375,7 +378,7 @@ const ListingModal = ({ listing }: { listing: Listing & ListingInclude }) => {
           </motion.section>
           <div
             onClick={closeModal}
-            className="w-screen h-screen absolute inset-0 z-10 bg-black/20"
+            className="w-screen h-screen absolute inset-0 z-50 bg-black/20"
           ></div>
         </>
       )}

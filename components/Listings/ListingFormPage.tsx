@@ -1,5 +1,5 @@
 "use client";
-import { condition } from "@/app/client-utils/constants";
+import { categories, condition } from "@/app/client-utils/constants";
 import { editListingAction, newListingAction } from "@/lib/listing.lib";
 import {
   ChangeEvent,
@@ -23,8 +23,9 @@ import { motion, stagger, useAnimate } from "motion/react";
 import { uploadImages } from "@/app/client-utils/functions";
 import { deleteImages } from "@/cloudinary/cloudinary";
 import { supabase } from "@/supabase/authHelper";
-import LocationInput from "../Inputs/LocationInput";
+
 import { Listing } from "@/src/generated/prisma/client";
+import LocationInput from "@/components/Inputs/LocationInput";
 
 const ListingForm = z.object({
   title: z.string().min(4, "Title Too Short"),
@@ -34,7 +35,7 @@ const ListingForm = z.object({
     lng: z.number(),
     lat: z.number(),
   }),
-
+  category: z.string().min(3, "Please Choose a Category"),
   condition: z.string().min(3, "Please Choose a Condition"),
 });
 
@@ -63,6 +64,7 @@ const ListingFormPage = ({ type }: { type: "new" | "edit" }) => {
     price: 0,
     description: "",
     condition: "",
+    category: "",
   });
 
   async function mountUser() {
@@ -77,25 +79,11 @@ const ListingFormPage = ({ type }: { type: "new" | "edit" }) => {
 
   useEffect(() => {
     if (!scope.current) return;
-    animate(
-      "#sect",
-      {
-        y: [50, 0],
-        opacity: [0, 1],
-      },
-      {
-        delay: stagger(0.1),
-      },
-    );
+    animate("#sect", { y: [50, 0], opacity: [0, 1] }, { delay: stagger(0.1) });
     animate(
       "#from, div",
-      {
-        y: [50, 0],
-        opacity: [0, 1],
-      },
-      {
-        delay: stagger(0.1),
-      },
+      { y: [50, 0], opacity: [0, 1] },
+      { delay: stagger(0.1) },
     );
   }, [scope]);
 
@@ -104,7 +92,6 @@ const ListingFormPage = ({ type }: { type: "new" | "edit" }) => {
     if (type === "edit" && selectedListing && selectedListing.imageUrls) {
       const { title, price, description, condition, imageUrls } =
         selectedListing;
-
       setListingFormData((prev) => ({
         ...prev,
         title,
@@ -114,12 +101,8 @@ const ListingFormPage = ({ type }: { type: "new" | "edit" }) => {
         imageUrls,
       }));
       setLatLong([selectedListing.latitude, selectedListing.longitude]);
-      const files = imageUrls;
-      const entries = files.map((url) => ({
-        file: null,
-        preview: url,
-      }));
-      setSelectedFiles((prev) => [...entries]);
+      const entries = imageUrls.map((url) => ({ file: null, preview: url }));
+      setSelectedFiles(entries);
     }
   }, []);
 
@@ -127,13 +110,11 @@ const ListingFormPage = ({ type }: { type: "new" | "edit" }) => {
     const lines = listingFormData.description.split("\n");
     return lines[lines.length - 1].length === 0;
   }
+
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     setListingFormData((prev) => {
-      const { title, price, condition, description } = listingFormData;
-      const newPrice = Number.parseInt(price);
-
       const parseListingForm = ListingForm.safeParse({
         ...prev,
         price: Number.parseInt(prev.price),
@@ -145,30 +126,20 @@ const ListingFormPage = ({ type }: { type: "new" | "edit" }) => {
       });
 
       if (!parseListingForm.success) {
-        console.warn("Validation error:", parseListingForm.error);
         setDisabled(true);
       } else {
         setDisabled(false);
       }
 
-      return {
-        ...prev,
-        [e.target.name]: e.target.value,
-      };
+      return { ...prev, [e.target.name]: e.target.value };
     });
   };
+
   const handleEnter = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter") {
       setInputRows((prev) => prev + 1);
-      console.log("Enter key pressed!", rows);
     } else if (e.key === "Backspace" && emptyLine()) {
-      console.log("Enter key pressed!", rows);
-      setInputRows((prev) => {
-        if (prev !== 1) {
-          return prev - 1;
-        }
-        return prev;
-      });
+      setInputRows((prev) => (prev !== 1 ? prev - 1 : prev));
     }
   };
 
@@ -184,26 +155,25 @@ const ListingFormPage = ({ type }: { type: "new" | "edit" }) => {
       price: newPrice,
       description,
       condition,
+      category: listingFormData.category,
       location: { lng: latLong[1], lat: latLong[0] },
     });
-
     if (!parseListingForm.success) {
-      console.error("Validation error:", parseListingForm.error);
       setError(true);
+      console.log(parseListingForm.error)
       return;
     }
 
     if (!user?.id) {
-      console.error("User not authenticated");
       setError(true);
       return;
     }
 
-    const files = selectedFiles.map((img) => {
-      if (!img.file) return img.preview;
-      return img.file;
-    });
+    const files = selectedFiles.map((img) =>
+      !img.file ? img.preview : img.file,
+    );
     setIsLoading(true);
+
     const {
       title: formTitle,
       price: formPrice,
@@ -223,17 +193,17 @@ const ListingFormPage = ({ type }: { type: "new" | "edit" }) => {
           longitude: latLong[1],
           imageUrls: uploadedUrls,
           sellerId: user.id,
+          category: listingFormData.category,
         },
         user.id,
       );
       if (newListing.success) {
         setSuccess(true);
         setSelectedListing(newListing.listing);
-        setIsLoading(false);
         setUserListings((prev: Listing[]) => [...prev, newListing.listing]);
-        redirect(`/listings/`);
+        setIsLoading(false);
+        redirect("/listings/");
       } else {
-        console.log("Failed to create listing:", newListing);
         setIsLoading(false);
         setError(true);
       }
@@ -244,10 +214,7 @@ const ListingFormPage = ({ type }: { type: "new" | "edit" }) => {
           delImage.push(image);
         }
       }
-
-      if (delImage.length > 0) {
-        await deleteImages(delImage);
-      }
+      if (delImage.length > 0) await deleteImages(delImage);
 
       const uploadedUrls = await uploadImages(files);
       const editListing = await editListingAction(
@@ -261,18 +228,18 @@ const ListingFormPage = ({ type }: { type: "new" | "edit" }) => {
           longitude: latLong[1],
           imageUrls: uploadedUrls,
           sellerId: user.id,
+          category: listingFormData.category,
         },
         user.id,
       );
-
+    
       if (editListing?.success) {
         setSuccess(true);
         setSelectedListing(editListing.listing);
         setUserListings((prev: Listing[]) => [...prev, editListing.listing]);
         setIsLoading(false);
-        redirect(`/listings/`);
+        redirect("/listings/");
       } else {
-        console.log("Failed to edit listing:", editListing);
         setIsLoading(false);
         setError(true);
       }
@@ -281,10 +248,11 @@ const ListingFormPage = ({ type }: { type: "new" | "edit" }) => {
 
   function removeImage(index: number) {
     setSelectedFiles((prev) => {
-      URL.revokeObjectURL(prev[index].preview); // clean up memory
+      URL.revokeObjectURL(prev[index].preview);
       return prev.filter((_, i) => i !== index);
     });
   }
+
 
   function handleFileChange(e: ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files ?? []);
@@ -295,167 +263,235 @@ const ListingFormPage = ({ type }: { type: "new" | "edit" }) => {
     setSelectedFiles((prev) => [...prev, ...entries]);
   }
 
-  return (
-    <motion.main
-      initial={{
-        y: 50,
-        opacity: 0,
-      }}
-      animate={{
-        y: [50, 0],
-        opacity: [0, 1],
-      }}
-      transition={{
-        delay: 0.1,
-      }}
-      ref={scope}
-      className=""
-    >
-      {/* <div className="px-2 flex relative justify-end ">
-      <button className="bg-primary  rounded-xl cursor-pointer text-white mt-4 font-bold px-4 py-2">
-        Post Listing
-      </button>
+  const inputClass =
+    "w-full bg-white border border-[#c8f5e8] rounded-xl px-3.5 py-2.5 text-sm text-[#011d16] placeholder:text-[#6b9e8a] outline-none focus:border-[#17f3b5] transition-colors";
 
-      </div> */}
-      <header id="sect" className="flex gap-2 overflow-auto no-scrollbar p-2">
-        {selectedFiles &&
-          selectedFiles.map(({ preview, file }, i) => {
-            return (
-              <div
-                key={preview}
-                className="flex  w-full min-w-80 justify-center border border-secondary hover:bg-secondary/25  rounded-xl items-center h-80 relative"
+  const chipClass = (active: boolean) =>
+    `cursor-pointer text-sm font-semibold px-3.5 py-1.5 rounded-full text-nowrap border transition-all ${
+      active
+        ? "bg-[#011d16] text-[#17f3b5] border-[#011d16]"
+        : "bg-white text-[#6b9e8a] border-[#c8f5e8]"
+    }`;
+
+  return (
+    <motion.div
+      initial={{ y: 50, opacity: 0 }}
+      animate={{ y: [50, 0], opacity: [0, 1] }}
+      transition={{ delay: 0.1 }}
+      ref={scope}
+      className="flex flex-col gap-5 px-5 pt-4 pb-10 bg-[#ecfef8] min-h-full"
+    >
+      {/* Photo strip */}
+      <section id="sect" className="flex flex-col gap-2">
+        <p className="text-[11px] font-medium text-[#6b9e8a] uppercase tracking-widest">
+          Photos
+        </p>
+        <div className="flex gap-3 overflow-x-auto no-scrollbar">
+          {selectedFiles.map(({ preview }, i) => (
+            <div
+              key={preview}
+              className="relative shrink-0 w-36 h-36 rounded-2xl border border-[#c8f5e8] bg-white overflow-hidden"
+            >
+              <button
+                type="button"
+                onClick={() => removeImage(i)}
+                className="absolute top-1.5 right-1.5 z-10 w-6 h-6 rounded-full bg-[#011d16]/70 flex items-center justify-center cursor-pointer"
               >
-                <button
-                  onClick={(e) => {
-                    removeImage(i);
-                  }}
-                  className=" cursor-pointer flex justify-center items-center absolute top-2 right-2 bg-gray-200 w-8 rounded-full  h-8"
-                >
-                  <IoClose />
-                </button>
-                <Image
-                  src={preview}
-                  alt="image upload"
-                  width={150}
-                  className="w-full rounded-2xl h-full  object-contain"
-                  height={150}
-                />
-              </div>
-            );
-          })}
-        <div className="flex  w-full min-w-80 justify-center border border-secondary hover:bg-secondary/25  rounded-xl items-center h-80 relative">
-          <span className="flex flex-col items-center font-semibold  text-secondary">
-            <MdAddToPhotos className="w-6 h-6" /> Add Photos / Video
-          </span>
-          <label
-            htmlFor="file"
-            className="cursor-pointer absolute w-full h-full"
-          ></label>
-          <input
-            type="file"
-            name="file"
-            id="file"
-            accept="image/*,video/*"
-            multiple
-            onChange={handleFileChange}
-            className="hidden absolute w-full h-full"
-          />
+                <IoClose className="text-white text-sm" />
+              </button>
+              <Image
+                src={preview}
+                alt="upload preview"
+                width={144}
+                height={144}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          ))}
+
+          {/* Add more */}
+          <div className="relative shrink-0 w-36 h-36 rounded-2xl border-2 border-dashed border-[#c8f5e8] bg-white flex flex-col items-center justify-center gap-1 cursor-pointer hover:bg-[#f0fdf8] transition-colors">
+            <MdAddToPhotos className="text-[#17f3b5] text-2xl" />
+            <span className="text-[11px] text-[#6b9e8a] font-medium text-center leading-tight">
+              Add photos
+            </span>
+            <label htmlFor="file" className="absolute inset-0 cursor-pointer" />
+            <input
+              type="file"
+              name="file"
+              id="file"
+              accept="image/*,video/*"
+              multiple
+              onChange={handleFileChange}
+              className="hidden"
+            />
+          </div>
         </div>
-      </header>
-      <article id="sect" className="pl-4 text-sm text-gray-400">
-        Photos: {selectedFiles?.length}/10
-      </article>
-      <section id="sect" className="p-2">
+        <p className="text-[11px] text-[#6b9e8a]">
+          {selectedFiles.length}/10 photos added
+        </p>
+      </section>
+
+      <div className="h-px bg-[#d6fdf1]" />
+
+      {/* Form fields */}
+      <section id="sect">
         <form
           onSubmit={(e) => handleSubmit(e)}
-          className="flex  form flex-col gap-2 p-2"
+          className="flex flex-col gap-5"
           id="form"
         >
-          <div className="">
-            <label className="" htmlFor="title">
+          {/* Title */}
+          <div className="flex flex-col gap-1.5">
+            <label
+              className="text-[13px] font-medium text-[#011d16]"
+              htmlFor="title"
+            >
               Title
             </label>
             <input
               type="text"
-              className=""
+              className={inputClass}
               name="title"
               id="title"
               onChange={handleChange}
               value={listingFormData.title}
-              placeholder="Title"
+              placeholder="e.g. Calculus textbook — 3rd edition"
             />
           </div>
 
-          <div className="">
-            <label>Price</label>
-            <input
-              type="number"
-              className=""
-              name="price"
-              id="price"
-              min={0}
-              max={1000000}
-              onChange={handleChange}
-              value={listingFormData.price}
-              placeholder="Price"
-            />
+          {/* Price */}
+          <div className="flex flex-col gap-1.5">
+            <label
+              className="text-[13px] font-medium text-[#011d16]"
+              htmlFor="price"
+            >
+              Price
+            </label>
+            <div className="relative">
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-[#6b9e8a]">
+                $
+              </span>
+              <input
+                type="number"
+                className={`${inputClass} pl-7`}
+                name="price"
+                id="price"
+                min={0}
+                max={1000000}
+                onChange={handleChange}
+                value={listingFormData.price}
+                placeholder="0"
+              />
+            </div>
           </div>
-          <h2 className="mt-2 text-xl font-semibold">Condition</h2>
-          <ul className="flex gap-4 overflow-x-auto no-scrollbar">
-            {condition.map((c) => {
-              return (
+
+          <div className="h-px bg-[#d6fdf1]" />
+
+          {/* Condition */}
+          <div className="flex flex-col gap-2">
+            <p className="text-[13px] font-medium text-[#011d16]">Condition</p>
+            <ul className="flex gap-2 overflow-x-auto no-scrollbar">
+              {condition.map((c) => (
                 <motion.button
-                  whileTap={{
-                    scale: 0.8,
-                  }}
+                  whileTap={{ scale: 0.92 }}
                   key={c}
                   type="button"
                   onClick={() =>
-                    setListingFormData((prev) => {
-                      return { ...prev, condition: c };
-                    })
+                    setListingFormData((prev) => ({ ...prev, condition: c }))
                   }
-                  className={`${c === listingFormData.condition ? "bg-secondary" : "bg-secondary/20"} bg-secondary cursor-pointer text-sm text-text font-semibold px-2 rounded-md py-1  text-nowrap`}
+                  className={chipClass(c === listingFormData.condition)}
                 >
                   {c}
                 </motion.button>
-              );
-            })}
-          </ul>
-          <div className="">
-            <label>Description</label>
+              ))}
+            </ul>
+          </div>
+
+          {/* Category */}
+          <div className="flex flex-col gap-2">
+            <p className="text-[13px] font-medium text-[#011d16]">Category</p>
+            <ul className="flex gap-2 overflow-x-auto no-scrollbar">
+              {categories.map(
+                (c) =>
+                  c !== "All" && (
+                    <motion.button
+                      whileTap={{ scale: 0.92 }}
+                      key={c}
+                      type="button"
+                      onClick={() =>
+                        setListingFormData((prev) => ({ ...prev, category: c }))
+                      }
+                      className={chipClass(c === listingFormData.category)}
+                    >
+                      {c}
+                    </motion.button>
+                  ),
+              )}
+            </ul>
+          </div>
+
+          <div className="h-px bg-[#d6fdf1]" />
+
+          {/* Description */}
+          <div className="flex flex-col gap-1.5">
+            <label
+              className="text-[13px] font-medium text-[#011d16]"
+              htmlFor="description"
+            >
+              Description
+            </label>
             <textarea
-              className=""
+              className={inputClass}
               name="description"
               id="description"
               rows={rows}
               onChange={handleChange}
               value={listingFormData.description}
               onKeyDown={(e) => handleEnter(e)}
-              placeholder="Description "
+              placeholder="Describe the item — edition, defects, extras included…"
             />
           </div>
-          <div className="">
-            <label>Postal Code</label>
-            <LocationInput llSetter={setLatLong} ll={latLong} />
+
+          {/* Location */}
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[13px] font-medium text-[#011d16]">
+              Location
+            </label>
+            <div className="transition-colors">
+              <LocationInput llSetter={setLatLong} ll={latLong} />
+            </div>
+            <p className="text-[11px] text-[#6b9e8a]">
+              Exact address shared only after buyer confirms
+            </p>
           </div>
+
+          <div className="h-px bg-[#d6fdf1]" />
+
+          {/* Submit */}
           <motion.button
-            whileTap={{
-              scale: 0.8,
-            }}
+            whileTap={{ scale: 0.97 }}
             type="submit"
             disabled={isLoading || disabled}
-            className="bg-primary rounded-xl cursor-pointer disabled:bg-gray-400 text-white mt-4 font-bold w-full h-12 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-primary text-text font-bold text-[15px] py-3.5 rounded-2xl disabled:opacity-40 disabled:cursor-not-allowed transition-opacity"
           >
             {isLoading ? (
-              <span className="inline-block animate-spin">Loading</span>
+              <span className="inline-block animate-spin">⏳</span>
             ) : (
-              `${type === "edit" ? "Edit" : "Post"} Listing`
+              `${type === "edit" ? "Save changes" : "Post listing"}`
             )}
           </motion.button>
+
+          <button
+            type="button"
+            onClick={() => redirect("/new")}
+            className="w-full bg-transparent text-[#6b9e8a] border border-[#c8f5e8] font-medium text-[14px] py-3 rounded-2xl"
+          >
+            Cancel
+          </button>
         </form>
       </section>
-    </motion.main>
+    </motion.div>
   );
 };
 

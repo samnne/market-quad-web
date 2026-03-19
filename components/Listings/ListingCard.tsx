@@ -1,12 +1,10 @@
 import { Listing } from "@/src/generated/prisma/client";
 import { motion } from "motion/react";
 import Image from "next/image";
-import { redirect } from "next/navigation";
 
 const ListingCard = ({ listing, setSelectedListing }: { listing: Listing, setSelectedListing: Function }) => {
   function openListingModal(listing: Listing) {
     setSelectedListing(listing)
-    redirect(`/listings/`);
   }
 
   return (
@@ -15,12 +13,12 @@ const ListingCard = ({ listing, setSelectedListing }: { listing: Listing, setSel
         scale: 0.95,
       }}
       onClick={() => openListingModal(listing)}
-      className=" bg-white  drop-shadow-xl text-white p-2 flex flex-col gap-2 rounded-4xl"
+      className=" bg-white  drop-shadow-xl text-white  flex flex-col gap-2 rounded-4xl"
       key={listing.lid}
     >
-      <motion.div className="h-80 relative p-1">
+      <motion.div className="h-48 relative ">
         <Image
-          className=" rounded-4xl w-full h-full object-contain bg-primary/25 z-0"
+          className=" rounded-t-4xl w-full h-full object-contain bg-primary/25 z-0"
           width={250}
           loading="eager"
           height={250}
@@ -60,14 +58,14 @@ const ListingCard = ({ listing, setSelectedListing }: { listing: Listing, setSel
       <div className="p-4 rounded-2xl text-lg  overflow-hidden text-nowrap flex flex-col gap-1 justify-center">
         {/* <span className="">${listing.price / 100} ⋅</span>
                   <h3 className="">{listing.title}</h3> */}
-        <h3 className="text-xl text-black">
+        <h3 className="text-xl  text-black truncate">
           {" "}
           ${listing.price} ⋅ {listing.title}
         </h3>
-        <span className="text-sm text-accent/50 font-bold">
+        <span className="text-sm  text-accent/50 font-bold">
           {listing?.condition}
         </span>
-        <p className="text-gray-400 text-sm text-nowrap  overflow-hidden">
+        <p className="text-gray-400  text-sm text-nowrap  overflow-hidden">
           {listing.description}
         </p>
       </div>

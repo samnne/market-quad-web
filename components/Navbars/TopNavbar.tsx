@@ -54,7 +54,7 @@ const TopNavbar = () => {
   };
 
   return (
-    <nav className=" sticky top-0 w-screen p-4 bg-white ">
+    <nav className=" sticky top-0 w-screen p-4 bg-background ">
       <section className="flex justify-between items-center">
         <div className="flex gap-4 items-center">
           <button className="flex text-xl justify-center items-center hover:text-primary transition-colors">

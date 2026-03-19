@@ -8,12 +8,12 @@ datasource db {
 }
 
 model Listing {
-  lid         String   @id @default(uuid()) @db.Uuid
-  title       String
-  description String
-  price       Int
-  imageUrls   String[]
-
+  lid           String         @id @default(uuid()) @db.Uuid
+  title         String
+  description   String
+  price         Int
+  imageUrls     String[]
+  category      String?        
   sellerId      String         @db.Uuid
   seller        User           @relation(fields: [sellerId], references: [uid], onDelete: Cascade)
   sold          Boolean        @default(false)
@@ -44,7 +44,7 @@ model User {
 model Conversation {
   cid       String   @id @default(uuid()) @db.Uuid
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt 
+  updatedAt DateTime @updatedAt
 
   listingId String  @db.Uuid
   listing   Listing @relation(fields: [listingId], references: [lid], onDelete: Cascade)
@@ -57,14 +57,14 @@ model Conversation {
 
   messages Message[]
 
-  @@unique([listingId, buyerId]) 
+  @@unique([listingId, buyerId])
 }
 
 model Message {
   mid       String    @id @default(uuid()) @db.Uuid
   text      String
   createdAt DateTime  @default(now())
-  readAt    DateTime? 
+  readAt    DateTime?
   edited    Boolean   @default(false)
   updatedAt DateTime  @updatedAt
 

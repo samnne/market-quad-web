@@ -3,6 +3,8 @@ import { motion, useAnimate } from "motion/react";
 import { useEffect } from "react";
 import ListingCard from "../Listings/ListingCard";
 import { redirect } from "next/navigation";
+import ListingModal from "../Listings/ListingByID";
+import { useListings } from "@/app/store/zustand";
 
 const UserListings = ({
   userListings,
@@ -17,7 +19,7 @@ const UserListings = ({
 }) => {
   const [scope, animate] = useAnimate();
   const [titleScope, titleAnimate] = useAnimate();
-
+  const { selectedListing } = useListings();
   const animateModal = async () => {
     await animate(
       scope.current,
@@ -59,6 +61,7 @@ const UserListings = ({
 
     setModals((prev: object) => ({ ...prev, userModal: false }));
   }
+
   return (
     <>
       {showModal ? (
@@ -68,20 +71,27 @@ const UserListings = ({
             left: -600,
             opacity: 0,
           }}
-          className="absolute p-8 pt-20 flex gap-5 flex-col  text-white z-50 h-fit min-h-screen w-screen bg-white top-0 right-0"
+          className=" absolute p-8 pt-20 flex gap-5 flex-col   z-20 h-fit min-h-screen w-screen bg-white top-0 right-0"
         >
+          <ListingModal listing={selectedListing} />
           {userListings.length > 0 ? (
             userListings.map((listing) => {
               return (
-                <div  key={listing?.lid}>
-                  <ListingCard listing={listing} setSelectedListing={setSelectedListing} />;
+                <div key={listing?.lid}>
+                  <ListingCard
+                    listing={listing}
+                    setSelectedListing={setSelectedListing}
+                  />
                 </div>
               );
             })
           ) : (
             <div className="w-full h-full  flex flex-col ">
               <div className="w-full h-full flex flex-col ">
-                <header id="mock" className="text-4xl  gap-2 flex flex-col font-bold text-black">
+                <header
+                  id="mock"
+                  className="text-4xl  gap-2 flex flex-col font-bold text-black"
+                >
                   <h1>Make A Listing!</h1>
                   <span className="text-lg text-gray-400">
                     Created listings will be displayed here!
@@ -101,29 +111,35 @@ const UserListings = ({
                         Trust me!
                       </span>
                     </header>
-                    <motion.button whileTap={{
-                      scale: 0.8
-                    }} whileInView={{
-                      y: [25, 0],
-                      opacity: [0,1]
-
-                    }} transition={{
-                      delay: 0.2,
-                      type: 'spring'
-                    }} className="text-black absolute top-5 right-5 flex self-end px-2 py-1 bg-primary rounded-2xl">Click me</motion.button>
+                    <motion.button
+                      whileTap={{
+                        scale: 0.8,
+                      }}
+                      whileInView={{
+                        y: [25, 0],
+                        opacity: [0, 1],
+                      }}
+                      transition={{
+                        delay: 0.2,
+                        type: "spring",
+                      }}
+                      className="text-black absolute top-5 right-5 flex self-end px-2 py-1 bg-primary rounded-2xl"
+                    >
+                      Click me
+                    </motion.button>
                   </section>
                 </section>
               </div>
             </div>
           )}
+
           <motion.div
             ref={titleScope}
             initial={{
               left: -600,
               opacity: 0,
             }}
-            
-            className="left-0 p-5 fixed items-center z-100 bg-white w-screen top-0 justify-between  flex "
+            className="left-0 p-5 fixed items-center z-10 bg-white w-screen  top-0 justify-between  flex "
           >
             <h1 className="text-black font-bold text-2xl">Your Listings</h1>
             <button

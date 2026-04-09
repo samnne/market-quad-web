@@ -11,12 +11,11 @@ import { BsThreeDots } from "react-icons/bs";
 import { IoClose } from "react-icons/io5";
 import StarRating from "../StarRating";
 import ListingMap from "./ListingMap";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { deleteListingAction } from "@/lib/listing.lib";
 import Carousel from "../Carousel";
 import { ListingInclude } from "@/src/generated/prisma/models";
 import { createConvo } from "@/lib/conversations.lib";
-import { supabase } from "@/supabase/authHelper";
 import { getUserSupabase } from "@/app/client-utils/functions";
 
 const getRandomFirstMessage = (): string => {
@@ -39,7 +38,9 @@ const ListingModal = ({ listing }: { listing: Listing & ListingInclude }) => {
   const { user, setUser } = useUser();
   const { setSelectedConvo } = useConvos();
   const [expandDescription, setExpandDescription] = useState(false);
-  const { setError } = useMessage();
+  const { setError, setSuccess } = useMessage();
+  const router = useRouter();
+  const [localReviews, setLocalReviews] = useState(0);
   const [date, setDate] = useState("No time available");
   const [message, setMessage] = useState<string>("");
 
@@ -67,17 +68,35 @@ const ListingModal = ({ listing }: { listing: Listing & ListingInclude }) => {
     setDate(hoursString);
   }
 
-  const handleInput = (e: ChangeEvent<HTMLInputElement>) => setMessage(e.target.value);
+  const handleInput = (e: ChangeEvent<HTMLInputElement>) =>
+    setMessage(e.target.value);
 
   async function mountUser() {
-    const user = await getUserSupabase();
-    if (!user) { setError(false); return; }
-    setUser(user);
+    const { user, app_user } = await getUserSupabase();
+    if (!user) {
+      setError(false);
+      return;
+    }
+
+    setUser({ ...user, app_user });
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/reviews/count`,
+      {
+        method: "get",
+        headers: {
+          Authorization: listing?.sellerId,
+        },
+      },
+    ).then((res) => res.json());
+    console.log(response)
+    setLocalReviews(response.count);
   }
 
   useEffect(() => {
     getTimeElapsed();
     mountUser();
+
     setMessage(getRandomFirstMessage());
   }, [listing]);
 
@@ -96,11 +115,14 @@ const ListingModal = ({ listing }: { listing: Listing & ListingInclude }) => {
   }
 
   async function createConversation() {
-    const { data, error } = await supabase.auth.getUser();
-    if (error) { setError(true); redirect("/sign-in"); }
+    const data = await getUserSupabase();
+    if (!data.user) {
+      setError(true);
+      redirect("/sign-in");
+    }
     const created = await createConvo({
       listingId: listing.lid,
-      buyerId: data.user.id,
+      buyerId: data.app_user.uid,
       sellerId: listing.sellerId,
       initialMessage: message,
     });
@@ -109,7 +131,11 @@ const ListingModal = ({ listing }: { listing: Listing & ListingInclude }) => {
 
   async function toggleListingOptions() {
     if (optionsModal === true) {
-      animateDots(scope.current, { y: [0, 100], opacity: [1, 0] }, { ...transition });
+      animateDots(
+        scope.current,
+        { y: [0, 100], opacity: [1, 0] },
+        { ...transition },
+      );
     }
     setOptionsModal((prev) => !prev);
   }
@@ -117,12 +143,58 @@ const ListingModal = ({ listing }: { listing: Listing & ListingInclude }) => {
   async function handleDeleteListing() {
     if (!user?.id) return;
     const delList = await deleteListingAction(listing.lid, user?.id);
-    if (delList?.success) redirect("/profile");
+    if (delList?.success) router.refresh();
   }
 
-  async function handleEditListing() { redirect("/edit"); }
-  async function handleArchive() { console.log("Archived"); }
-  async function handleSold() { console.log("Sold"); }
+  async function handleEditListing() {
+    redirect("/edit");
+  }
+  async function handleArchive() {
+    if (!user) return;
+    listing.archived = !listing.archived;
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/listings`,
+      {
+        method: "put",
+        headers: {
+          Authorization: user.id,
+        },
+        body: JSON.stringify(listing),
+      },
+    ).then((res) => res.json());
+
+    if (!response.success) {
+      setError(true);
+      return;
+    }
+
+    setSuccess(true);
+    setSelectedListing({});
+    router.refresh();
+  }
+  async function handleSold() {
+    if (!user) return;
+    listing.sold = !listing.sold;
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/listings`,
+      {
+        method: "put",
+        headers: {
+          Authorization: user.id,
+        },
+        body: JSON.stringify(listing),
+      },
+    ).then((res) => res.json());
+
+    if (!response.success) {
+      setError(true);
+      return;
+    }
+
+    setSuccess(true);
+    setSelectedListing({});
+    router.refresh();
+  }
 
   const isSeller = listing?.sellerId === user?.id;
   const existingConvo = listing?.conversations?.find(
@@ -144,10 +216,10 @@ const ListingModal = ({ listing }: { listing: Listing & ListingInclude }) => {
             initial={{ y: 500 }}
             animate={{ y: [500, 0] }}
             transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-x-0 bottom-0 z-60 bg-white rounded-t-3xl flex flex-col max-h-[92dvh] overflow-y-auto"
+            className="fixed inset-x-0 bottom-0 z-60 bg-pill rounded-t-3xl flex flex-col max-h-[92dvh] overflow-y-auto"
           >
             {/* Nav */}
-            <nav className="flex items-center justify-between px-4 py-3.5 sticky top-0 bg-white border-b border-[#f0fdf8] z-10 rounded-t-3xl">
+            <nav className="flex items-center justify-between px-4 py-3.5 sticky top-0 bg-pill border-b border-[#f0fdf8] z-60 rounded-t-3xl">
               <button
                 onClick={closeModal}
                 className="w-8.5 h-8.5 rounded-[10px] bg-[#f0fdf8] border border-[#e0faf2] flex items-center justify-center cursor-pointer"
@@ -155,10 +227,7 @@ const ListingModal = ({ listing }: { listing: Listing & ListingInclude }) => {
                 <IoClose className="text-text text-base" />
               </button>
               <p className="text-[13px] font-bold text-text">Listing details</p>
-              <button
-              
-                className="w-8.5 h-8.5 rounded-[10px] bg-[#f0fdf8] border border-[#e0faf2] flex items-center justify-center cursor-pointer"
-              >
+              <button className="w-8.5 h-8.5 rounded-[10px] bg-[#f0fdf8] border border-[#e0faf2] flex items-center justify-center cursor-pointer">
                 <BsThreeDots className="text-[#6b9e8a] text-base" />
               </button>
             </nav>
@@ -175,7 +244,6 @@ const ListingModal = ({ listing }: { listing: Listing & ListingInclude }) => {
 
             {/* Body */}
             <div className="flex flex-col gap-4 p-4 pb-10">
-
               {/* Title + price + time */}
               <div>
                 <h2 className="text-[20px] font-extrabold text-text leading-tight mb-1">
@@ -197,7 +265,7 @@ const ListingModal = ({ listing }: { listing: Listing & ListingInclude }) => {
                       <p className="text-[13px] font-bold text-text mb-2.5">
                         Send a message
                       </p>
-                      <div className="flex items-center gap-2 bg-white border border-[#c8f5e8] rounded-2xl pl-3.5 pr-1.5 py-1.5 focus-within:border-primary transition-colors">
+                      <div className="flex items-center gap-2 bg-pill border border-[#c8f5e8] rounded-2xl pl-3.5 pr-1.5 py-1.5 focus-within:border-primary transition-colors">
                         <input
                           type="text"
                           value={message}
@@ -244,31 +312,49 @@ const ListingModal = ({ listing }: { listing: Listing & ListingInclude }) => {
                     className="flex gap-2 overflow-x-auto no-scrollbar"
                   >
                     {[
-                      { label: "Edit", fn: handleEditListing, accent: false },
-                      { label: "Mark sold", fn: handleSold, accent: false },
-                      { label: "Archive", fn: handleArchive, accent: false },
-                    ].map(({ label, fn }) => (
-                      <button
-                        key={label}
-                        onClick={fn}
-                        className="shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-semibold bg-white border border-[#c8f5e8] text-[#6b9e8a]"
-                      >
-                        {label}
-                      </button>
-                    ))}
-                    <button
+                      { label: "Edit", fn: handleEditListing, key: null },
+                      { label: "Mark sold", fn: handleSold, key: "sold" },
+                      { label: "Archive", fn: handleArchive, key: "archived" },
+                    ].map(({ label, fn, key }) => {
+                      const isActive = key
+                        ? listing[key as keyof typeof listing]
+                        : false;
+
+                      return (
+                        <motion.button
+                          whileTap={{ scale: 0.95 }}
+                          key={label}
+                          onClick={fn}
+                          className={`shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-semibold border transition-all ${
+                            isActive
+                              ? "bg-text text-primary border-text"
+                              : "bg-pill border-[#c8f5e8] text-[#6b9e8a]"
+                          }`}
+                        >
+                          {isActive
+                            ? key!.charAt(0).toUpperCase() + key!.slice(1)
+                            : label}
+                        </motion.button>
+                      );
+                    })}
+                    <motion.button
+                      whileTap={{
+                        scale: 0.95,
+                      }}
                       onClick={handleDeleteListing}
                       className="shrink-0 px-3.5 py-1.5 rounded-full text-[12px] font-semibold bg-[#fff0f0] border border-[#fca5a5] text-red-600"
                     >
                       Delete
-                    </button>
+                    </motion.button>
                   </motion.div>
                 </div>
               )}
 
               {/* Description */}
               <div className="bg-[#f7fdfb] border border-[#e0faf2] rounded-2xl p-4">
-                <p className="text-[13px] font-bold text-text mb-2">Description</p>
+                <p className="text-[13px] font-bold text-text mb-2">
+                  Description
+                </p>
                 <motion.p
                   animate={{ height: expandDescription ? "auto" : "80px" }}
                   layout
@@ -287,18 +373,35 @@ const ListingModal = ({ listing }: { listing: Listing & ListingInclude }) => {
 
               {/* Seller */}
               <div className="bg-[#f7fdfb] border border-[#e0faf2] rounded-2xl p-4">
-                <p className="text-[13px] font-bold text-text mb-3">The seller</p>
+                <p className="text-[13px] font-bold text-text mb-3">
+                  The seller
+                </p>
                 <div className="flex items-center gap-3">
                   <div className="w-11 h-11 rounded-full bg-secondary flex items-center justify-center text-[15px] font-bold text-text shrink-0">
                     {(user?.user_metadata?.name?.[0] ?? "?").toUpperCase()}
                   </div>
+
                   <div>
                     <p className="text-[14px] font-bold text-text">
                       {user?.user_metadata?.name ?? "Seller"}
                     </p>
-                    <div className="flex items-center w-1/2 gap-1.5 mt-0.5">
-                      <StarRating value={user?.user_metadata?.rating ?? 4} />
-                      <span className="text-[11px] text-[#6b9e8a]">(20 reviews)</span>
+                    <div className="flex items-center  gap-1 mt-0.5">
+                      <div className="w-1/2">
+                        <StarRating
+                          value={user?.app_user?.rating ?? 3}
+                          setValue={() => console.log("...")}
+                        />
+                      </div>
+
+                      <span className="text-[11px] text-[#6b9e8a]">
+                        (
+                        {localReviews
+                          ? localReviews === 1
+                            ? `${localReviews} review`
+                            : `${localReviews} reviews`
+                          : "loading..."}
+                        )
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -317,7 +420,6 @@ const ListingModal = ({ listing }: { listing: Listing & ListingInclude }) => {
                   />
                 </div>
               </div>
-
             </div>
           </motion.section>
         </>

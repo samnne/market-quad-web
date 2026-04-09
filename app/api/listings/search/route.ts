@@ -7,18 +7,24 @@ export async function GET(req: NextRequest) {
     const query = searchParams.get("q");
     const category = searchParams.get("cat");
     const userId = req.headers.get("authorization");
-
-    if (!query || (query.trim().length === 0)) {
+    if (!userId) {
+      return NextResponse.json(
+        { message: "User ID is required", listings: [], success: false },
+        { status: 400 },
+      );
+    }
+    
+    if (!query || query.trim().length === 0) {
       return NextResponse.json(
         { message: "Search query is required", listings: [], success: false },
         { status: 400 },
       );
     }
-
+   
     const listings = await prisma.listing.findMany({
       where: {
         archived: false,
-        ...(userId ? { sellerId: { not: userId } } : {}),
+        sellerId: { not: userId },
         OR: [
           {
             title: {

@@ -100,7 +100,7 @@ export async function DELETE(
     const listing = await deleteListing(lid);
 
     const val = await deleteImages(listing.imageUrls);
-    console.log(val);
+    
     return NextResponse.json(
       {
         message: "Succesfully deleted Listing",

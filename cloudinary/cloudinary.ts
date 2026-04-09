@@ -11,19 +11,18 @@ cloudinary.config({
 
 export async function deleteImages(images: string[]) {
   for (let image of images) {
-    console.log(image)
-    const publicID = image.split("/");
-    console.log(publicID)
-    const uploadFolder = publicID.find((p) => p === "listings");
-    console.log(uploadFolder)
     
+    const publicID = image.split("/");
+   
+    const uploadFolder = publicID.find((p) => p === "listings");
+  
     const png = publicID.find((p) => p.includes("png"));
-    console.log(png)
+
     const file = png?.substring(0, png.indexOf("."));
-    console.log(file)
+   
 
     const combined = `${uploadFolder}/${png}`;
-    console.log(combined);
+ 
     await cloudinary.uploader
       .destroy(combined, { invalidate: true, resource_type: "image" })
       .then((res) => console.log(res))

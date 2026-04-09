@@ -63,7 +63,7 @@ const TopNavbar = () => {
               width={25}
               height={25}
               alt="TopNavLogo"
-              loading="eager"
+              loading="lazy"
               className="w-auto h-auto"
             />
           </button>

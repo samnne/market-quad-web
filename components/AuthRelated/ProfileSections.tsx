@@ -40,7 +40,7 @@ const ProfileSections = ({
     <>
       <li
         onClick={() => openModal(modalType, userListings)}
-        className="flex justify-between overflow-x-hidden"
+        className="flex justify-between  overflow-x-hidden"
       >
         <div className="flex p-4 items-center gap-2">
           <div className=" bg-gray-200/40 text-primary p-2 rounded-lg">

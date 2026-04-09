@@ -20,8 +20,18 @@ export type UserModel = runtime.Types.Result.DefaultSelection<Prisma.$UserPayloa
 
 export type AggregateUser = {
   _count: UserCountAggregateOutputType | null
+  _avg: UserAvgAggregateOutputType | null
+  _sum: UserSumAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
+}
+
+export type UserAvgAggregateOutputType = {
+  rating: number | null
+}
+
+export type UserSumAggregateOutputType = {
+  rating: number | null
 }
 
 export type UserMinAggregateOutputType = {
@@ -31,6 +41,7 @@ export type UserMinAggregateOutputType = {
   profileURL: string | null
   isVerified: boolean | null
   createdAt: Date | null
+  rating: number | null
 }
 
 export type UserMaxAggregateOutputType = {
@@ -40,6 +51,7 @@ export type UserMaxAggregateOutputType = {
   profileURL: string | null
   isVerified: boolean | null
   createdAt: Date | null
+  rating: number | null
 }
 
 export type UserCountAggregateOutputType = {
@@ -49,9 +61,18 @@ export type UserCountAggregateOutputType = {
   profileURL: number
   isVerified: number
   createdAt: number
+  rating: number
   _all: number
 }
 
+
+export type UserAvgAggregateInputType = {
+  rating?: true
+}
+
+export type UserSumAggregateInputType = {
+  rating?: true
+}
 
 export type UserMinAggregateInputType = {
   uid?: true
@@ -60,6 +81,7 @@ export type UserMinAggregateInputType = {
   profileURL?: true
   isVerified?: true
   createdAt?: true
+  rating?: true
 }
 
 export type UserMaxAggregateInputType = {
@@ -69,6 +91,7 @@ export type UserMaxAggregateInputType = {
   profileURL?: true
   isVerified?: true
   createdAt?: true
+  rating?: true
 }
 
 export type UserCountAggregateInputType = {
@@ -78,6 +101,7 @@ export type UserCountAggregateInputType = {
   profileURL?: true
   isVerified?: true
   createdAt?: true
+  rating?: true
   _all?: true
 }
 
@@ -119,6 +143,18 @@ export type UserAggregateArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: UserAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: UserSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: UserMinAggregateInputType
@@ -149,6 +185,8 @@ export type UserGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
   take?: number
   skip?: number
   _count?: UserCountAggregateInputType | true
+  _avg?: UserAvgAggregateInputType
+  _sum?: UserSumAggregateInputType
   _min?: UserMinAggregateInputType
   _max?: UserMaxAggregateInputType
 }
@@ -160,7 +198,10 @@ export type UserGroupByOutputType = {
   profileURL: string
   isVerified: boolean
   createdAt: Date
+  rating: number
   _count: UserCountAggregateOutputType | null
+  _avg: UserAvgAggregateOutputType | null
+  _sum: UserSumAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
 }
@@ -190,10 +231,14 @@ export type UserWhereInput = {
   profileURL?: Prisma.StringFilter<"User"> | string
   isVerified?: Prisma.BoolFilter<"User"> | boolean
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
-  listings?: Prisma.ListingListRelationFilter
+  rating?: Prisma.FloatFilter<"User"> | number
   buyerConversations?: Prisma.ConversationListRelationFilter
   sellerConversations?: Prisma.ConversationListRelationFilter
+  listings?: Prisma.ListingListRelationFilter
   messages?: Prisma.MessageListRelationFilter
+  reviewsReceived?: Prisma.ReviewListRelationFilter
+  reviewsGiven?: Prisma.ReviewListRelationFilter
+  preferences?: Prisma.XOR<Prisma.UserPreferencesNullableScalarRelationFilter, Prisma.UserPreferencesWhereInput> | null
 }
 
 export type UserOrderByWithRelationInput = {
@@ -203,10 +248,14 @@ export type UserOrderByWithRelationInput = {
   profileURL?: Prisma.SortOrder
   isVerified?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
-  listings?: Prisma.ListingOrderByRelationAggregateInput
+  rating?: Prisma.SortOrder
   buyerConversations?: Prisma.ConversationOrderByRelationAggregateInput
   sellerConversations?: Prisma.ConversationOrderByRelationAggregateInput
+  listings?: Prisma.ListingOrderByRelationAggregateInput
   messages?: Prisma.MessageOrderByRelationAggregateInput
+  reviewsReceived?: Prisma.ReviewOrderByRelationAggregateInput
+  reviewsGiven?: Prisma.ReviewOrderByRelationAggregateInput
+  preferences?: Prisma.UserPreferencesOrderByWithRelationInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -219,10 +268,14 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   profileURL?: Prisma.StringFilter<"User"> | string
   isVerified?: Prisma.BoolFilter<"User"> | boolean
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
-  listings?: Prisma.ListingListRelationFilter
+  rating?: Prisma.FloatFilter<"User"> | number
   buyerConversations?: Prisma.ConversationListRelationFilter
   sellerConversations?: Prisma.ConversationListRelationFilter
+  listings?: Prisma.ListingListRelationFilter
   messages?: Prisma.MessageListRelationFilter
+  reviewsReceived?: Prisma.ReviewListRelationFilter
+  reviewsGiven?: Prisma.ReviewListRelationFilter
+  preferences?: Prisma.XOR<Prisma.UserPreferencesNullableScalarRelationFilter, Prisma.UserPreferencesWhereInput> | null
 }, "uid" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -232,9 +285,12 @@ export type UserOrderByWithAggregationInput = {
   profileURL?: Prisma.SortOrder
   isVerified?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  rating?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
+  _avg?: Prisma.UserAvgOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
   _min?: Prisma.UserMinOrderByAggregateInput
+  _sum?: Prisma.UserSumOrderByAggregateInput
 }
 
 export type UserScalarWhereWithAggregatesInput = {
@@ -247,6 +303,7 @@ export type UserScalarWhereWithAggregatesInput = {
   profileURL?: Prisma.StringWithAggregatesFilter<"User"> | string
   isVerified?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
+  rating?: Prisma.FloatWithAggregatesFilter<"User"> | number
 }
 
 export type UserCreateInput = {
@@ -256,10 +313,14 @@ export type UserCreateInput = {
   profileURL: string
   isVerified?: boolean
   createdAt?: Date | string
-  listings?: Prisma.ListingCreateNestedManyWithoutSellerInput
+  rating?: number
   buyerConversations?: Prisma.ConversationCreateNestedManyWithoutBuyerInput
   sellerConversations?: Prisma.ConversationCreateNestedManyWithoutSellerInput
+  listings?: Prisma.ListingCreateNestedManyWithoutSellerInput
   messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  reviewsReceived?: Prisma.ReviewCreateNestedManyWithoutRevieweeInput
+  reviewsGiven?: Prisma.ReviewCreateNestedManyWithoutReviewerInput
+  preferences?: Prisma.UserPreferencesCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -269,10 +330,14 @@ export type UserUncheckedCreateInput = {
   profileURL: string
   isVerified?: boolean
   createdAt?: Date | string
-  listings?: Prisma.ListingUncheckedCreateNestedManyWithoutSellerInput
+  rating?: number
   buyerConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutBuyerInput
   sellerConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutSellerInput
+  listings?: Prisma.ListingUncheckedCreateNestedManyWithoutSellerInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  reviewsReceived?: Prisma.ReviewUncheckedCreateNestedManyWithoutRevieweeInput
+  reviewsGiven?: Prisma.ReviewUncheckedCreateNestedManyWithoutReviewerInput
+  preferences?: Prisma.UserPreferencesUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -282,10 +347,14 @@ export type UserUpdateInput = {
   profileURL?: Prisma.StringFieldUpdateOperationsInput | string
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  listings?: Prisma.ListingUpdateManyWithoutSellerNestedInput
+  rating?: Prisma.FloatFieldUpdateOperationsInput | number
   buyerConversations?: Prisma.ConversationUpdateManyWithoutBuyerNestedInput
   sellerConversations?: Prisma.ConversationUpdateManyWithoutSellerNestedInput
+  listings?: Prisma.ListingUpdateManyWithoutSellerNestedInput
   messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  reviewsReceived?: Prisma.ReviewUpdateManyWithoutRevieweeNestedInput
+  reviewsGiven?: Prisma.ReviewUpdateManyWithoutReviewerNestedInput
+  preferences?: Prisma.UserPreferencesUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -295,10 +364,14 @@ export type UserUncheckedUpdateInput = {
   profileURL?: Prisma.StringFieldUpdateOperationsInput | string
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  listings?: Prisma.ListingUncheckedUpdateManyWithoutSellerNestedInput
+  rating?: Prisma.FloatFieldUpdateOperationsInput | number
   buyerConversations?: Prisma.ConversationUncheckedUpdateManyWithoutBuyerNestedInput
   sellerConversations?: Prisma.ConversationUncheckedUpdateManyWithoutSellerNestedInput
+  listings?: Prisma.ListingUncheckedUpdateManyWithoutSellerNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  reviewsReceived?: Prisma.ReviewUncheckedUpdateManyWithoutRevieweeNestedInput
+  reviewsGiven?: Prisma.ReviewUncheckedUpdateManyWithoutReviewerNestedInput
+  preferences?: Prisma.UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -308,6 +381,7 @@ export type UserCreateManyInput = {
   profileURL: string
   isVerified?: boolean
   createdAt?: Date | string
+  rating?: number
 }
 
 export type UserUpdateManyMutationInput = {
@@ -317,6 +391,7 @@ export type UserUpdateManyMutationInput = {
   profileURL?: Prisma.StringFieldUpdateOperationsInput | string
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  rating?: Prisma.FloatFieldUpdateOperationsInput | number
 }
 
 export type UserUncheckedUpdateManyInput = {
@@ -326,6 +401,7 @@ export type UserUncheckedUpdateManyInput = {
   profileURL?: Prisma.StringFieldUpdateOperationsInput | string
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  rating?: Prisma.FloatFieldUpdateOperationsInput | number
 }
 
 export type UserScalarRelationFilter = {
@@ -340,6 +416,11 @@ export type UserCountOrderByAggregateInput = {
   profileURL?: Prisma.SortOrder
   isVerified?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  rating?: Prisma.SortOrder
+}
+
+export type UserAvgOrderByAggregateInput = {
+  rating?: Prisma.SortOrder
 }
 
 export type UserMaxOrderByAggregateInput = {
@@ -349,6 +430,7 @@ export type UserMaxOrderByAggregateInput = {
   profileURL?: Prisma.SortOrder
   isVerified?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  rating?: Prisma.SortOrder
 }
 
 export type UserMinOrderByAggregateInput = {
@@ -358,6 +440,16 @@ export type UserMinOrderByAggregateInput = {
   profileURL?: Prisma.SortOrder
   isVerified?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  rating?: Prisma.SortOrder
+}
+
+export type UserSumOrderByAggregateInput = {
+  rating?: Prisma.SortOrder
+}
+
+export type UserNullableScalarRelationFilter = {
+  is?: Prisma.UserWhereInput | null
+  isNot?: Prisma.UserWhereInput | null
 }
 
 export type UserCreateNestedOneWithoutListingsInput = {
@@ -374,6 +466,56 @@ export type UserUpdateOneRequiredWithoutListingsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutListingsInput, Prisma.UserUpdateWithoutListingsInput>, Prisma.UserUncheckedUpdateWithoutListingsInput>
 }
 
+export type UserCreateNestedOneWithoutPreferencesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPreferencesInput, Prisma.UserUncheckedCreateWithoutPreferencesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPreferencesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutPreferencesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPreferencesInput, Prisma.UserUncheckedCreateWithoutPreferencesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPreferencesInput
+  upsert?: Prisma.UserUpsertWithoutPreferencesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPreferencesInput, Prisma.UserUpdateWithoutPreferencesInput>, Prisma.UserUncheckedUpdateWithoutPreferencesInput>
+}
+
+export type UserCreateNestedOneWithoutReviewsReceivedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutReviewsReceivedInput, Prisma.UserUncheckedCreateWithoutReviewsReceivedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutReviewsReceivedInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutReviewsGivenInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutReviewsGivenInput, Prisma.UserUncheckedCreateWithoutReviewsGivenInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutReviewsGivenInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutReviewsReceivedNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutReviewsReceivedInput, Prisma.UserUncheckedCreateWithoutReviewsReceivedInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutReviewsReceivedInput
+  upsert?: Prisma.UserUpsertWithoutReviewsReceivedInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutReviewsReceivedInput, Prisma.UserUpdateWithoutReviewsReceivedInput>, Prisma.UserUncheckedUpdateWithoutReviewsReceivedInput>
+}
+
+export type UserUpdateOneRequiredWithoutReviewsGivenNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutReviewsGivenInput, Prisma.UserUncheckedCreateWithoutReviewsGivenInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutReviewsGivenInput
+  upsert?: Prisma.UserUpsertWithoutReviewsGivenInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutReviewsGivenInput, Prisma.UserUpdateWithoutReviewsGivenInput>, Prisma.UserUncheckedUpdateWithoutReviewsGivenInput>
+}
+
+export type FloatFieldUpdateOperationsInput = {
+  set?: number
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type UserCreateNestedOneWithoutBuyerConversationsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutBuyerConversationsInput, Prisma.UserUncheckedCreateWithoutBuyerConversationsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutBuyerConversationsInput
@@ -386,18 +528,22 @@ export type UserCreateNestedOneWithoutSellerConversationsInput = {
   connect?: Prisma.UserWhereUniqueInput
 }
 
-export type UserUpdateOneRequiredWithoutBuyerConversationsNestedInput = {
+export type UserUpdateOneWithoutBuyerConversationsNestedInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutBuyerConversationsInput, Prisma.UserUncheckedCreateWithoutBuyerConversationsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutBuyerConversationsInput
   upsert?: Prisma.UserUpsertWithoutBuyerConversationsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
   connect?: Prisma.UserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutBuyerConversationsInput, Prisma.UserUpdateWithoutBuyerConversationsInput>, Prisma.UserUncheckedUpdateWithoutBuyerConversationsInput>
 }
 
-export type UserUpdateOneRequiredWithoutSellerConversationsNestedInput = {
+export type UserUpdateOneWithoutSellerConversationsNestedInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutSellerConversationsInput, Prisma.UserUncheckedCreateWithoutSellerConversationsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutSellerConversationsInput
   upsert?: Prisma.UserUpsertWithoutSellerConversationsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
   connect?: Prisma.UserWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSellerConversationsInput, Prisma.UserUpdateWithoutSellerConversationsInput>, Prisma.UserUncheckedUpdateWithoutSellerConversationsInput>
 }
@@ -423,9 +569,13 @@ export type UserCreateWithoutListingsInput = {
   profileURL: string
   isVerified?: boolean
   createdAt?: Date | string
+  rating?: number
   buyerConversations?: Prisma.ConversationCreateNestedManyWithoutBuyerInput
   sellerConversations?: Prisma.ConversationCreateNestedManyWithoutSellerInput
   messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  reviewsReceived?: Prisma.ReviewCreateNestedManyWithoutRevieweeInput
+  reviewsGiven?: Prisma.ReviewCreateNestedManyWithoutReviewerInput
+  preferences?: Prisma.UserPreferencesCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutListingsInput = {
@@ -435,9 +585,13 @@ export type UserUncheckedCreateWithoutListingsInput = {
   profileURL: string
   isVerified?: boolean
   createdAt?: Date | string
+  rating?: number
   buyerConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutBuyerInput
   sellerConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutSellerInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  reviewsReceived?: Prisma.ReviewUncheckedCreateNestedManyWithoutRevieweeInput
+  reviewsGiven?: Prisma.ReviewUncheckedCreateNestedManyWithoutReviewerInput
+  preferences?: Prisma.UserPreferencesUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutListingsInput = {
@@ -463,9 +617,13 @@ export type UserUpdateWithoutListingsInput = {
   profileURL?: Prisma.StringFieldUpdateOperationsInput | string
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  rating?: Prisma.FloatFieldUpdateOperationsInput | number
   buyerConversations?: Prisma.ConversationUpdateManyWithoutBuyerNestedInput
   sellerConversations?: Prisma.ConversationUpdateManyWithoutSellerNestedInput
   messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  reviewsReceived?: Prisma.ReviewUpdateManyWithoutRevieweeNestedInput
+  reviewsGiven?: Prisma.ReviewUpdateManyWithoutReviewerNestedInput
+  preferences?: Prisma.UserPreferencesUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutListingsInput = {
@@ -475,9 +633,253 @@ export type UserUncheckedUpdateWithoutListingsInput = {
   profileURL?: Prisma.StringFieldUpdateOperationsInput | string
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  rating?: Prisma.FloatFieldUpdateOperationsInput | number
   buyerConversations?: Prisma.ConversationUncheckedUpdateManyWithoutBuyerNestedInput
   sellerConversations?: Prisma.ConversationUncheckedUpdateManyWithoutSellerNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  reviewsReceived?: Prisma.ReviewUncheckedUpdateManyWithoutRevieweeNestedInput
+  reviewsGiven?: Prisma.ReviewUncheckedUpdateManyWithoutReviewerNestedInput
+  preferences?: Prisma.UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UserCreateWithoutPreferencesInput = {
+  uid: string
+  email: string
+  name: string
+  profileURL: string
+  isVerified?: boolean
+  createdAt?: Date | string
+  rating?: number
+  buyerConversations?: Prisma.ConversationCreateNestedManyWithoutBuyerInput
+  sellerConversations?: Prisma.ConversationCreateNestedManyWithoutSellerInput
+  listings?: Prisma.ListingCreateNestedManyWithoutSellerInput
+  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  reviewsReceived?: Prisma.ReviewCreateNestedManyWithoutRevieweeInput
+  reviewsGiven?: Prisma.ReviewCreateNestedManyWithoutReviewerInput
+}
+
+export type UserUncheckedCreateWithoutPreferencesInput = {
+  uid: string
+  email: string
+  name: string
+  profileURL: string
+  isVerified?: boolean
+  createdAt?: Date | string
+  rating?: number
+  buyerConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutBuyerInput
+  sellerConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutSellerInput
+  listings?: Prisma.ListingUncheckedCreateNestedManyWithoutSellerInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  reviewsReceived?: Prisma.ReviewUncheckedCreateNestedManyWithoutRevieweeInput
+  reviewsGiven?: Prisma.ReviewUncheckedCreateNestedManyWithoutReviewerInput
+}
+
+export type UserCreateOrConnectWithoutPreferencesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutPreferencesInput, Prisma.UserUncheckedCreateWithoutPreferencesInput>
+}
+
+export type UserUpsertWithoutPreferencesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutPreferencesInput, Prisma.UserUncheckedUpdateWithoutPreferencesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutPreferencesInput, Prisma.UserUncheckedCreateWithoutPreferencesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutPreferencesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutPreferencesInput, Prisma.UserUncheckedUpdateWithoutPreferencesInput>
+}
+
+export type UserUpdateWithoutPreferencesInput = {
+  uid?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  profileURL?: Prisma.StringFieldUpdateOperationsInput | string
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  rating?: Prisma.FloatFieldUpdateOperationsInput | number
+  buyerConversations?: Prisma.ConversationUpdateManyWithoutBuyerNestedInput
+  sellerConversations?: Prisma.ConversationUpdateManyWithoutSellerNestedInput
+  listings?: Prisma.ListingUpdateManyWithoutSellerNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  reviewsReceived?: Prisma.ReviewUpdateManyWithoutRevieweeNestedInput
+  reviewsGiven?: Prisma.ReviewUpdateManyWithoutReviewerNestedInput
+}
+
+export type UserUncheckedUpdateWithoutPreferencesInput = {
+  uid?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  profileURL?: Prisma.StringFieldUpdateOperationsInput | string
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  rating?: Prisma.FloatFieldUpdateOperationsInput | number
+  buyerConversations?: Prisma.ConversationUncheckedUpdateManyWithoutBuyerNestedInput
+  sellerConversations?: Prisma.ConversationUncheckedUpdateManyWithoutSellerNestedInput
+  listings?: Prisma.ListingUncheckedUpdateManyWithoutSellerNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  reviewsReceived?: Prisma.ReviewUncheckedUpdateManyWithoutRevieweeNestedInput
+  reviewsGiven?: Prisma.ReviewUncheckedUpdateManyWithoutReviewerNestedInput
+}
+
+export type UserCreateWithoutReviewsReceivedInput = {
+  uid: string
+  email: string
+  name: string
+  profileURL: string
+  isVerified?: boolean
+  createdAt?: Date | string
+  rating?: number
+  buyerConversations?: Prisma.ConversationCreateNestedManyWithoutBuyerInput
+  sellerConversations?: Prisma.ConversationCreateNestedManyWithoutSellerInput
+  listings?: Prisma.ListingCreateNestedManyWithoutSellerInput
+  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  reviewsGiven?: Prisma.ReviewCreateNestedManyWithoutReviewerInput
+  preferences?: Prisma.UserPreferencesCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutReviewsReceivedInput = {
+  uid: string
+  email: string
+  name: string
+  profileURL: string
+  isVerified?: boolean
+  createdAt?: Date | string
+  rating?: number
+  buyerConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutBuyerInput
+  sellerConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutSellerInput
+  listings?: Prisma.ListingUncheckedCreateNestedManyWithoutSellerInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  reviewsGiven?: Prisma.ReviewUncheckedCreateNestedManyWithoutReviewerInput
+  preferences?: Prisma.UserPreferencesUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutReviewsReceivedInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutReviewsReceivedInput, Prisma.UserUncheckedCreateWithoutReviewsReceivedInput>
+}
+
+export type UserCreateWithoutReviewsGivenInput = {
+  uid: string
+  email: string
+  name: string
+  profileURL: string
+  isVerified?: boolean
+  createdAt?: Date | string
+  rating?: number
+  buyerConversations?: Prisma.ConversationCreateNestedManyWithoutBuyerInput
+  sellerConversations?: Prisma.ConversationCreateNestedManyWithoutSellerInput
+  listings?: Prisma.ListingCreateNestedManyWithoutSellerInput
+  messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  reviewsReceived?: Prisma.ReviewCreateNestedManyWithoutRevieweeInput
+  preferences?: Prisma.UserPreferencesCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutReviewsGivenInput = {
+  uid: string
+  email: string
+  name: string
+  profileURL: string
+  isVerified?: boolean
+  createdAt?: Date | string
+  rating?: number
+  buyerConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutBuyerInput
+  sellerConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutSellerInput
+  listings?: Prisma.ListingUncheckedCreateNestedManyWithoutSellerInput
+  messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  reviewsReceived?: Prisma.ReviewUncheckedCreateNestedManyWithoutRevieweeInput
+  preferences?: Prisma.UserPreferencesUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutReviewsGivenInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutReviewsGivenInput, Prisma.UserUncheckedCreateWithoutReviewsGivenInput>
+}
+
+export type UserUpsertWithoutReviewsReceivedInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutReviewsReceivedInput, Prisma.UserUncheckedUpdateWithoutReviewsReceivedInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutReviewsReceivedInput, Prisma.UserUncheckedCreateWithoutReviewsReceivedInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutReviewsReceivedInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutReviewsReceivedInput, Prisma.UserUncheckedUpdateWithoutReviewsReceivedInput>
+}
+
+export type UserUpdateWithoutReviewsReceivedInput = {
+  uid?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  profileURL?: Prisma.StringFieldUpdateOperationsInput | string
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  rating?: Prisma.FloatFieldUpdateOperationsInput | number
+  buyerConversations?: Prisma.ConversationUpdateManyWithoutBuyerNestedInput
+  sellerConversations?: Prisma.ConversationUpdateManyWithoutSellerNestedInput
+  listings?: Prisma.ListingUpdateManyWithoutSellerNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  reviewsGiven?: Prisma.ReviewUpdateManyWithoutReviewerNestedInput
+  preferences?: Prisma.UserPreferencesUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutReviewsReceivedInput = {
+  uid?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  profileURL?: Prisma.StringFieldUpdateOperationsInput | string
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  rating?: Prisma.FloatFieldUpdateOperationsInput | number
+  buyerConversations?: Prisma.ConversationUncheckedUpdateManyWithoutBuyerNestedInput
+  sellerConversations?: Prisma.ConversationUncheckedUpdateManyWithoutSellerNestedInput
+  listings?: Prisma.ListingUncheckedUpdateManyWithoutSellerNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  reviewsGiven?: Prisma.ReviewUncheckedUpdateManyWithoutReviewerNestedInput
+  preferences?: Prisma.UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UserUpsertWithoutReviewsGivenInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutReviewsGivenInput, Prisma.UserUncheckedUpdateWithoutReviewsGivenInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutReviewsGivenInput, Prisma.UserUncheckedCreateWithoutReviewsGivenInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutReviewsGivenInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutReviewsGivenInput, Prisma.UserUncheckedUpdateWithoutReviewsGivenInput>
+}
+
+export type UserUpdateWithoutReviewsGivenInput = {
+  uid?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  profileURL?: Prisma.StringFieldUpdateOperationsInput | string
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  rating?: Prisma.FloatFieldUpdateOperationsInput | number
+  buyerConversations?: Prisma.ConversationUpdateManyWithoutBuyerNestedInput
+  sellerConversations?: Prisma.ConversationUpdateManyWithoutSellerNestedInput
+  listings?: Prisma.ListingUpdateManyWithoutSellerNestedInput
+  messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  reviewsReceived?: Prisma.ReviewUpdateManyWithoutRevieweeNestedInput
+  preferences?: Prisma.UserPreferencesUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutReviewsGivenInput = {
+  uid?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  profileURL?: Prisma.StringFieldUpdateOperationsInput | string
+  isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  rating?: Prisma.FloatFieldUpdateOperationsInput | number
+  buyerConversations?: Prisma.ConversationUncheckedUpdateManyWithoutBuyerNestedInput
+  sellerConversations?: Prisma.ConversationUncheckedUpdateManyWithoutSellerNestedInput
+  listings?: Prisma.ListingUncheckedUpdateManyWithoutSellerNestedInput
+  messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  reviewsReceived?: Prisma.ReviewUncheckedUpdateManyWithoutRevieweeNestedInput
+  preferences?: Prisma.UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutBuyerConversationsInput = {
@@ -487,9 +889,13 @@ export type UserCreateWithoutBuyerConversationsInput = {
   profileURL: string
   isVerified?: boolean
   createdAt?: Date | string
-  listings?: Prisma.ListingCreateNestedManyWithoutSellerInput
+  rating?: number
   sellerConversations?: Prisma.ConversationCreateNestedManyWithoutSellerInput
+  listings?: Prisma.ListingCreateNestedManyWithoutSellerInput
   messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  reviewsReceived?: Prisma.ReviewCreateNestedManyWithoutRevieweeInput
+  reviewsGiven?: Prisma.ReviewCreateNestedManyWithoutReviewerInput
+  preferences?: Prisma.UserPreferencesCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutBuyerConversationsInput = {
@@ -499,9 +905,13 @@ export type UserUncheckedCreateWithoutBuyerConversationsInput = {
   profileURL: string
   isVerified?: boolean
   createdAt?: Date | string
-  listings?: Prisma.ListingUncheckedCreateNestedManyWithoutSellerInput
+  rating?: number
   sellerConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutSellerInput
+  listings?: Prisma.ListingUncheckedCreateNestedManyWithoutSellerInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  reviewsReceived?: Prisma.ReviewUncheckedCreateNestedManyWithoutRevieweeInput
+  reviewsGiven?: Prisma.ReviewUncheckedCreateNestedManyWithoutReviewerInput
+  preferences?: Prisma.UserPreferencesUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutBuyerConversationsInput = {
@@ -516,9 +926,13 @@ export type UserCreateWithoutSellerConversationsInput = {
   profileURL: string
   isVerified?: boolean
   createdAt?: Date | string
-  listings?: Prisma.ListingCreateNestedManyWithoutSellerInput
+  rating?: number
   buyerConversations?: Prisma.ConversationCreateNestedManyWithoutBuyerInput
+  listings?: Prisma.ListingCreateNestedManyWithoutSellerInput
   messages?: Prisma.MessageCreateNestedManyWithoutSenderInput
+  reviewsReceived?: Prisma.ReviewCreateNestedManyWithoutRevieweeInput
+  reviewsGiven?: Prisma.ReviewCreateNestedManyWithoutReviewerInput
+  preferences?: Prisma.UserPreferencesCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSellerConversationsInput = {
@@ -528,9 +942,13 @@ export type UserUncheckedCreateWithoutSellerConversationsInput = {
   profileURL: string
   isVerified?: boolean
   createdAt?: Date | string
-  listings?: Prisma.ListingUncheckedCreateNestedManyWithoutSellerInput
+  rating?: number
   buyerConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutBuyerInput
+  listings?: Prisma.ListingUncheckedCreateNestedManyWithoutSellerInput
   messages?: Prisma.MessageUncheckedCreateNestedManyWithoutSenderInput
+  reviewsReceived?: Prisma.ReviewUncheckedCreateNestedManyWithoutRevieweeInput
+  reviewsGiven?: Prisma.ReviewUncheckedCreateNestedManyWithoutReviewerInput
+  preferences?: Prisma.UserPreferencesUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSellerConversationsInput = {
@@ -556,9 +974,13 @@ export type UserUpdateWithoutBuyerConversationsInput = {
   profileURL?: Prisma.StringFieldUpdateOperationsInput | string
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  listings?: Prisma.ListingUpdateManyWithoutSellerNestedInput
+  rating?: Prisma.FloatFieldUpdateOperationsInput | number
   sellerConversations?: Prisma.ConversationUpdateManyWithoutSellerNestedInput
+  listings?: Prisma.ListingUpdateManyWithoutSellerNestedInput
   messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  reviewsReceived?: Prisma.ReviewUpdateManyWithoutRevieweeNestedInput
+  reviewsGiven?: Prisma.ReviewUpdateManyWithoutReviewerNestedInput
+  preferences?: Prisma.UserPreferencesUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutBuyerConversationsInput = {
@@ -568,9 +990,13 @@ export type UserUncheckedUpdateWithoutBuyerConversationsInput = {
   profileURL?: Prisma.StringFieldUpdateOperationsInput | string
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  listings?: Prisma.ListingUncheckedUpdateManyWithoutSellerNestedInput
+  rating?: Prisma.FloatFieldUpdateOperationsInput | number
   sellerConversations?: Prisma.ConversationUncheckedUpdateManyWithoutSellerNestedInput
+  listings?: Prisma.ListingUncheckedUpdateManyWithoutSellerNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  reviewsReceived?: Prisma.ReviewUncheckedUpdateManyWithoutRevieweeNestedInput
+  reviewsGiven?: Prisma.ReviewUncheckedUpdateManyWithoutReviewerNestedInput
+  preferences?: Prisma.UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutSellerConversationsInput = {
@@ -591,9 +1017,13 @@ export type UserUpdateWithoutSellerConversationsInput = {
   profileURL?: Prisma.StringFieldUpdateOperationsInput | string
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  listings?: Prisma.ListingUpdateManyWithoutSellerNestedInput
+  rating?: Prisma.FloatFieldUpdateOperationsInput | number
   buyerConversations?: Prisma.ConversationUpdateManyWithoutBuyerNestedInput
+  listings?: Prisma.ListingUpdateManyWithoutSellerNestedInput
   messages?: Prisma.MessageUpdateManyWithoutSenderNestedInput
+  reviewsReceived?: Prisma.ReviewUpdateManyWithoutRevieweeNestedInput
+  reviewsGiven?: Prisma.ReviewUpdateManyWithoutReviewerNestedInput
+  preferences?: Prisma.UserPreferencesUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSellerConversationsInput = {
@@ -603,9 +1033,13 @@ export type UserUncheckedUpdateWithoutSellerConversationsInput = {
   profileURL?: Prisma.StringFieldUpdateOperationsInput | string
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  listings?: Prisma.ListingUncheckedUpdateManyWithoutSellerNestedInput
+  rating?: Prisma.FloatFieldUpdateOperationsInput | number
   buyerConversations?: Prisma.ConversationUncheckedUpdateManyWithoutBuyerNestedInput
+  listings?: Prisma.ListingUncheckedUpdateManyWithoutSellerNestedInput
   messages?: Prisma.MessageUncheckedUpdateManyWithoutSenderNestedInput
+  reviewsReceived?: Prisma.ReviewUncheckedUpdateManyWithoutRevieweeNestedInput
+  reviewsGiven?: Prisma.ReviewUncheckedUpdateManyWithoutReviewerNestedInput
+  preferences?: Prisma.UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutMessagesInput = {
@@ -615,9 +1049,13 @@ export type UserCreateWithoutMessagesInput = {
   profileURL: string
   isVerified?: boolean
   createdAt?: Date | string
-  listings?: Prisma.ListingCreateNestedManyWithoutSellerInput
+  rating?: number
   buyerConversations?: Prisma.ConversationCreateNestedManyWithoutBuyerInput
   sellerConversations?: Prisma.ConversationCreateNestedManyWithoutSellerInput
+  listings?: Prisma.ListingCreateNestedManyWithoutSellerInput
+  reviewsReceived?: Prisma.ReviewCreateNestedManyWithoutRevieweeInput
+  reviewsGiven?: Prisma.ReviewCreateNestedManyWithoutReviewerInput
+  preferences?: Prisma.UserPreferencesCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutMessagesInput = {
@@ -627,9 +1065,13 @@ export type UserUncheckedCreateWithoutMessagesInput = {
   profileURL: string
   isVerified?: boolean
   createdAt?: Date | string
-  listings?: Prisma.ListingUncheckedCreateNestedManyWithoutSellerInput
+  rating?: number
   buyerConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutBuyerInput
   sellerConversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutSellerInput
+  listings?: Prisma.ListingUncheckedCreateNestedManyWithoutSellerInput
+  reviewsReceived?: Prisma.ReviewUncheckedCreateNestedManyWithoutRevieweeInput
+  reviewsGiven?: Prisma.ReviewUncheckedCreateNestedManyWithoutReviewerInput
+  preferences?: Prisma.UserPreferencesUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutMessagesInput = {
@@ -655,9 +1097,13 @@ export type UserUpdateWithoutMessagesInput = {
   profileURL?: Prisma.StringFieldUpdateOperationsInput | string
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  listings?: Prisma.ListingUpdateManyWithoutSellerNestedInput
+  rating?: Prisma.FloatFieldUpdateOperationsInput | number
   buyerConversations?: Prisma.ConversationUpdateManyWithoutBuyerNestedInput
   sellerConversations?: Prisma.ConversationUpdateManyWithoutSellerNestedInput
+  listings?: Prisma.ListingUpdateManyWithoutSellerNestedInput
+  reviewsReceived?: Prisma.ReviewUpdateManyWithoutRevieweeNestedInput
+  reviewsGiven?: Prisma.ReviewUpdateManyWithoutReviewerNestedInput
+  preferences?: Prisma.UserPreferencesUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMessagesInput = {
@@ -667,9 +1113,13 @@ export type UserUncheckedUpdateWithoutMessagesInput = {
   profileURL?: Prisma.StringFieldUpdateOperationsInput | string
   isVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  listings?: Prisma.ListingUncheckedUpdateManyWithoutSellerNestedInput
+  rating?: Prisma.FloatFieldUpdateOperationsInput | number
   buyerConversations?: Prisma.ConversationUncheckedUpdateManyWithoutBuyerNestedInput
   sellerConversations?: Prisma.ConversationUncheckedUpdateManyWithoutSellerNestedInput
+  listings?: Prisma.ListingUncheckedUpdateManyWithoutSellerNestedInput
+  reviewsReceived?: Prisma.ReviewUncheckedUpdateManyWithoutRevieweeNestedInput
+  reviewsGiven?: Prisma.ReviewUncheckedUpdateManyWithoutReviewerNestedInput
+  preferences?: Prisma.UserPreferencesUncheckedUpdateOneWithoutUserNestedInput
 }
 
 
@@ -678,17 +1128,21 @@ export type UserUncheckedUpdateWithoutMessagesInput = {
  */
 
 export type UserCountOutputType = {
-  listings: number
   buyerConversations: number
   sellerConversations: number
+  listings: number
   messages: number
+  reviewsReceived: number
+  reviewsGiven: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  listings?: boolean | UserCountOutputTypeCountListingsArgs
   buyerConversations?: boolean | UserCountOutputTypeCountBuyerConversationsArgs
   sellerConversations?: boolean | UserCountOutputTypeCountSellerConversationsArgs
+  listings?: boolean | UserCountOutputTypeCountListingsArgs
   messages?: boolean | UserCountOutputTypeCountMessagesArgs
+  reviewsReceived?: boolean | UserCountOutputTypeCountReviewsReceivedArgs
+  reviewsGiven?: boolean | UserCountOutputTypeCountReviewsGivenArgs
 }
 
 /**
@@ -699,13 +1153,6 @@ export type UserCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensi
    * Select specific fields to fetch from the UserCountOutputType
    */
   select?: Prisma.UserCountOutputTypeSelect<ExtArgs> | null
-}
-
-/**
- * UserCountOutputType without action
- */
-export type UserCountOutputTypeCountListingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ListingWhereInput
 }
 
 /**
@@ -725,8 +1172,29 @@ export type UserCountOutputTypeCountSellerConversationsArgs<ExtArgs extends runt
 /**
  * UserCountOutputType without action
  */
+export type UserCountOutputTypeCountListingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ListingWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
 export type UserCountOutputTypeCountMessagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.MessageWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountReviewsReceivedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ReviewWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountReviewsGivenArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ReviewWhereInput
 }
 
 
@@ -737,10 +1205,14 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   profileURL?: boolean
   isVerified?: boolean
   createdAt?: boolean
-  listings?: boolean | Prisma.User$listingsArgs<ExtArgs>
+  rating?: boolean
   buyerConversations?: boolean | Prisma.User$buyerConversationsArgs<ExtArgs>
   sellerConversations?: boolean | Prisma.User$sellerConversationsArgs<ExtArgs>
+  listings?: boolean | Prisma.User$listingsArgs<ExtArgs>
   messages?: boolean | Prisma.User$messagesArgs<ExtArgs>
+  reviewsReceived?: boolean | Prisma.User$reviewsReceivedArgs<ExtArgs>
+  reviewsGiven?: boolean | Prisma.User$reviewsGivenArgs<ExtArgs>
+  preferences?: boolean | Prisma.User$preferencesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -751,6 +1223,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   profileURL?: boolean
   isVerified?: boolean
   createdAt?: boolean
+  rating?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -760,6 +1233,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   profileURL?: boolean
   isVerified?: boolean
   createdAt?: boolean
+  rating?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectScalar = {
@@ -769,14 +1243,18 @@ export type UserSelectScalar = {
   profileURL?: boolean
   isVerified?: boolean
   createdAt?: boolean
+  rating?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"uid" | "email" | "name" | "profileURL" | "isVerified" | "createdAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"uid" | "email" | "name" | "profileURL" | "isVerified" | "createdAt" | "rating", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  listings?: boolean | Prisma.User$listingsArgs<ExtArgs>
   buyerConversations?: boolean | Prisma.User$buyerConversationsArgs<ExtArgs>
   sellerConversations?: boolean | Prisma.User$sellerConversationsArgs<ExtArgs>
+  listings?: boolean | Prisma.User$listingsArgs<ExtArgs>
   messages?: boolean | Prisma.User$messagesArgs<ExtArgs>
+  reviewsReceived?: boolean | Prisma.User$reviewsReceivedArgs<ExtArgs>
+  reviewsGiven?: boolean | Prisma.User$reviewsGivenArgs<ExtArgs>
+  preferences?: boolean | Prisma.User$preferencesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -785,10 +1263,13 @@ export type UserIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
 export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "User"
   objects: {
-    listings: Prisma.$ListingPayload<ExtArgs>[]
     buyerConversations: Prisma.$ConversationPayload<ExtArgs>[]
     sellerConversations: Prisma.$ConversationPayload<ExtArgs>[]
+    listings: Prisma.$ListingPayload<ExtArgs>[]
     messages: Prisma.$MessagePayload<ExtArgs>[]
+    reviewsReceived: Prisma.$ReviewPayload<ExtArgs>[]
+    reviewsGiven: Prisma.$ReviewPayload<ExtArgs>[]
+    preferences: Prisma.$UserPreferencesPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     uid: string
@@ -797,6 +1278,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     profileURL: string
     isVerified: boolean
     createdAt: Date
+    rating: number
   }, ExtArgs["result"]["user"]>
   composites: {}
 }
@@ -1191,10 +1673,13 @@ readonly fields: UserFieldRefs;
  */
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  listings<T extends Prisma.User$listingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$listingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ListingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   buyerConversations<T extends Prisma.User$buyerConversationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$buyerConversationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   sellerConversations<T extends Prisma.User$sellerConversationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sellerConversationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  listings<T extends Prisma.User$listingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$listingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ListingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   messages<T extends Prisma.User$messagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$messagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reviewsReceived<T extends Prisma.User$reviewsReceivedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reviewsReceivedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reviewsGiven<T extends Prisma.User$reviewsGivenArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reviewsGivenArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  preferences<T extends Prisma.User$preferencesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$preferencesArgs<ExtArgs>>): Prisma.Prisma__UserPreferencesClient<runtime.Types.Result.GetResult<Prisma.$UserPreferencesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1230,6 +1715,7 @@ export interface UserFieldRefs {
   readonly profileURL: Prisma.FieldRef<"User", 'String'>
   readonly isVerified: Prisma.FieldRef<"User", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly rating: Prisma.FieldRef<"User", 'Float'>
 }
     
 
@@ -1618,30 +2104,6 @@ export type UserDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
 }
 
 /**
- * User.listings
- */
-export type User$listingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Listing
-   */
-  select?: Prisma.ListingSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Listing
-   */
-  omit?: Prisma.ListingOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ListingInclude<ExtArgs> | null
-  where?: Prisma.ListingWhereInput
-  orderBy?: Prisma.ListingOrderByWithRelationInput | Prisma.ListingOrderByWithRelationInput[]
-  cursor?: Prisma.ListingWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ListingScalarFieldEnum | Prisma.ListingScalarFieldEnum[]
-}
-
-/**
  * User.buyerConversations
  */
 export type User$buyerConversationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1690,6 +2152,30 @@ export type User$sellerConversationsArgs<ExtArgs extends runtime.Types.Extension
 }
 
 /**
+ * User.listings
+ */
+export type User$listingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Listing
+   */
+  select?: Prisma.ListingSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Listing
+   */
+  omit?: Prisma.ListingOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ListingInclude<ExtArgs> | null
+  where?: Prisma.ListingWhereInput
+  orderBy?: Prisma.ListingOrderByWithRelationInput | Prisma.ListingOrderByWithRelationInput[]
+  cursor?: Prisma.ListingWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ListingScalarFieldEnum | Prisma.ListingScalarFieldEnum[]
+}
+
+/**
  * User.messages
  */
 export type User$messagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1711,6 +2197,73 @@ export type User$messagesArgs<ExtArgs extends runtime.Types.Extensions.InternalA
   take?: number
   skip?: number
   distinct?: Prisma.MessageScalarFieldEnum | Prisma.MessageScalarFieldEnum[]
+}
+
+/**
+ * User.reviewsReceived
+ */
+export type User$reviewsReceivedArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Review
+   */
+  select?: Prisma.ReviewSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Review
+   */
+  omit?: Prisma.ReviewOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ReviewInclude<ExtArgs> | null
+  where?: Prisma.ReviewWhereInput
+  orderBy?: Prisma.ReviewOrderByWithRelationInput | Prisma.ReviewOrderByWithRelationInput[]
+  cursor?: Prisma.ReviewWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ReviewScalarFieldEnum | Prisma.ReviewScalarFieldEnum[]
+}
+
+/**
+ * User.reviewsGiven
+ */
+export type User$reviewsGivenArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Review
+   */
+  select?: Prisma.ReviewSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Review
+   */
+  omit?: Prisma.ReviewOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ReviewInclude<ExtArgs> | null
+  where?: Prisma.ReviewWhereInput
+  orderBy?: Prisma.ReviewOrderByWithRelationInput | Prisma.ReviewOrderByWithRelationInput[]
+  cursor?: Prisma.ReviewWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ReviewScalarFieldEnum | Prisma.ReviewScalarFieldEnum[]
+}
+
+/**
+ * User.preferences
+ */
+export type User$preferencesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UserPreferences
+   */
+  select?: Prisma.UserPreferencesSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UserPreferences
+   */
+  omit?: Prisma.UserPreferencesOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserPreferencesInclude<ExtArgs> | null
+  where?: Prisma.UserPreferencesWhereInput
 }
 
 /**

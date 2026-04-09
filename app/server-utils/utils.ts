@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import { UserInclude } from "@/src/generated/prisma/models";
 import { type User } from "../../src/generated/prisma/client";
 
@@ -17,14 +17,17 @@ export function simplifyUserData(user: User & UserInclude): SafeUser {
 }
 
 
-export function ErrorMessage(message:string, status: number, ...args: Array<string | number | null>): Object{
-    return {
-        message, 
-        status,
-        ...args
-    }
+export function ErrorMessage(
+  message: string,
+  status: number,
+  ...args: Array<string | number | null>
+): Object {
+  return {
+    message,
+    status,
+    ...args,
+  };
 }
-
 
 // export async function hashPassword(password: string): Promise<string> {
 //   const saltRounds = 8;
@@ -34,5 +37,3 @@ export function ErrorMessage(message:string, status: number, ...args: Array<stri
 
 //   return await bcrypt.compareSync(password, hash);
 // }
-
-

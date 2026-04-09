@@ -20,7 +20,7 @@ import Image from "next/image";
 import { IoClose } from "react-icons/io5";
 
 import { motion, stagger, useAnimate } from "motion/react";
-import { uploadImages } from "@/app/client-utils/functions";
+import { getUserSupabase, uploadImages } from "@/app/client-utils/functions";
 import { deleteImages } from "@/cloudinary/cloudinary";
 import { supabase } from "@/supabase/authHelper";
 
@@ -53,7 +53,8 @@ const ListingFormPage = ({ type }: { type: "new" | "edit" }) => {
     userListings,
     setUserListings,
   } = useUser();
-  const router = useRouter()
+
+  const router = useRouter();
   const [rows, setInputRows] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const {
@@ -76,13 +77,14 @@ const ListingFormPage = ({ type }: { type: "new" | "edit" }) => {
   });
 
   async function mountUser() {
-    const { data, error } = await supabase.auth.getUser();
-    if (error || !data.user) {
+    const { user, error, app_user } = await getUserSupabase();
+    if (error || !user) {
       console.error("Auth error:", error);
       setError(true);
       redirect("/sign-in");
     }
-    setUser(data.user);
+
+    setUser({ ...user, app_user });
   }
 
   useEffect(() => {
@@ -212,6 +214,7 @@ const ListingFormPage = ({ type }: { type: "new" | "edit" }) => {
 
     if (type === "new") {
       const uploadedUrls = await uploadImages(files);
+
       const newListing = await newListingAction(
         {
           title: formTitle,
@@ -229,7 +232,7 @@ const ListingFormPage = ({ type }: { type: "new" | "edit" }) => {
       if (newListing.success) {
         setSuccess(true);
         setSelectedListing(newListing.listing);
-         const notNew = userListings.filter(
+        const notNew = userListings.filter(
           (listing) => listing.lid !== newListing.listing.lid,
         );
         setUserListings([...notNew, newListing.listing]);
@@ -299,13 +302,13 @@ const ListingFormPage = ({ type }: { type: "new" | "edit" }) => {
   }
 
   const inputClass =
-    "w-full bg-white border border-[#c8f5e8] rounded-xl px-3.5 py-2.5 text-sm text-[#011d16] placeholder:text-[#6b9e8a] outline-none focus:border-[#17f3b5] transition-colors";
+    "w-full bg-pill border border-background rounded-xl px-3.5 py-2.5 text-sm text-text placeholder:text-primary/50 outline-none focus:border-primary transition-colors";
 
   const chipClass = (active: boolean) =>
     `cursor-pointer text-sm font-semibold px-3.5 py-1.5 rounded-full text-nowrap border transition-all ${
       active
-        ? "bg-[#011d16] text-[#17f3b5] border-[#011d16]"
-        : "bg-white text-[#6b9e8a] border-[#c8f5e8]"
+        ? "bg-text text-primary border-text"
+        : "bg-pill text-primary/50 border-background"
     }`;
 
   return (
@@ -314,23 +317,23 @@ const ListingFormPage = ({ type }: { type: "new" | "edit" }) => {
       animate={{ y: [50, 0], opacity: [0, 1] }}
       transition={{ delay: 0.1 }}
       ref={scope}
-      className="flex flex-col gap-5 px-5 pt-4 pb-10 bg-[#ecfef8] min-h-full"
+      className="flex flex-col gap-5 px-5 pt-4 pb-10  min-h-full"
     >
       {/* Photo strip */}
       <section id="sect" className="flex flex-col gap-2">
-        <p className="text-[11px] font-medium text-[#6b9e8a] uppercase tracking-widest">
+        <p className="text-[11px] font-medium text-primary/50 uppercase tracking-widest">
           Photos
         </p>
         <div className="flex gap-3 overflow-x-auto no-scrollbar">
           {selectedFiles.map(({ preview }, i) => (
             <div
               key={preview}
-              className="relative shrink-0 w-36 h-36 rounded-2xl border border-[#c8f5e8] bg-white overflow-hidden"
+              className="relative shrink-0 w-36 h-36 rounded-2xl border border-background bg-pill overflow-hidden"
             >
               <button
                 type="button"
                 onClick={() => removeImage(i)}
-                className="absolute top-1.5 right-1.5 z-10 w-6 h-6 rounded-full bg-[#011d16]/70 flex items-center justify-center cursor-pointer"
+                className="absolute top-1.5 right-1.5 z-10 w-6 h-6 rounded-full bg-text/70 flex items-center justify-center cursor-pointer"
               >
                 <IoClose className="text-white text-sm" />
               </button>
@@ -345,9 +348,9 @@ const ListingFormPage = ({ type }: { type: "new" | "edit" }) => {
           ))}
 
           {/* Add more */}
-          <div className="relative shrink-0 w-36 h-36 rounded-2xl border-2 border-dashed border-[#c8f5e8] bg-white flex flex-col items-center justify-center gap-1 cursor-pointer hover:bg-[#f0fdf8] transition-colors">
-            <MdAddToPhotos className="text-[#17f3b5] text-2xl" />
-            <span className="text-[11px] text-[#6b9e8a] font-medium text-center leading-tight">
+          <div className="relative shrink-0 w-36 h-36 rounded-2xl border-2 border-dashed border-background bg-pill flex flex-col items-center justify-center gap-1 cursor-pointer hover:bg-[#f0fdf8] transition-colors">
+            <MdAddToPhotos className="text-primary text-2xl" />
+            <span className="text-[11px] text-primary/50 font-medium text-center leading-tight">
               Add photos
             </span>
             <label htmlFor="file" className="absolute inset-0 cursor-pointer" />
@@ -362,7 +365,7 @@ const ListingFormPage = ({ type }: { type: "new" | "edit" }) => {
             />
           </div>
         </div>
-        <p className="text-[11px] text-[#6b9e8a]">
+        <p className="text-[11px] text-primary/50">
           {selectedFiles.length}/10 photos added
         </p>
       </section>
@@ -379,7 +382,7 @@ const ListingFormPage = ({ type }: { type: "new" | "edit" }) => {
           {/* Title */}
           <div className="flex flex-col gap-1.5">
             <label
-              className="text-[13px] font-medium text-[#011d16]"
+              className="text-[13px] font-medium text-text"
               htmlFor="title"
             >
               Title
@@ -398,13 +401,13 @@ const ListingFormPage = ({ type }: { type: "new" | "edit" }) => {
           {/* Price */}
           <div className="flex flex-col gap-1.5">
             <label
-              className="text-[13px] font-medium text-[#011d16]"
+              className="text-[13px] font-medium text-text"
               htmlFor="price"
             >
               Price
             </label>
             <div className="relative">
-              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-[#6b9e8a]">
+              <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-sm text-primary/50">
                 $
               </span>
               <input
@@ -425,7 +428,7 @@ const ListingFormPage = ({ type }: { type: "new" | "edit" }) => {
 
           {/* Condition */}
           <div className="flex flex-col gap-2">
-            <p className="text-[13px] font-medium text-[#011d16]">Condition</p>
+            <p className="text-[13px] font-medium text-text">Condition</p>
             <ul className="flex gap-2 overflow-x-auto no-scrollbar">
               {condition.map((c) => (
                 <motion.button
@@ -445,7 +448,7 @@ const ListingFormPage = ({ type }: { type: "new" | "edit" }) => {
 
           {/* Category */}
           <div className="flex flex-col gap-2">
-            <p className="text-[13px] font-medium text-[#011d16]">Category</p>
+            <p className="text-[13px] font-medium text-text">Category</p>
             <ul className="flex gap-2 overflow-x-auto no-scrollbar">
               {categories.map(
                 (c) =>
@@ -471,7 +474,7 @@ const ListingFormPage = ({ type }: { type: "new" | "edit" }) => {
           {/* Description */}
           <div className="flex flex-col gap-1.5">
             <label
-              className="text-[13px] font-medium text-[#011d16]"
+              className="text-[13px] font-medium text-text"
               htmlFor="description"
             >
               Description
@@ -490,13 +493,16 @@ const ListingFormPage = ({ type }: { type: "new" | "edit" }) => {
 
           {/* Location */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-[13px] font-medium text-[#011d16]">
+            <label className="text-[13px] font-medium text-text">
               Location
             </label>
             <div className="transition-colors">
-              <LocationInput llSetter={setLatLong} ll={latLong} />
+              <LocationInput
+                llSetter={setLatLong}
+                ll={[selectedListing?.latitude ? selectedListing?.latitude : 0, selectedListing?.longitude ? selectedListing?.longitude : 0]}
+              />
             </div>
-            <p className="text-[11px] text-[#6b9e8a]">
+            <p className="text-[11px] text-primary/50">
               Exact address shared only after buyer confirms
             </p>
           </div>
@@ -519,8 +525,8 @@ const ListingFormPage = ({ type }: { type: "new" | "edit" }) => {
 
           <button
             type="button"
-          onClick={() => router.back()}
-            className="w-full bg-transparent text-[#6b9e8a] border border-[#c8f5e8] font-medium text-[14px] py-3 rounded-2xl"
+            onClick={() => router.back()}
+            className="w-full bg-transparent text-primary/50 border border-background font-medium text-[14px] py-3 rounded-2xl"
           >
             Cancel
           </button>

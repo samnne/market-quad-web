@@ -3,9 +3,8 @@ import * as maptilersdk from "@maptiler/sdk";
 import "@maptiler/sdk/dist/maptiler-sdk.css";
 import "dotenv/config";
 import { useListings } from "@/app/store/zustand";
-const UVIC_LNG_LAT: number[] & maptilersdk.LngLatLike = [
-  -123.312603, 48.463816,
-];
+import { UVIC_LNG_LAT } from "@/app/client-utils/constants";
+
 const ListingMap = (props: {ll: number[]}) => {
   const mapContainer = useRef(null);
   const map = useRef<maptilersdk.Map>(null);
@@ -14,7 +13,7 @@ const ListingMap = (props: {ll: number[]}) => {
   useEffect(() => { 
     if (map.current) return;
     const apiKey = process.env.NEXT_PUBLIC_MAPTILER_API_KEY;
-    const finalArr = selectedListing ? [selectedListing.longitude, selectedListing.latitude] : UVIC_LNG_LAT
+    const finalArr: (number[] & maptilersdk.LngLatLike) = selectedListing ? [selectedListing.longitude!, selectedListing.latitude!] : UVIC_LNG_LAT
   
     if (mapContainer.current && apiKey) {
       maptilersdk.config.apiKey = apiKey;

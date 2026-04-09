@@ -1,3 +1,4 @@
+import { LngLatLike } from "@maptiler/sdk";
 import { FaHome, FaShoppingBag, FaPlus, FaInbox, FaUser } from "react-icons/fa";
 export const navLinks = [
   {
@@ -25,6 +26,10 @@ export const navLinks = [
     href: "/profile",
     icon: FaUser,
   },
+];
+
+export const UVIC_LNG_LAT: number[] & LngLatLike = [
+  -123.312603, 48.463816,
 ];
 
 export const condition = [

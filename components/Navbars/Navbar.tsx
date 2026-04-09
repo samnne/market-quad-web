@@ -45,7 +45,7 @@ const Navbar = () => {
             left: activeEl.offsetLeft,
           });
         }}
-        className="flex p-1 relative shadow-lg shadow-accent/40 bg-white border border-secondary/30 rounded-xl justify-around items-center"
+        className="flex p-1 relative shadow-lg shadow-accent/40 bg-pill border border-secondary/30 rounded-xl justify-around items-center"
       >
         {navLinks.map((link, i) => (
 
@@ -55,7 +55,7 @@ const Navbar = () => {
             setPosition={setPosition}
           >
             <Link
-              className={`${pathname.includes(link.href) && "text-accent border border-primary"} hover:bg-background-dark/10 grow cursor-pointer flex-col  rounded-2xl w-12 h-12 flex justify-center items-center`}
+              className={`${pathname.includes(link.href) && "text-primary border border-primary"} hover:bg-background-dark/10 grow cursor-pointer flex-col  rounded-2xl w-12 h-12 flex justify-center items-center`}
               href={link.href}
             >
 
@@ -120,7 +120,7 @@ const Cursor = ({ position }) => {
   return (
     <motion.li
       animate={{ ...position }}
-      className="absolute z-0 h-12 bg-primary rounded-2xl"
+      className="absolute z-0 h-12 bg-text rounded-2xl"
     />
   );
 };

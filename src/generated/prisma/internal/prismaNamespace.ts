@@ -385,9 +385,12 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   Listing: 'Listing',
+  UserPreferences: 'UserPreferences',
+  Review: 'Review',
   User: 'User',
   Conversation: 'Conversation',
-  Message: 'Message'
+  Message: 'Message',
+  WaitlistTable: 'WaitlistTable'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -403,7 +406,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "listing" | "user" | "conversation" | "message"
+    modelProps: "listing" | "userPreferences" | "review" | "user" | "conversation" | "message" | "waitlistTable"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -478,6 +481,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.ListingCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.ListingCountAggregateOutputType> | number
+        }
+      }
+    }
+    UserPreferences: {
+      payload: Prisma.$UserPreferencesPayload<ExtArgs>
+      fields: Prisma.UserPreferencesFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.UserPreferencesFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPreferencesPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.UserPreferencesFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPreferencesPayload>
+        }
+        findFirst: {
+          args: Prisma.UserPreferencesFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPreferencesPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.UserPreferencesFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPreferencesPayload>
+        }
+        findMany: {
+          args: Prisma.UserPreferencesFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPreferencesPayload>[]
+        }
+        create: {
+          args: Prisma.UserPreferencesCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPreferencesPayload>
+        }
+        createMany: {
+          args: Prisma.UserPreferencesCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.UserPreferencesCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPreferencesPayload>[]
+        }
+        delete: {
+          args: Prisma.UserPreferencesDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPreferencesPayload>
+        }
+        update: {
+          args: Prisma.UserPreferencesUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPreferencesPayload>
+        }
+        deleteMany: {
+          args: Prisma.UserPreferencesDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.UserPreferencesUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.UserPreferencesUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPreferencesPayload>[]
+        }
+        upsert: {
+          args: Prisma.UserPreferencesUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$UserPreferencesPayload>
+        }
+        aggregate: {
+          args: Prisma.UserPreferencesAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateUserPreferences>
+        }
+        groupBy: {
+          args: Prisma.UserPreferencesGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserPreferencesGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.UserPreferencesCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.UserPreferencesCountAggregateOutputType> | number
+        }
+      }
+    }
+    Review: {
+      payload: Prisma.$ReviewPayload<ExtArgs>
+      fields: Prisma.ReviewFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ReviewFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ReviewFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload>
+        }
+        findFirst: {
+          args: Prisma.ReviewFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ReviewFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload>
+        }
+        findMany: {
+          args: Prisma.ReviewFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload>[]
+        }
+        create: {
+          args: Prisma.ReviewCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload>
+        }
+        createMany: {
+          args: Prisma.ReviewCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ReviewCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload>[]
+        }
+        delete: {
+          args: Prisma.ReviewDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload>
+        }
+        update: {
+          args: Prisma.ReviewUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload>
+        }
+        deleteMany: {
+          args: Prisma.ReviewDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ReviewUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ReviewUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload>[]
+        }
+        upsert: {
+          args: Prisma.ReviewUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ReviewPayload>
+        }
+        aggregate: {
+          args: Prisma.ReviewAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateReview>
+        }
+        groupBy: {
+          args: Prisma.ReviewGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ReviewGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ReviewCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ReviewCountAggregateOutputType> | number
         }
       }
     }
@@ -703,6 +854,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    WaitlistTable: {
+      payload: Prisma.$WaitlistTablePayload<ExtArgs>
+      fields: Prisma.WaitlistTableFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.WaitlistTableFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WaitlistTablePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.WaitlistTableFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WaitlistTablePayload>
+        }
+        findFirst: {
+          args: Prisma.WaitlistTableFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WaitlistTablePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.WaitlistTableFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WaitlistTablePayload>
+        }
+        findMany: {
+          args: Prisma.WaitlistTableFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WaitlistTablePayload>[]
+        }
+        create: {
+          args: Prisma.WaitlistTableCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WaitlistTablePayload>
+        }
+        createMany: {
+          args: Prisma.WaitlistTableCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.WaitlistTableCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WaitlistTablePayload>[]
+        }
+        delete: {
+          args: Prisma.WaitlistTableDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WaitlistTablePayload>
+        }
+        update: {
+          args: Prisma.WaitlistTableUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WaitlistTablePayload>
+        }
+        deleteMany: {
+          args: Prisma.WaitlistTableDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.WaitlistTableUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.WaitlistTableUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WaitlistTablePayload>[]
+        }
+        upsert: {
+          args: Prisma.WaitlistTableUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WaitlistTablePayload>
+        }
+        aggregate: {
+          args: Prisma.WaitlistTableAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateWaitlistTable>
+        }
+        groupBy: {
+          args: Prisma.WaitlistTableGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WaitlistTableGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.WaitlistTableCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WaitlistTableCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -748,18 +973,46 @@ export const ListingScalarFieldEnum = {
   description: 'description',
   price: 'price',
   imageUrls: 'imageUrls',
-  category: 'category',
   sellerId: 'sellerId',
-  sold: 'sold',
+  createdAt: 'createdAt',
   archived: 'archived',
-  condition: 'condition',
+  sold: 'sold',
   latitude: 'latitude',
   longitude: 'longitude',
   views: 'views',
-  createdAt: 'createdAt'
+  condition: 'condition',
+  category: 'category'
 } as const
 
 export type ListingScalarFieldEnum = (typeof ListingScalarFieldEnum)[keyof typeof ListingScalarFieldEnum]
+
+
+export const UserPreferencesScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  defaultCategory: 'defaultCategory',
+  defaultCondition: 'defaultCondition',
+  defaultLocation: 'defaultLocation',
+  defaultLat: 'defaultLat',
+  defaultLng: 'defaultLng',
+  updatedAt: 'updatedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type UserPreferencesScalarFieldEnum = (typeof UserPreferencesScalarFieldEnum)[keyof typeof UserPreferencesScalarFieldEnum]
+
+
+export const ReviewScalarFieldEnum = {
+  rid: 'rid',
+  rating: 'rating',
+  comment: 'comment',
+  role: 'role',
+  reviewerId: 'reviewerId',
+  revieweeId: 'revieweeId',
+  createdAt: 'createdAt'
+} as const
+
+export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof ReviewScalarFieldEnum]
 
 
 export const UserScalarFieldEnum = {
@@ -768,7 +1021,8 @@ export const UserScalarFieldEnum = {
   name: 'name',
   profileURL: 'profileURL',
   isVerified: 'isVerified',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  rating: 'rating'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -776,11 +1030,11 @@ export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof User
 
 export const ConversationScalarFieldEnum = {
   cid: 'cid',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
   listingId: 'listingId',
   buyerId: 'buyerId',
-  sellerId: 'sellerId'
+  createdAt: 'createdAt',
+  sellerId: 'sellerId',
+  updatedAt: 'updatedAt'
 } as const
 
 export type ConversationScalarFieldEnum = (typeof ConversationScalarFieldEnum)[keyof typeof ConversationScalarFieldEnum]
@@ -789,15 +1043,26 @@ export type ConversationScalarFieldEnum = (typeof ConversationScalarFieldEnum)[k
 export const MessageScalarFieldEnum = {
   mid: 'mid',
   text: 'text',
+  edited: 'edited',
+  conversationId: 'conversationId',
   createdAt: 'createdAt',
   readAt: 'readAt',
-  edited: 'edited',
-  updatedAt: 'updatedAt',
   senderId: 'senderId',
-  conversationId: 'conversationId'
+  updatedAt: 'updatedAt'
 } as const
 
 export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeof MessageScalarFieldEnum]
+
+
+export const WaitlistTableScalarFieldEnum = {
+  id: 'id',
+  created_at: 'created_at',
+  full_name: 'full_name',
+  uvic_email: 'uvic_email',
+  intent: 'intent'
+} as const
+
+export type WaitlistTableScalarFieldEnum = (typeof WaitlistTableScalarFieldEnum)[keyof typeof WaitlistTableScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -859,6 +1124,20 @@ export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
+ * Reference to a field of type 'DateTime'
+ */
+export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
+    
+
+
+/**
+ * Reference to a field of type 'DateTime[]'
+ */
+export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+/**
  * Reference to a field of type 'Boolean'
  */
 export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
@@ -880,16 +1159,30 @@ export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaMode
 
 
 /**
- * Reference to a field of type 'DateTime'
+ * Reference to a field of type 'ReviewRole'
  */
-export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
+export type EnumReviewRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReviewRole'>
     
 
 
 /**
- * Reference to a field of type 'DateTime[]'
+ * Reference to a field of type 'ReviewRole[]'
  */
-export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+export type ListEnumReviewRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReviewRole[]'>
+    
+
+
+/**
+ * Reference to a field of type 'BigInt'
+ */
+export type BigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt'>
+    
+
+
+/**
+ * Reference to a field of type 'BigInt[]'
+ */
+export type ListBigIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BigInt[]'>
     
 
 /**
@@ -988,9 +1281,12 @@ export type PrismaClientOptions = ({
 }
 export type GlobalOmitConfig = {
   listing?: Prisma.ListingOmit
+  userPreferences?: Prisma.UserPreferencesOmit
+  review?: Prisma.ReviewOmit
   user?: Prisma.UserOmit
   conversation?: Prisma.ConversationOmit
   message?: Prisma.MessageOmit
+  waitlistTable?: Prisma.WaitlistTableOmit
 }
 
 /* Types for Logging */

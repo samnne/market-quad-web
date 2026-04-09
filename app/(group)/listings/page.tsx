@@ -12,7 +12,7 @@ import ListingModal from "@/components/Listings/ListingByID";
 const CATEGORIES = ["All", "Textbooks", "Electronics", "Clothes", "Housing", "Notes", "Sports", "Other"];
 
 const SkeletonCard = () => (
-  <div className="bg-white rounded-2xl border border-[#e0faf2] overflow-hidden animate-pulse">
+  <div className="bg-pill rounded-2xl border border-[#e0faf2] overflow-hidden animate-pulse">
     <div className="h-48 bg-[#e8faf4]" />
     <div className="p-3 flex flex-col gap-2">
       <div className="h-3.5 w-2/3 bg-[#e0faf2] rounded-full" />
@@ -73,6 +73,7 @@ const ListingPage = () => {
       } catch (err) {
         console.error("Error fetching listings:", err);
         setError(true);
+       
       } finally {
         setLoading(false);
       }
@@ -82,11 +83,11 @@ const ListingPage = () => {
   }, [searchQuery]);
 
   return (
-    <div className="flex flex-col bg-[#ecfef8] min-h-full pb-6">
+    <div className="flex flex-col  min-h-full pb-6">
 
       {/* Search bar */}
       <div className="px-4 pt-4 pb-3">
-        <div className="bg-white border border-[#c8f5e8] rounded-2xl px-4 py-2.5 flex items-center gap-2.5 focus-within:border-[#17f3b5] transition-colors">
+        <div className="bg-pill border border-secondary/50 rounded-2xl px-4 py-2.5 flex items-center gap-2.5 focus-within:border-primary transition-colors">
           <svg className="w-3.5 h-3.5 shrink-0 opacity-40" viewBox="0 0 20 20" fill="none">
             <circle cx="9" cy="9" r="6" stroke="#011d16" strokeWidth="1.5" />
             <path d="M13.5 13.5L17 17" stroke="#011d16" strokeWidth="1.5" strokeLinecap="round" />
@@ -95,7 +96,7 @@ const ListingPage = () => {
             type="text"
             defaultValue={searchQuery ?? ""}
             placeholder="Search listings…"
-            className="flex-1 text-[13px] text-[#011d16] placeholder:text-[#6b9e8a] bg-transparent outline-none"
+            className="flex-1 text-[13px] text-text placeholder:text-secondary bg-transparent outline-none"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 const val = (e.target as HTMLInputElement).value.trim();
@@ -107,7 +108,7 @@ const ListingPage = () => {
           {searchQuery && (
             <button
               onClick={() => router.push("/listings")}
-              className="text-[#6b9e8a] text-sm leading-none cursor-pointer"
+              className="text-secondary text-sm leading-none cursor-pointer"
             >
               ✕
             </button>
@@ -123,8 +124,8 @@ const ListingPage = () => {
             onClick={() => setActiveCategory(cat)}
             className={`shrink-0 px-3.5 py-1.5 rounded-full text-[13px] font-medium border transition-all ${
               activeCategory === cat
-                ? "bg-[#011d16] text-[#17f3b5] border-[#011d16]"
-                : "bg-white text-[#6b9e8a] border-[#c8f5e8]"
+                ? "bg-text text-primary border-text"
+                : "bg-pill text-secondary border-secondary/50"
             }`}
           >
             {cat}
@@ -134,22 +135,22 @@ const ListingPage = () => {
 
       {/* Header row */}
       <div className="flex items-center justify-between px-4 pb-3">
-        <p className="text-[13px] font-medium text-[#011d16]">
+        <p className="text-[13px] font-medium text-text">
           {searchQuery ? (
-            <>Results for <span className="text-[#17f3b5]">"{searchQuery}"</span></>
+            <>Results for <span className="text-primary">"{searchQuery}"</span></>
           ) : (
             "Today's listings"
           )}
           {!loading && displayListings?.length > 0 && (
-            <span className="text-[#6b9e8a] font-normal ml-1.5">· {displayListings.length}</span>
+            <span className="text-secondary font-normal ml-1.5">· {displayListings.length}</span>
           )}
         </p>
         {/* Grid / list toggle */}
-        <div className="flex gap-1 bg-white border border-[#c8f5e8] rounded-xl p-1">
+        <div className="flex gap-1 bg-pill border border-secondary/50 rounded-xl p-1">
           <button
             onClick={() => setView("grid")}
             className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all ${
-              view === "grid" ? "bg-[#011d16]" : ""
+              view === "grid" ? "bg-text" : ""
             }`}
           >
             <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
@@ -162,7 +163,7 @@ const ListingPage = () => {
           <button
             onClick={() => setView("list")}
             className={`w-7 h-7 rounded-lg flex items-center justify-center transition-all ${
-              view === "list" ? "bg-[#011d16]" : ""
+              view === "list" ? "bg-text" : ""
             }`}
           >
             <svg width="13" height="10" viewBox="0 0 13 10" fill="none">
@@ -201,16 +202,16 @@ const ListingPage = () => {
           </motion.div>
         ) : (
           <div className="flex flex-col items-center justify-center py-20 gap-4">
-            <div className="w-14 h-14 bg-[#d6fdf1] rounded-2xl flex items-center justify-center">
+            <div className="w-14 h-14 bg-secondary/50 rounded-2xl flex items-center justify-center">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path d="M3 3h18v4H3zM3 10h18v11H3z" stroke="#0a6644" strokeWidth="1.5" strokeLinejoin="round" />
               </svg>
             </div>
-            <p className="text-[14px] text-[#6b9e8a] text-center leading-relaxed">
+            <p className="text-[14px] text-secondary text-center leading-relaxed">
               {searchQuery
-                ? <>No listings matched <span className="text-[#011d16] font-semibold">"{searchQuery}"</span>.</>
+                ? <>No listings matched <span className="text-text font-semibold">"{searchQuery}"</span>.</>
                 : activeCategory !== "All"
-                ? <>No listings in <span className="text-[#011d16] font-semibold">{activeCategory}</span> yet.</>
+                ? <>No listings in <span className="text-text font-semibold">{activeCategory}</span> yet.</>
                 : "No listings available yet."}
             </p>
             {(searchQuery || activeCategory !== "All") && (
@@ -219,7 +220,7 @@ const ListingPage = () => {
                   setActiveCategory("All");
                   if (searchQuery) router.push("/listings");
                 }}
-                className="text-[13px] text-[#f544bd] underline font-medium cursor-pointer"
+                className="text-[13px] text-secondary/50 underline font-medium cursor-pointer"
               >
                 Clear filters
               </button>

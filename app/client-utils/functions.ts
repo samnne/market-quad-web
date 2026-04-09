@@ -10,28 +10,37 @@ import {
 import { supabase } from "@/supabase/authHelper";
 import pLimit from "p-limit";
 import { ConvosState, ListingStore, UserState } from "../types";
+import { ImageLoaderProps } from "next/image";
 
+export const cloudinaryLoader = ({ src, width, quality }: ImageLoaderProps) => {
+  const transforms = `c_fill,w_${width},q_${quality ?? 75},f_auto`;
+  return src.replace("/upload/", `/upload/${transforms}/`);
+};
 
-export function cleanUP(listingStore: ListingStore, userStore: UserState, convoStore: ConvosState) {
+export function cleanUP(
+  listingStore: ListingStore,
+  userStore: UserState,
+  convoStore: ConvosState,
+) {
   userStore.reset();
   listingStore.reset();
-  convoStore.reset()
+  convoStore.reset();
 }
 
-export function matchUVIC(email: string){
- const testerEmail = process.env.NEXT_PUBLIC_EMAIL_TESTER
-  if (email === testerEmail){
-    return true
+export function matchUVIC(email: string) {
+  const testerEmail = process.env.NEXT_PUBLIC_EMAIL_TESTER;
+  if (email === testerEmail) {
+    return true;
   }
-  return email.includes('@uvic') 
+  return email.includes("@uvic");
 }
 
 export async function fetchConvos({ setter }: { setter: Function }) {
-  const { data, error } = await supabase.auth.getUser();
-  if (!data.user) {
-    return false
+  const user = await getUserSupabase();
+  if (user) {
+    return false;
   } else {
-    const temp = await getConvos(data.user?.id);
+    const temp = await getConvos(user?.id);
     setter(temp);
 
     return temp;
@@ -106,8 +115,13 @@ async function uploadImage(file: File) {
 export async function getUserSupabase() {
   const { data, error } = await supabase.auth.getUser();
   if (error) {
-    return false;
+    return { user: null, error, app_user: null };
   }
-
-  return { ...data.user };
+  const user = await supabase
+    .from("User")
+    .select("*")
+    .eq("uid", data.user.id)
+    .single();
+  const supa_user = data.user;
+  return { user: supa_user, app_user: user.data };
 }

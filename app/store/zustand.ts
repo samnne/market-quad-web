@@ -1,10 +1,10 @@
-import { Conversation, Listing } from "@/src/generated/prisma/client";
-import { create, StoreApi, UseBoundStore } from "zustand";
-import { FormType, SafeUser } from "../types";
+import { Conversation, Listing, User, UserPreferences } from "@/src/generated/prisma/client";
 import { ConversationInclude } from "@/src/generated/prisma/models";
-import { User, UserResponse } from "@supabase/supabase-js";
-interface Store {
-  type: FormType;
+
+import { create, StoreApi, UseBoundStore } from "zustand";
+
+export interface Store {
+  type: "sign-in" | "sign-up" | "otp";
   changeType: Function;
 }
 export const useType = create((set) => {
@@ -15,7 +15,7 @@ export const useType = create((set) => {
   return { ...store };
 });
 
-type ListingStore = {
+export type ListingStore = {
   listings: Listing[];
   setListings: Function;
   selectedListing?: Listing | null;
@@ -36,12 +36,14 @@ export const useListings: UseBoundStore<StoreApi<ListingStore>> = create(
   },
 );
 
-type UserState = {
+export type UserState = {
   user: User | null;
   setUser: Function;
   userListings: Listing[];
   setUserListings: Function;
   reset: Function;
+  preferences: UserPreferences | null;
+  setPreferences: (p: UserPreferences | null) => void;
 };
 export const useUser: UseBoundStore<StoreApi<UserState>> = create((set) => {
   return {
@@ -50,14 +52,18 @@ export const useUser: UseBoundStore<StoreApi<UserState>> = create((set) => {
     userListings: [],
     setUserListings: (listings: Listing[]) => set({ userListings: listings }),
     reset: () => set({ user: null, userListings: [] }),
+    preferences: null,
+    setPreferences: (pref: UserPreferences | null) => ({ preferences: pref }),
   };
 });
 
-type MessagePopUp = {
+export type MessagePopUp = {
   error: boolean;
   success: boolean;
   setSuccess: Function;
   setError: Function;
+  msg: string;
+  setMessage: Function;
 };
 
 export const useMessage: UseBoundStore<StoreApi<MessagePopUp>> = create(
@@ -65,13 +71,15 @@ export const useMessage: UseBoundStore<StoreApi<MessagePopUp>> = create(
     return {
       error: false,
       success: false,
+      msg: "",
       setSuccess: (success: boolean) => set({ success: success }),
       setError: (error: boolean) => set({ error: error }),
+      setMessage: (msg: string) => set({ msg: msg }),
     };
   },
 );
 
-type ConvosState = {
+export type ConvosState = {
   convos: (Conversation & ConversationInclude)[] | null;
   setConvos: Function;
   selectedConvo: Conversation | null;
@@ -88,3 +96,25 @@ export const useConvos: UseBoundStore<StoreApi<ConvosState>> = create((set) => {
     reset: () => set({ convos: null, selectedConvo: null }),
   };
 });
+export interface ReviewModalState {
+  reviewModal: boolean;
+  setReviewModal: Function;
+  makeReview: boolean;
+  setMakeAReview: Function;
+  reset: Function;
+}
+
+export const useReviewModal: UseBoundStore<StoreApi<ReviewModalState>> = create(
+  (set) => {
+    return {
+      reviewModal: false,
+      setReviewModal: (show: boolean) =>
+        set({
+          reviewModal: show,
+        }),
+      makeReview: false,
+      setMakeAReview: (show: boolean) => set({ makeReview: show }),
+      reset: () => set({ reviewModal: false, makeReview: false }),
+    };
+  },
+);

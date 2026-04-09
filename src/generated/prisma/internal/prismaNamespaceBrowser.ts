@@ -52,9 +52,12 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   Listing: 'Listing',
+  UserPreferences: 'UserPreferences',
+  Review: 'Review',
   User: 'User',
   Conversation: 'Conversation',
-  Message: 'Message'
+  Message: 'Message',
+  WaitlistTable: 'WaitlistTable'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -79,18 +82,46 @@ export const ListingScalarFieldEnum = {
   description: 'description',
   price: 'price',
   imageUrls: 'imageUrls',
-  category: 'category',
   sellerId: 'sellerId',
-  sold: 'sold',
+  createdAt: 'createdAt',
   archived: 'archived',
-  condition: 'condition',
+  sold: 'sold',
   latitude: 'latitude',
   longitude: 'longitude',
   views: 'views',
-  createdAt: 'createdAt'
+  condition: 'condition',
+  category: 'category'
 } as const
 
 export type ListingScalarFieldEnum = (typeof ListingScalarFieldEnum)[keyof typeof ListingScalarFieldEnum]
+
+
+export const UserPreferencesScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  defaultCategory: 'defaultCategory',
+  defaultCondition: 'defaultCondition',
+  defaultLocation: 'defaultLocation',
+  defaultLat: 'defaultLat',
+  defaultLng: 'defaultLng',
+  updatedAt: 'updatedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type UserPreferencesScalarFieldEnum = (typeof UserPreferencesScalarFieldEnum)[keyof typeof UserPreferencesScalarFieldEnum]
+
+
+export const ReviewScalarFieldEnum = {
+  rid: 'rid',
+  rating: 'rating',
+  comment: 'comment',
+  role: 'role',
+  reviewerId: 'reviewerId',
+  revieweeId: 'revieweeId',
+  createdAt: 'createdAt'
+} as const
+
+export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof ReviewScalarFieldEnum]
 
 
 export const UserScalarFieldEnum = {
@@ -99,7 +130,8 @@ export const UserScalarFieldEnum = {
   name: 'name',
   profileURL: 'profileURL',
   isVerified: 'isVerified',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  rating: 'rating'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -107,11 +139,11 @@ export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof User
 
 export const ConversationScalarFieldEnum = {
   cid: 'cid',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
   listingId: 'listingId',
   buyerId: 'buyerId',
-  sellerId: 'sellerId'
+  createdAt: 'createdAt',
+  sellerId: 'sellerId',
+  updatedAt: 'updatedAt'
 } as const
 
 export type ConversationScalarFieldEnum = (typeof ConversationScalarFieldEnum)[keyof typeof ConversationScalarFieldEnum]
@@ -120,15 +152,26 @@ export type ConversationScalarFieldEnum = (typeof ConversationScalarFieldEnum)[k
 export const MessageScalarFieldEnum = {
   mid: 'mid',
   text: 'text',
+  edited: 'edited',
+  conversationId: 'conversationId',
   createdAt: 'createdAt',
   readAt: 'readAt',
-  edited: 'edited',
-  updatedAt: 'updatedAt',
   senderId: 'senderId',
-  conversationId: 'conversationId'
+  updatedAt: 'updatedAt'
 } as const
 
 export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeof MessageScalarFieldEnum]
+
+
+export const WaitlistTableScalarFieldEnum = {
+  id: 'id',
+  created_at: 'created_at',
+  full_name: 'full_name',
+  uvic_email: 'uvic_email',
+  intent: 'intent'
+} as const
+
+export type WaitlistTableScalarFieldEnum = (typeof WaitlistTableScalarFieldEnum)[keyof typeof WaitlistTableScalarFieldEnum]
 
 
 export const SortOrder = {

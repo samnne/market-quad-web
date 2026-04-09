@@ -83,6 +83,7 @@ export async function getListingByID(
 export async function createNewListing(
   listingData: listingFormData,
 ): Promise<Listing> {
+ 
   const listing = await prisma.listing.create({
     data: {
       ...listingData,
@@ -93,9 +94,11 @@ export async function createNewListing(
 }
 
 export async function updateListing(lid: string, listingData: listingFormData) {
+  
   const listing = await prisma.listing.update({
     data: {
       ...listingData,
+      
     },
     where: {
       lid,

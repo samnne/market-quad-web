@@ -1,0 +1,63 @@
+import { prisma } from "@/db/db";
+import { updateReviewCount } from "@/db/reviews.db";
+import { NextRequest, NextResponse } from "next/server";
+
+export async function GET(req: NextRequest) {
+  const userID = req.headers.get("authorization");
+  if (!userID) {
+    return NextResponse.json({
+      message: "Must be Authorized",
+      success: false,
+    });
+  }
+  const reviews = await prisma.review.findMany({
+    where: {
+      OR: [{ revieweeId: userID }],
+    },
+  });
+
+  return NextResponse.json({
+    message: "Successfully retrieved reviews",
+    success: true,
+    reviews,
+  });
+}
+export async function POST(req: NextRequest) {
+  const userID = req.headers.get("authorization");
+  if (!userID) {
+    return NextResponse.json({
+      message: "Must be Authorized",
+      success: false,
+    });
+  }
+  const newReview = await req.json();
+
+  const review = await prisma.review.upsert({
+    where: {
+      reviewerId_revieweeId_role: {
+        reviewerId: userID,
+        revieweeId: newReview.revieweeId,
+        role: newReview.role,
+      },
+    },
+    update: {
+      rating: newReview.rating,
+      comment: newReview.comment,
+    },
+    create: {
+      rating: newReview.rating,
+      comment: newReview.comment,
+      revieweeId: newReview.revieweeId,
+      reviewerId: userID,
+      role: newReview.role,
+    },
+  });
+
+  await updateReviewCount(newReview.revieweeId);
+
+  return NextResponse.json({
+    message: "Successfully retrieved reviews",
+    success: true,
+    review,
+  });
+}

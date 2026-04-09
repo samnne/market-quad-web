@@ -72,7 +72,7 @@ const DeleteModal = ({
                 stiffness: 300,
                 damping: 28,
               }}
-              className="bg-white rounded-[24px] p-6 w-full max-w-[340px] flex flex-col gap-5 pointer-events-auto"
+              className="bg-pill rounded-[24px] p-6 w-full max-w-[340px] flex flex-col gap-5 pointer-events-auto"
             >
               {/* Warning icon */}
               <div className="w-[52px] h-[52px] bg-[#fff0f0] border border-[#fca5a5] rounded-2xl flex items-center justify-center mx-auto">

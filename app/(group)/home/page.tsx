@@ -82,7 +82,7 @@ const MarketQuadHome = () => {
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-        className="bg-white rounded-2xl outline focus-within:outline-4 transition-all outline-[#c8f5e8] px-4 py-3 flex items-center gap-2.5"
+        className="bg-pill rounded-2xl outline focus-within:outline-4 transition-all outline-secondary/50border-secondary/50 px-4 py-3 flex items-center gap-2.5"
       >
         <svg
           className="w-4 h-4 shrink-0 opacity-35"
@@ -103,7 +103,7 @@ const MarketQuadHome = () => {
             value={searchQuery}
             onChange={(e)=> setSearchQuery(e.target.value)}
             placeholder="Search textbooks, gear, notes…"
-            className="text-sm text-[#6b9e8a] p-1 outline-0"
+            className="text-sm text-secondary p-1 outline-0"
           />
         </form>
         <form onSubmit={(e)=>handleSearchListings(e)} className="ml-auto w-8 h-8 rounded-[9px] bg-primary flex items-center justify-center shrink-0">
@@ -131,8 +131,8 @@ const MarketQuadHome = () => {
             onClick={() => handleSearchByCat(cat)}
             className={`shrink-0 px-3.5 py-1.5 rounded-full text-[13px] font-medium border transition-all ${
               i === 0
-                ? "bg-[#011d16] text-[#17f3b5] border-[#011d16]"
-                : "bg-white text-[#6b9e8a] border-[#c8f5e8]"
+                ? "bg-text text-primary border-text"
+                : "bg-pill text-secondary border-secondary/50"
             }`}
           >
             {cat}
@@ -148,7 +148,7 @@ const MarketQuadHome = () => {
             {[1, 2, 3].map((n) => (
               <div
                 key={n}
-                className="shrink-0 min-w-[200px] h-[180px] rounded-xl bg-white border border-[#e0faf2] animate-pulse"
+                className="shrink-0 min-w-50 h-45 rounded-xl bg-pill border border-[#e0faf2] animate-pulse"
               />
             ))}
           </div>
@@ -165,7 +165,7 @@ const MarketQuadHome = () => {
             {[1, 2].map((n) => (
               <div
                 key={n}
-                className="shrink-0 min-w-[200px] h-[80px] rounded-xl bg-white border border-[#e0faf2] animate-pulse"
+                className="shrink-0 min-w-50 h-20 rounded-xl bg-pill border border-[#e0faf2] animate-pulse"
               />
             ))}
           </div>
@@ -179,12 +179,12 @@ const MarketQuadHome = () => {
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
-        className="bg-[#011d16] rounded-[18px] p-5 flex items-center justify-between overflow-hidden relative"
+        className="bg-text rounded-[18px] p-5 flex items-center justify-between overflow-hidden relative"
       >
-        <div className="absolute -top-5 -right-5 w-24 h-24 rounded-full bg-[#17f3b5] opacity-10" />
-        <div className="absolute bottom-[-30px] right-8 w-20 h-20 rounded-full bg-[#d282f9] opacity-15" />
+        <div className="absolute -top-5 -right-5 w-24 h-24 rounded-full bg-primary opacity-10" />
+        <div className="absolute bottom-[-30px] right-8 w-20 h-20 rounded-full bg-secondary opacity-15" />
         <div className="relative z-10">
-          <p className="text-[11px] text-[#17f3b5] font-medium uppercase tracking-widest mb-1">
+          <p className="text-[11px] text-primary font-medium uppercase tracking-widest mb-1">
             Got stuff to offload?
           </p>
           <p className="text-[17px] font-extrabold text-white leading-tight">
@@ -195,7 +195,7 @@ const MarketQuadHome = () => {
         </div>
         <button
           onClick={() => redirect("/new")}
-          className="relative z-10 shrink-0 bg-[#17f3b5] text-[#011d16] rounded-xl px-4 py-2.5 text-[13px] font-bold active:scale-95 transition-transform"
+          className="relative z-10 shrink-0 bg-primary text-text rounded-xl px-4 py-2.5 text-[13px] font-bold active:scale-95 transition-transform"
         >
           + Sell
         </button>

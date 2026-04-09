@@ -1,3 +1,4 @@
+import { cloudinaryLoader } from "@/app/client-utils/functions";
 import { useListings } from "@/app/store/zustand";
 import { Listing } from "@/src/generated/prisma/client";
 import { motion } from "motion/react";
@@ -16,56 +17,27 @@ const ListingCard = ({ listing }: { listing: Listing }) => {
         scale: 0.95,
       }}
       onClick={() => openListingModal(listing)}
-      className=" bg-white  drop-shadow-xl text-white  flex flex-col gap-2 rounded-4xl"
+      className=" bg-pill  drop-shadow-xl text-white  relative flex flex-col gap-2 rounded-4xl"
       key={listing.lid}
     >
-      <motion.div className="h-48 relative ">
+      <div className="h-48 relative ">
         <Image
           className=" rounded-t-4xl relative  w-full h-full object-cover bg-primary/25 z-100"
-          width={250}
-          loading="eager"
-          height={250}
-          src={
-            listing.imageUrls.length > 0
-              ? listing.imageUrls[0]
-                ? listing.imageUrls[0].includes("example")
-                  ? "https://picsum.photos/500"
-                  : listing.imageUrls[0]
-                : "/"
-              : "/"
-          }
-          alt=""
-         
+          loading="lazy"
+          sizes="(max-width: 768px) 50vw, 33vw"
+          loader={cloudinaryLoader}
+          fill
+          src={listing.imageUrls?.[0] || "/placeholder.jpg"}
+          alt={listing.title}
         />
         <div className="absolute flex justify-center items-center inset-0 rounded-t-4xl w-full h-full object-cover  z-0">
-          <div className=" w-20 h-20 rounded-full text-4xl text-black flex justify-center items-center"><MdOutlineShoppingCart /></div>
+          <div className=" w-20 h-20 rounded-full text-4xl text-black flex justify-center items-center">
+            <MdOutlineShoppingCart />
+          </div>
         </div>
-
-
-        {/* <motion.span
-          initial={{
-            opacity: 0,
-            scale: 0,
-          }}
-          whileInView={{
-            opacity: 1,
-            scale: 1,
-          }}
-          transition={{
-            delay: 0.1,
-            type: "spring",
-            stiffness: 200,
-          }}
-          className="absolute top-3 right-5 font-bold bg-primary rounded-4xl px-2"
-        >
-
-          Click to View
-        </motion.span> */}
-      </motion.div>
+      </div>
 
       <div className="p-4 font-inter rounded-2xl text-lg  overflow-hidden text-nowrap flex flex-col gap-1 justify-center">
-        {/* <span className="">${listing.price / 100} ⋅</span>
-                  <h3 className="">{listing.title}</h3> */}
         <h3 className="text-lg   text-black truncate">
           {" "}
           ${listing.price} ⋅ {listing.title}
@@ -77,6 +49,13 @@ const ListingCard = ({ listing }: { listing: Listing }) => {
           {listing.description}
         </p>
       </div>
+      {(listing.sold || listing.archived) && (
+        <div
+          className={`absolute right-3 top-3 z-100  text-primary border border-primary text-sm rounded-lg flex justify-center items-center font-bold px-2 ${listing?.sold ? "text-red-500 bg-red-300 border-red-300" : "bg-text text-primary border-primary"}`}
+        >
+          {listing?.sold ? "SOLD" : listing.archived ? "ARCHIVED" : ""}
+        </div>
+      )}
     </motion.section>
   );
 };

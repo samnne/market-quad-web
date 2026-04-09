@@ -1,8 +1,15 @@
 "use client";
 
 import { BASEURL } from "@/app/client-utils/constants";
+import { getUserSupabase } from "@/app/client-utils/functions";
 import { socket } from "@/app/socket";
-import { useConvos, useListings, useMessage, useUser } from "@/app/store/zustand";
+import {
+  useConvos,
+  useListings,
+  useMessage,
+  useUser,
+  useReviewModal,
+} from "@/app/store/zustand";
 import { getMessagesForConvo, sendMessage } from "@/lib/messages.lib";
 import { Message } from "@/src/generated/prisma/client";
 import { supabase } from "@/supabase/authHelper";
@@ -10,7 +17,7 @@ import { motion, useAnimate } from "motion/react";
 import { redirect, useParams } from "next/navigation";
 import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
 import { CiCircleInfo } from "react-icons/ci";
-import { FaCircle } from "react-icons/fa";
+
 import { IoArrowBack, IoArrowUp } from "react-icons/io5";
 
 function formatTime(date: string | Date) {
@@ -29,14 +36,19 @@ function formatDateDivider(date: string | Date) {
   yesterday.setDate(today.getDate() - 1);
   if (d.toDateString() === today.toDateString()) return "Today";
   if (d.toDateString() === yesterday.toDateString()) return "Yesterday";
-  return d.toLocaleDateString("en", { weekday: "long", month: "short", day: "numeric" });
+  return d.toLocaleDateString("en", {
+    weekday: "long",
+    month: "short",
+    day: "numeric",
+  });
 }
 
 const CID = () => {
   const params = useParams();
   const messageEndRef = useRef<HTMLDivElement>(null);
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const { selectedConvo, setSelectedConvo } = useConvos();
+  const { reviewModal, setReviewModal } = useReviewModal();
   const [rows, setInputRows] = useState(1);
   const [messageText, setMessageText] = useState("");
   const { setError } = useMessage();
@@ -65,7 +77,7 @@ const CID = () => {
 
   const getListingMetaData = async () => {
     if (!params.cid) return;
-    const convo = await getConvo(params.cid);
+    const convo = await getConvo(params.cid as string);
     if (!convo) {
       setError(true);
       redirect("/conversations");
@@ -88,7 +100,9 @@ const CID = () => {
     function onConnect() {
       setIsConnected(true);
       setTransport(socket.io.engine.transport.name);
-      socket.io.engine.on("upgrade", (transport) => setTransport(transport.name));
+      socket.io.engine.on("upgrade", (transport) =>
+        setTransport(transport.name),
+      );
     }
 
     function onDisconnect() {
@@ -99,7 +113,11 @@ const CID = () => {
     socket.on("connect", onConnect);
     socket.on("typing", async (val) => {
       if (!val) {
-        await animate(scope.current, { opacity: 0, scale: 0, transformOrigin: "bottom left" }, { type: "spring", stiffness: 300, duration: 0.3 });
+        await animate(
+          scope.current,
+          { opacity: 0, scale: 0, transformOrigin: "bottom left" },
+          { type: "spring", stiffness: 300, duration: 0.3 },
+        );
       }
       setTyping(val);
     });
@@ -129,8 +147,8 @@ const CID = () => {
 
   function handleOpenConvo() {
     try {
-      if (!user?.uid) return;
-      socket.emit("open-convo", { cid: params.cid, uid: user.uid });
+      if (!user?.id) return;
+      socket.emit("open-convo", { cid: params.cid, uid: user.id as string });
     } catch (err) {
       console.error("Error opening conversation:", err);
       setError(true);
@@ -140,10 +158,16 @@ const CID = () => {
   async function mountMessages() {
     try {
       const cid = params.cid;
-      if (!cid) { setError(true); return; }
-      const tempMessages = await getMessagesForConvo(cid);
-      if (!tempMessages) { setError(true); return; }
-      
+      if (!cid) {
+        setError(true);
+        return;
+      }
+      const tempMessages = await getMessagesForConvo(cid as string);
+      if (!tempMessages) {
+        setError(true);
+        return;
+      }
+
       setMessages(tempMessages);
     } catch (err) {
       console.error("Error fetching messages:", err);
@@ -153,10 +177,13 @@ const CID = () => {
 
   async function mountUser() {
     try {
-      const { data, error } = await supabase.auth.getUser();
-      if (error || !data.user) { setError(true); return; }
-      socket.emit("open-convo", { cid: params.cid, uid: data.user.id });
-      setUser(data.user);
+      const { user, app_user } = await getUserSupabase();
+      if (!user) {
+        setError(true);
+        return;
+      }
+      socket.emit("open-convo", { cid: params.cid, uid: user.id });
+      setUser({ ...user, app_user });
     } catch (err) {
       console.error("Error mounting user:", err);
       setError(true);
@@ -176,6 +203,21 @@ const CID = () => {
     }
   }
 
+  async function determineReviewPage() {
+    const senderMessages = messages.map((msg) => msg.senderId === user?.id);
+    const otherMessages = messages.map((msg) => msg.senderId !== user?.id);
+    const checkReviews = {
+      sender: senderMessages,
+      other: otherMessages,
+    };
+
+    if (!(checkReviews.sender.length > 3 && checkReviews.other.length > 3)) {
+      return;
+    }
+
+    setReviewModal(true);
+    return;
+  }
   async function handleSendMessage() {
     try {
       if (!messageText.trim() || !user?.id) return;
@@ -185,20 +227,31 @@ const CID = () => {
         message: { senderId: user.id, text: messageText },
       });
       const response = await sendMessage(
-        { conversationId: params.cid, senderId: user.id, text: messageText },
+        {
+          conversationId: params.cid as string,
+          senderId: user.id,
+          text: messageText,
+        },
         user,
       );
-      setMessages((prev) => [...prev, response.new_message]);
-      setMessageText("");
+      if (!response.new_message) {
+        setMessageError({ ...response });
+        return;
+      }
+
       if (response.error) {
         setMessageError({ ...response });
+        return;
       }
+
+      setMessages((prev) => [...prev, response.new_message]);
+      socket.emit("typing", { cid: params.cid, typing: false });
+      setMessageText("");
     } catch (err) {
       console.error("Unexpected error sending message:", err);
       setError(true);
     }
   }
-
   function emptyLine() {
     const lines = messageText.split("\n");
     return lines[lines.length - 1].length === 0;
@@ -216,6 +269,7 @@ const CID = () => {
   };
 
   useEffect(() => {
+    determineReviewPage();
     scrollToBottom();
   }, [messages]);
 
@@ -223,12 +277,11 @@ const CID = () => {
 
   return (
     <div className="absolute inset-0 z-50 min-h-screen flex flex-col bg-background">
-
       {/* Nav */}
-      <nav className="bg-white border-b border-[#e0faf2] px-4 py-3 flex items-center gap-3 shrink-0">
+      <nav className="bg-pill border-b border-secondary/25 px-4 py-3 flex items-center gap-3 shrink-0">
         <button
           onClick={() => redirect("/conversations")}
-          className="w-8.5 h-8.5 rounded-[10px] bg-[#f0fdf8] border border-[#c8f5e8] flex items-center justify-center cursor-pointer shrink-0"
+          className="w-8.5 h-8.5 rounded-[10px] bg-background border border-secondary flex items-center justify-center cursor-pointer shrink-0"
         >
           <IoArrowBack className="text-text text-base" />
         </button>
@@ -237,7 +290,7 @@ const CID = () => {
           <p className="text-[14px] font-bold text-text truncate">
             {selectedConvo?.listing?.title ?? "Conversation"}
           </p>
-          <p className="text-[11px] text-[#6b9e8a]">
+          <p className="text-[11px] text-text">
             {isConnected ? "Connected" : "Offline"}
           </p>
         </div>
@@ -246,24 +299,35 @@ const CID = () => {
           <span className="w-2 h-2 rounded-full bg-primary border-2 border-white shrink-0" />
         )}
 
-        <button className="w-8.5 h-8.5 rounded-[10px] bg-[#f0fdf8] border border-[#c8f5e8] flex items-center justify-center cursor-pointer shrink-0">
+        <button
+          onClick={() => setReviewModal(!reviewModal)}
+          className="w-8.5 h-8.5 rounded-[10px] bg-background border border-secondary/25 flex items-center justify-center cursor-pointer shrink-0"
+        >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
             <circle cx="8" cy="8" r="6" stroke="#6b9e8a" strokeWidth="1.5" />
-            <path d="M8 7v4M8 5.5v.5" stroke="#6b9e8a" strokeWidth="1.5" strokeLinecap="round" />
+            <path
+              d="M8 7v4M8 5.5v.5"
+              stroke="#6b9e8a"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+            />
           </svg>
         </button>
       </nav>
 
       {/* Listing pill */}
       {listing && (
-        <div className="mx-4 mt-3 mb-1 bg-white border border-[#e0faf2] rounded-2xl px-3 py-2.5 flex items-center gap-3 shrink-0">
-          <div className="w-9 h-9 bg-[#d6fdf1] rounded-xl flex items-center justify-center text-lg shrink-0">
+        <div className="mx-4 mt-3 mb-1 bg-pill border border-secondary/25 rounded-2xl px-3 py-2.5 flex items-center gap-3 shrink-0">
+          <div className="w-9 h-9 bg-background rounded-xl flex items-center justify-center text-lg shrink-0">
             📦
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-[12px] font-bold text-text truncate">{listing.title}</p>
-            <p className="text-[11px] text-[#6b9e8a]">
-              ${listing.price}{listing.condition ? ` · ${listing.condition}` : ""}
+            <p className="text-[12px] font-bold text-text truncate">
+              {listing.title}
+            </p>
+            <p className="text-[11px] text-secondary">
+              ${listing.price}
+              {listing.condition ? ` · ${listing.condition}` : ""}
             </p>
           </div>
           <button
@@ -279,7 +343,7 @@ const CID = () => {
       <div className="flex-1 overflow-y-auto px-4 py-3 flex flex-col gap-1.5 no-scrollbar">
         {messages.map((message: Message, i) => {
           const isMine = message.senderId === user?.id;
-          
+
           const prevMsg = messages[i - 1 > 0 ? i - 1 : 0];
           const showDivider =
             i === 0 ||
@@ -289,16 +353,19 @@ const CID = () => {
 
           const isLast = i === messages.length - 1;
           const hasError =
-            !messageError?.success && message.text === messageError?.message_text;
+            !messageError?.success &&
+            message.text === messageError?.message_text;
 
           return (
             <div key={message.mid ?? i}>
               {showDivider && message.createdAt && (
-                <p className="text-center text-[11px] text-[#aad4c5] my-3">
+                <p className="text-center text-[11px] text-secondary my-3">
                   {formatDateDivider(message.createdAt)}
                 </p>
               )}
-              <div className={`flex items-end gap-1.5 ${isMine ? "justify-end" : "justify-start"}`}>
+              <div
+                className={`flex items-end gap-1.5 ${isMine ? "justify-end" : "justify-start"}`}
+              >
                 {!isMine && (
                   <div className="w-6 h-6 rounded-full bg-secondary flex items-center justify-center text-[9px] font-bold text-text shrink-0 mb-0.5">
                     {(selectedConvo?.listing?.title?.[0] ?? "?").toUpperCase()}
@@ -310,18 +377,21 @@ const CID = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.25 }}
                     className={`px-3.5 py-2 text-[14px] leading-snug max-w-[72vw] wrap-break
-                      ${isMine
-                        ? "bg-text text-primary rounded-[18px] rounded-br-[5px]"
-                        : "bg-white text-text border border-[#e0faf2] rounded-[18px] rounded-bl-[5px]"
+                      ${
+                        isMine
+                          ? "bg-text text-secondary rounded-[18px] rounded-br-[5px]"
+                          : "bg-pill text-text border border-secondary/25 rounded-[18px] rounded-bl-[5px]"
                       }
                       ${hasError ? "border border-red-300" : ""}
                     `}
                   >
                     {message.text}
                   </motion.div>
-                  <div className={`flex items-center gap-1 mt-0.5 ${isMine ? "justify-end" : "justify-start"}`}>
+                  <div
+                    className={`flex items-center gap-1 mt-0.5 ${isMine ? "justify-end" : "justify-start"}`}
+                  >
                     {message.createdAt && (
-                      <span className="text-[10px] text-[#aad4c5]">
+                      <span className="text-[10px] text-secondary">
                         {formatTime(message.createdAt)}
                       </span>
                     )}
@@ -346,14 +416,20 @@ const CID = () => {
             ref={scope}
             initial={{ opacity: 0, scale: 0, transformOrigin: "bottom left" }}
             whileInView={{ opacity: 1, scale: 1 }}
-            className="flex items-center gap-1 bg-white border border-[#e0faf2] rounded-[18px] rounded-bl-[5px] px-3.5 py-2.5 w-fit"
+            className="flex items-center gap-1 bg-pill border border-secondary/25 rounded-[18px] rounded-bl-[5px] px-3.5 py-2.5 w-fit"
           >
             {[0.1, 0.25, 0.4].map((delay) => (
               <motion.div
                 key={delay}
                 animate={{ y: [-3, 3] }}
-                transition={{ type: "spring", duration: 0.5, delay, repeat: Infinity, repeatType: "reverse" }}
-                className="w-1.5 h-1.5 rounded-full bg-[#aad4c5]"
+                transition={{
+                  type: "spring",
+                  duration: 0.5,
+                  delay,
+                  repeat: Infinity,
+                  repeatType: "reverse",
+                }}
+                className="w-1.5 h-1.5 rounded-full bg-secondary"
               />
             ))}
           </motion.div>
@@ -363,10 +439,15 @@ const CID = () => {
       </div>
 
       {/* Input bar */}
-      <div className="bg-white border-t border-[#e0faf2] px-3 py-2.5 flex items-end gap-2 shrink-0">
-        <button className="w-9 h-9 rounded-[10px] bg-[#f0fdf8] border border-[#c8f5e8] flex items-center justify-center shrink-0">
+      <div className="bg-pill border-t border-secondary/25 px-3 py-2.5 flex items-end gap-2 shrink-0">
+        <button className="w-9 h-9 rounded-[10px] bg-background border border-secondary flex items-center justify-center shrink-0">
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M8 3v10M3 8h10" stroke="#6b9e8a" strokeWidth="1.5" strokeLinecap="round" />
+            <path
+              d="M8 3v10M3 8h10"
+              stroke="#6b9e8a"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+            />
           </svg>
         </button>
 
@@ -378,7 +459,7 @@ const CID = () => {
           onKeyDown={handleEnter}
           onChange={handleChange}
           placeholder="Message…"
-          className="flex-1 bg-[#f7fdfb] border border-[#c8f5e8] rounded-2xl px-3.5 py-2 text-sm text-text placeholder:text-[#6b9e8a] resize-none outline-none focus:border-primary transition-colors no-scrollbar"
+          className="flex-1 bg-[#f7fdfb] border border-secondary rounded-2xl px-3.5 py-2 text-sm text-text placeholder:text-[#6b9e8a] resize-none outline-none focus:border-primary transition-colors no-scrollbar"
         />
 
         <motion.button
@@ -390,7 +471,6 @@ const CID = () => {
           <IoArrowUp className="text-text text-base" />
         </motion.button>
       </div>
-
     </div>
   );
 };

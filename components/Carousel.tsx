@@ -1,5 +1,6 @@
 "use client";
 
+import { cloudinaryLoader } from "@/app/client-utils/functions";
 import clsx from "clsx";
 import { motion, useAnimate, useMotionValue } from "motion/react";
 import Image from "next/image";
@@ -17,6 +18,7 @@ const Carousel = ({ images }: { images: string[] }) => {
     setDragging(true);
   };
   const onDragEnd = () => {
+    if (images.length === 1) return
     setDragging(false);
     const x = dragX.get();
     if (x <= -DRAG_BUFFER) {
@@ -67,10 +69,11 @@ const Carousel = ({ images }: { images: string[] }) => {
               <Image
                 src={m}
                 alt="image upload"
-                width={150}
                 className="w-full h-full  object-contain"
-                height={150}
-                loading="eager"
+                loading="lazy"
+                sizes="(max-width: 768px) 50vw, 33vw"
+                loader={cloudinaryLoader}
+                fill
               />
             </motion.div>
           );

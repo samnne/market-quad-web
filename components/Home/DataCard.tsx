@@ -31,7 +31,7 @@ const DataCard = ({ dataList, href }: DataCardProps) => {
       );
     }
   }, []);
-  console.log(dataList);
+  
   return (
     <motion.div
       ref={scope}
@@ -78,8 +78,8 @@ const DataCard = ({ dataList, href }: DataCardProps) => {
             ) : (
               ""
             )}{" "}
-            <div className="p-2 w-full bg-white rounded-2xl h-fit flex flex-col font-inter ">
-              <h4 className="w-full h-fit   font-bold   text-black ">
+            <div className="p-2 w-full bg-pill rounded-2xl h-fit flex flex-col font-inter ">
+              <h4 className="w-full h-fit   font-bold   text-black truncate ">
                 {data?.title || data?.listing?.title}
               </h4>
               <span className="text-sm text-gray-400 ">
@@ -94,7 +94,7 @@ const DataCard = ({ dataList, href }: DataCardProps) => {
                 </span>
               </div>
             </div>
-            <div className="text-xs text-gray-400 p-1 border border-black/25 font-light font-inter absolute top-2 right-2 rounded-2xl bg-white ">
+            <div className="text-xs text-gray-400 p-1 border border-black/25 font-light font-inter absolute top-2 right-2 rounded-2xl bg-pill ">
               {data?.condition}
             </div>
           </motion.div>

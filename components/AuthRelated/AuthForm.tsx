@@ -20,7 +20,8 @@ import {
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { setVerifiedUser } from "@/db/user.db";
 import { motion } from "motion/react";
-import { matchUVIC } from "@/app/client-utils/functions";
+import { getUserSupabase, matchUVIC } from "@/app/client-utils/functions";
+import { useRouter } from "next/navigation";
 
 interface LoginUserForm {
   email: string;
@@ -30,14 +31,14 @@ interface LoginUserForm {
 
 const AuthForm = ({ type }: { type: FormType }) => {
   const [inputType, setInputType] = useState<"password" | "text">("password");
-  const [errorMessage, setErrorMessage] = useState({});
+  const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const [counter, setCounter] = useState(0);
-  const { setError, setSuccess } = useMessage();
+  const { setError, setSuccess, setMessage } = useMessage();
   const { user, setUser } = useUser();
 
   const { changeType } = useType();
-  const [focused, setFocused] = useState(0);
+
   const [otp, setOTP] = useState("");
   const [loadingLogin, setLoadingLogin] = useState(false);
   const [loadingSignup, setLoadingSignup] = useState(false);
@@ -48,11 +49,11 @@ const AuthForm = ({ type }: { type: FormType }) => {
     name: "",
   });
   const mountSession = async () => {
-    const { data, error } = await supabase.auth.getUser();
-    if (error) {
+    const { user, error, app_user } = await getUserSupabase();
+    if (!user) {
       return;
     }
-    setUser(data.user);
+    setUser({ ...user, app_user });
     redirect("/home");
   };
   useEffect(() => {
@@ -71,38 +72,49 @@ const AuthForm = ({ type }: { type: FormType }) => {
         return prev - 1;
       });
     }, 1000);
-   
+
     return () => clearInterval(interval);
   }, []);
   // HANDLE LOGIN
-  const handleLogin = async (formData: FormData) => {
+  const handleLogin = async () => {
     setLoadingLogin(true);
     try {
-      const email = formData.get("email");
-      if (!email || !matchUVIC(email as string)) {
-        console.error("UVic Email is required");
+      if (!formData.email || !matchUVIC(formData.email)) {
         setError(true);
-        setLoadingLogin(false);
         return;
       }
-
-      const { data, error } = await supabase.auth.signInWithOtp({
-        email: email as string,
-        options: {
-          shouldCreateUser: false,
-        },
+      const user = await supabase
+        .from("User")
+        .select("*")
+        .eq("email", formData.email);
+   
+      if (user.data && user.data[0]?.isVerified) {
+        const { error } = await supabase.auth.signInWithPassword({
+          email: formData.email,
+          password: formData.password,
+        });
+        if (error) {
+        
+          setError(true);
+          setMessage("Email or Password is incorrect");
+          console.log(error);
+          return;
+        }
+        return router.push("/profile");
+      }
+      const { error } = await supabase.auth.signInWithOtp({
+        email: formData.email,
+        options: { shouldCreateUser: false },
       });
-
       if (error) {
-        console.log("Login error:", error);
+        console.log(error);
         setError(true);
-        setLoadingLogin(false);
+        setMessage("Email or Password is incorrect");
         return;
       }
-
-      changeType("otp");
+      handleLogin();
     } catch (err) {
-      console.error("Unexpected error during login:", err);
+      console.error(err);
       setError(true);
     } finally {
       setLoadingLogin(false);
@@ -175,17 +187,20 @@ const AuthForm = ({ type }: { type: FormType }) => {
     }
   };
 
-  async function handleForgotPassword(){
-    const {data, error} = await supabase.auth.resetPasswordForEmail(formData.email as string, {
-      redirectTo: "http://localhost:3000/update-password"
-    })
-    if (error){
-      setError(true)
-      console.log(error)
-      return 
+  async function handleForgotPassword() {
+    const { data, error } = await supabase.auth.resetPasswordForEmail(
+      formData.email as string,
+      {
+        redirectTo: "http://localhost:3000/update-password",
+      },
+    );
+    if (error) {
+      setError(true);
+      console.log(error);
+      return;
     }
 
-    console.log(data)
+ 
   }
 
   // HANDLES SIGN UP
@@ -363,7 +378,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
             </Link>
           </div>
           <div className="w-full flex flex-col justify-center items-center">
-            <a onClick={()=> handleForgotPassword()}>
+            <a onClick={() => handleForgotPassword()}>
               <span className="text-secondary-dark text-sm border-b border-b-secondary-dark">
                 Forgot Password
               </span>
@@ -392,30 +407,30 @@ const AuthForm = ({ type }: { type: FormType }) => {
                   <InputOTPGroup>
                     <InputOTPSlot
                       index={0}
-                      className="h-10 w-10 text-lg border-primary bg-white data-[active=true]:border-primary data-[active=true]:ring-primary/30"
+                      className="h-10 w-10 text-lg border-primary bg-pill data-[active=true]:border-primary data-[active=true]:ring-primary/30"
                     />
                     <InputOTPSlot
                       index={1}
-                      className="h-10 w-10 text-lg border-primary bg-white data-[active=true]:border-primary data-[active=true]:ring-primary/30"
+                      className="h-10 w-10 text-lg border-primary bg-pill data-[active=true]:border-primary data-[active=true]:ring-primary/30"
                     />
                     <InputOTPSlot
                       index={2}
-                      className="h-10 w-10 text-lg border-primary bg-white data-[active=true]:border-primary data-[active=true]:ring-primary/30"
+                      className="h-10 w-10 text-lg border-primary bg-pill data-[active=true]:border-primary data-[active=true]:ring-primary/30"
                     />
                   </InputOTPGroup>
                   <InputOTPSeparator />
                   <InputOTPGroup>
                     <InputOTPSlot
                       index={3}
-                      className="h-10 w-10 text-lg border-primary bg-white data-[active=true]:border-primary data-[active=true]:ring-primary/30"
+                      className="h-10 w-10 text-lg border-primary bg-pill data-[active=true]:border-primary data-[active=true]:ring-primary/30"
                     />
                     <InputOTPSlot
                       index={4}
-                      className="h-10 w-10 text-lg border-primary bg-white data-[active=true]:border-primary data-[active=true]:ring-primary/30"
+                      className="h-10 w-10 text-lg border-primary bg-pill data-[active=true]:border-primary data-[active=true]:ring-primary/30"
                     />
                     <InputOTPSlot
                       index={5}
-                      className="h-10 w-10 text-lg border-primary bg-white data-[active=true]:border-primary data-[active=true]:ring-primary/30"
+                      className="h-10 w-10 text-lg border-primary bg-pill data-[active=true]:border-primary data-[active=true]:ring-primary/30"
                     />
                   </InputOTPGroup>
                 </InputOTPGroup>
@@ -425,7 +440,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
             <motion.button
               disabled={loadingOtp}
               whileTap={{
-                scale: 0.8
+                scale: 0.8,
               }}
               className="confirm bg-primary py-4 px-2 rounded-4xl text-white w-full self-end font-bold  disabled:opacity-70 disabled:cursor-not-allowed"
             >
@@ -469,16 +484,23 @@ const AuthForm = ({ type }: { type: FormType }) => {
                 setCounter(60);
               }}
             >
-              
               Resend<div>{counter ? ` ${counter}` : ""}</div>
             </button>
           </div>
 
-          <motion.button whileTap={{
-            scale: [0.8,1]
-          } } transition={{
-            type: "spring"
-          }} type="button" onClick={()=>changeType('sign-in')} className="text-sm bg-gray-400/50 mt-4 p-2 text-white  rounded-4xl drop-shadow-lg drop-shadow-black/25 ">Go back to Login</motion.button>
+          <motion.button
+            whileTap={{
+              scale: [0.8, 1],
+            }}
+            transition={{
+              type: "spring",
+            }}
+            type="button"
+            onClick={() => changeType("sign-in")}
+            className="text-sm bg-gray-400/50 mt-4 p-2 text-white  rounded-4xl drop-shadow-lg drop-shadow-black/25 "
+          >
+            Go back to Login
+          </motion.button>
         </form>
       )}
     </>

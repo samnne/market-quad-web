@@ -4,7 +4,7 @@ import { motion, useAnimate } from "motion/react";
 import { CiCircleInfo } from "react-icons/ci";
 import { FaTimes } from "react-icons/fa";
 
-const SuccessMessage = ({setter}: {setter: Function}) => {
+const SuccessMessage = ({setter, msg = "Success"}: {setter: Function, msg: string}) => {
   const [scope, animate] = useAnimate();
   return (
     <motion.div 
@@ -23,7 +23,7 @@ const SuccessMessage = ({setter}: {setter: Function}) => {
       <div className="flex items-center justify-between font-bold w-full p-4 drop-shadow-lg drop-shadow-primary/50 rounded-2xl border-2  gap-5 border-primary bg-white text-primary text-xl">
         <div className="text-3xl flex items-center gap-2 ">
           <CiCircleInfo />
-          <h2 className="text-xl">Success!</h2>
+          <h2 className="text-xl">{msg}</h2>
         </div>
         <button onClick={()=> setter(false)} className="flex justify-center items-center">
             <FaTimes />

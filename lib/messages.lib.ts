@@ -35,7 +35,7 @@ export async function sendMessage(newMessage: NewMessageProps, user: User) {
     return { success: true, message: "Message Sent", new_message: message };
   }
 
-  return { error: "User not authenticated" };
+  return { error: "User not authenticated", new_message: null, };
 }
 
 export async function getMessagesForConvo(cid: string) {

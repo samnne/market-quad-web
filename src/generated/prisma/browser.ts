@@ -23,6 +23,16 @@ export * from './enums';
  */
 export type Listing = Prisma.ListingModel
 /**
+ * Model UserPreferences
+ * 
+ */
+export type UserPreferences = Prisma.UserPreferencesModel
+/**
+ * Model Review
+ * 
+ */
+export type Review = Prisma.ReviewModel
+/**
  * Model User
  * 
  */
@@ -37,3 +47,8 @@ export type Conversation = Prisma.ConversationModel
  * 
  */
 export type Message = Prisma.MessageModel
+/**
+ * Model WaitlistTable
+ * This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+ */
+export type WaitlistTable = Prisma.WaitlistTableModel

@@ -4,7 +4,7 @@ import { getListingByID, updateListing } from "@/db/listings.db";
 import { ErrorMessage } from "@/app/server-utils/utils";
 
 import { deleteImages } from "@/cloudinary/cloudinary";
-import { ListingWithIncludes } from "@/app/types";
+
 
 export async function GET(
   req: NextRequest,
@@ -17,7 +17,7 @@ export async function GET(
         status: 500,
       });
     }
-    let listing: ListingWithIncludes  = await getListingByID(lid);
+    let listing = await getListingByID(lid);
 
     if (!listing) {
       return NextResponse.json(ErrorMessage("Failed to Fetch Listing", 500), {

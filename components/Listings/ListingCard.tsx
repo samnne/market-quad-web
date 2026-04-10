@@ -7,8 +7,18 @@ import { MdOutlineShoppingCart } from "react-icons/md";
 
 const ListingCard = ({ listing }: { listing: Listing }) => {
   const { setSelectedListing } = useListings();
-  function openListingModal(listing: Listing) {
-    setSelectedListing(listing);
+  async function openListingModal(listing: Listing) {
+    try {
+      const response = await fetch(`/api/listings/${listing.lid}`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          setSelectedListing(data.listing);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to fetch listing details:", error);
+    }
   }
 
   return (

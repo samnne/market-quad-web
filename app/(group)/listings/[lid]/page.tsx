@@ -21,7 +21,7 @@ const LID = () => {
   }, [params.lid, fetchByID]);
   return (
     <>
-      <ListingModal listing={selectedListing} />
+      {selectedListing && <ListingModal listing={selectedListing} />}
     </>
   );
 };

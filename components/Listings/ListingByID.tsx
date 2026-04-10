@@ -17,7 +17,7 @@ import Carousel from "../Carousel";
 
 import { createConvo } from "@/lib/conversations.lib";
 import { getUserSupabase } from "@/app/client-utils/functions";
-import { ListingWithIncludes, mapToUserSession } from "@/app/types";
+import { ConvoWithRelations, ListingWithIncludes, mapToUserSession } from "@/app/types";
 
 const getRandomFirstMessage = (): string => {
   const msgs = [
@@ -112,7 +112,7 @@ const ListingModal = ({ listing }: { listing: ListingWithIncludes }) => {
   }
 
   function goToConvos(convo: Conversation) {
-    setSelectedConvo(convo);
+    setSelectedConvo(convo as ConvoWithRelations);
     redirect(`/conversations/${convo.cid}`);
   }
 

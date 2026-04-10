@@ -2,7 +2,7 @@
 import { prisma } from "./db";
 
 export async function setVerifiedUser(uid: string | undefined) {
-    if (!uid) return { success: false}
+    if (!uid) return { user: null, success: false}
   const user = await prisma.user.update({
     data: {
       isVerified: true,

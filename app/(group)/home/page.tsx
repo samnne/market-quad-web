@@ -9,7 +9,8 @@ import SectionHeader from "@/components/Home/SectionHeader";
 import { motion, stagger, useAnimate } from "motion/react";
 import { redirect } from "next/navigation";
 
-import { useEffect, useState } from "react";
+import { SubmitEvent, useEffect, useState } from "react";
+import { ConvoWithRelations, ListingWithRelations } from "@/app/types";
 
 const MarketQuadHome = () => {
   const router = useRouter();
@@ -19,6 +20,18 @@ const MarketQuadHome = () => {
   const [loading, setLoading] = useState(false);
   const [scope, animate] = useAnimate();
   const [searchQuery, setSearchQuery] = useState("");
+  useEffect(() => {
+    if (!scope.current) return;
+    try {
+      animate(
+        "section",
+        { y: [50, 0], opacity: [0, 1] },
+        { type: "keyframes", duration: 0.4, delay: stagger(0.2) },
+      );
+    } catch (err) {
+      console.error("Animation error:", err);
+    }
+  }, [animate, scope]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -39,24 +52,20 @@ const MarketQuadHome = () => {
     };
 
     loadData();
-
-    if (!scope.current) return;
-    try {
-      animate(
-        "section",
-        { y: [50, 0], opacity: [0, 1] },
-        { type: "keyframes", duration: 0.4, delay: stagger(0.2) },
-      );
-    } catch (err) {
-      console.error("Animation error:", err);
-    }
-  }, []);
+  }, [
+    setError,
+    setLoading,
+    listings.length,
+    convos?.length,
+    setConvos,
+    setListings,
+  ]);
   const handleSearchByCat = (cat: string) => {
     router.push(`/listings?cat=${cat}`);
   };
-  const handleSearchListings = async (e: SubmitEvent) => {
-    e.stopPropagation()
-    e.preventDefault()
+  const handleSearchListings = async (e: SubmitEvent<HTMLFormElement>) => {
+    e.stopPropagation();
+    e.preventDefault();
     try {
       if (!searchQuery.trim()) {
         setError(true);
@@ -64,7 +73,6 @@ const MarketQuadHome = () => {
       }
 
       router.push(`/listings?search=${encodeURIComponent(searchQuery)}`);
-     
     } catch (err) {
       console.error("Error handling search:", err);
       setError(true);
@@ -101,12 +109,15 @@ const MarketQuadHome = () => {
           <input
             type="text"
             value={searchQuery}
-            onChange={(e)=> setSearchQuery(e.target.value)}
+            onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search textbooks, gear, notes…"
             className="text-sm text-secondary p-1 outline-0"
           />
         </form>
-        <form onSubmit={(e)=>handleSearchListings(e)} className="ml-auto w-8 h-8 rounded-[9px] bg-primary flex items-center justify-center shrink-0">
+        <form
+          onSubmit={(e) => handleSearchListings(e)}
+          className="ml-auto w-8 h-8 rounded-[9px] bg-primary flex items-center justify-center shrink-0"
+        >
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
             <path
               d="M2 4h10M4 7h6M6 10h2"
@@ -153,7 +164,7 @@ const MarketQuadHome = () => {
             ))}
           </div>
         ) : (
-          <DataCard dataList={listings} href="listings" />
+          <DataCard dataList={listings as ListingWithRelations[]} href="listings" />
         )}
       </section>
 
@@ -170,7 +181,7 @@ const MarketQuadHome = () => {
             ))}
           </div>
         ) : (
-          <DataCard dataList={convos} href="conversations" />
+          <DataCard dataList={convos as ConvoWithRelations[]} href="conversations" />
         )}
       </section>
 
@@ -182,7 +193,7 @@ const MarketQuadHome = () => {
         className="bg-text rounded-[18px] p-5 flex items-center justify-between overflow-hidden relative"
       >
         <div className="absolute -top-5 -right-5 w-24 h-24 rounded-full bg-primary opacity-10" />
-        <div className="absolute bottom-[-30px] right-8 w-20 h-20 rounded-full bg-secondary opacity-15" />
+        <div className="absolute -bottom-7.5 right-8 w-20 h-20 rounded-full bg-secondary opacity-15" />
         <div className="relative z-10">
           <p className="text-[11px] text-primary font-medium uppercase tracking-widest mb-1">
             Got stuff to offload?

@@ -21,7 +21,7 @@ export const useType = create<Store>((set) => {
 export type ListingStore = {
   listings: Listing[];
   setListings: (listings: Listing[]) => void;
-  selectedListing?: Listing | null;
+  selectedListing?: ListingWithRelations | null;
   setSelectedListing: (listing:ListingWithRelations | null) => void;
   reset: () => void;
 };

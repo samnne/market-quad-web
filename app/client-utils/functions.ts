@@ -11,7 +11,8 @@ import { supabase } from "@/supabase/authHelper";
 import pLimit from "p-limit";
 
 import { ImageLoaderProps } from "next/image";
-import { Listing } from "@/src/generated/prisma/client";
+import {  Listing } from "@/src/generated/prisma/client";
+import { ConvoWithRelations } from "../types";
 
 export const cloudinaryLoader = ({ src, width, quality }: ImageLoaderProps) => {
   const transforms = `c_fill,w_${width},q_${quality ?? 75},f_auto`;
@@ -39,7 +40,7 @@ export function matchUVIC(email: string) {
 export async function fetchConvos({
   setter,
 }: {
-  setter: (data: object[]) => void;
+  setter: (convos: ConvoWithRelations[]) => void;
 }) {
   const user = await getUserSupabase();
   if (!user.user) {

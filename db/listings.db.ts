@@ -42,10 +42,11 @@ export async function createNewListing(listingData: ListingCreateInput) {
   return prisma.listing.create({ data: { ...listingData } });
 }
 
-export async function updateListing(lid: string, listingData: ListingUpdateInput) {
+export async function updateListing(lid: string, listingData: ListingUpdateInput): Promise<ListingWithIncludes> {
   return prisma.listing.update({
     data: { ...listingData },
     where: { lid },
+    include: { seller: true, conversations: true },
   });
 }
 

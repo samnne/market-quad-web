@@ -324,7 +324,7 @@ const ListingPage = () => {
         )}
       </div>
 
-      <ListingModal listing={selectedListing} />
+      {selectedListing && <ListingModal listing={selectedListing} />}
     </div>
   );
 };

@@ -18,16 +18,22 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "res.cloudinary.com",
-        pathname: "/**"
+        pathname: "/**",
       },
     ],
   },
   experimental: {
     serverActions: {
-      allowedOrigins: [ "localhost:3000"],
+      allowedOrigins: [
+        "localhost:3000",
+        "app.market-quad.com",
+        "market-quad.com",
+      ],
     },
+ 
+ 
   },
-  reactStrictMode: false
+  reactStrictMode: false,
 };
 
 export default nextConfig;

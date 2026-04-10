@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
     });
   }
   try {
-    const listings = await getUserListings(lid);
+    const listings = await getUserListings(lid?.uid ?? uid);
 
     return NextResponse.json({
       listings,

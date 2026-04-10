@@ -1,0 +1,114 @@
+generator client {
+  provider   = "prisma-client-js" // Change this to the standard provider
+  output     = "../src/generated/prisma"
+  engineType = "library"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Listing {
+  lid           String         @id @default(uuid()) @db.Uuid
+  title         String
+  description   String
+  price         Int
+  imageUrls     String[]
+  sellerId      String         @db.Uuid
+  createdAt     DateTime       @default(now())
+  archived      Boolean        @default(false)
+  sold          Boolean        @default(false)
+  latitude      Float?
+  longitude     Float?
+  views         Int            @default(0)
+  condition     String?
+  category      String?
+  conversations Conversation[]
+  seller        User           @relation(fields: [sellerId], references: [uid], onDelete: Cascade)
+}
+
+model UserPreferences {
+  id               String   @id @default(uuid()) @db.Uuid
+  userId           String   @unique @db.Uuid
+  defaultCategory  String?
+  defaultCondition String?
+  defaultLocation  String?
+  defaultLat       Float?
+  defaultLng       Float?
+  updatedAt        DateTime @updatedAt
+  createdAt        DateTime @default(now())
+  user             User     @relation(fields: [userId], references: [uid], onDelete: Cascade)
+}
+
+model Review {
+  rid        String     @id @default(uuid()) @db.Uuid
+  rating     Int
+  comment    String?
+  role       ReviewRole
+  reviewerId String     @db.Uuid
+  revieweeId String     @db.Uuid
+  createdAt  DateTime   @default(now())
+  reviewee   User       @relation("ReviewsReceived", fields: [revieweeId], references: [uid], onDelete: Cascade)
+  reviewer   User       @relation("ReviewsGiven", fields: [reviewerId], references: [uid], onDelete: Cascade)
+
+  @@unique([reviewerId, revieweeId, role])
+}
+
+model User {
+  uid                 String           @id @db.Uuid
+  email               String           @unique
+  name                String
+  profileURL          String
+  isVerified          Boolean          @default(false)
+  createdAt           DateTime         @default(now())
+  rating              Float            @default(0)
+  buyerConversations  Conversation[]   @relation("ConversationBuyer")
+  sellerConversations Conversation[]   @relation("ConversationSeller")
+  listings            Listing[]
+  messages            Message[]
+  reviewsReceived     Review[]         @relation("ReviewsReceived")
+  reviewsGiven        Review[]         @relation("ReviewsGiven")
+  preferences         UserPreferences?
+}
+
+model Conversation {
+  cid       String    @id @default(uuid()) @db.Uuid
+  listingId String    @db.Uuid
+  buyerId   String?   @db.Uuid // ← nullable
+  createdAt DateTime  @default(now())
+  sellerId  String?   @db.Uuid // ← nullable
+  updatedAt DateTime  @updatedAt
+  buyer     User?     @relation("ConversationBuyer", fields: [buyerId], references: [uid])
+  listing   Listing   @relation(fields: [listingId], references: [lid], onDelete: Cascade)
+  seller    User?     @relation("ConversationSeller", fields: [sellerId], references: [uid])
+  messages  Message[]
+
+  @@unique([listingId, buyerId])
+}
+
+model Message {
+  mid            String       @id @default(uuid()) @db.Uuid
+  text           String
+  edited         Boolean      @default(false)
+  conversationId String       @db.Uuid
+  createdAt      DateTime     @default(now())
+  readAt         DateTime?
+  senderId       String       @db.Uuid
+  updatedAt      DateTime     @updatedAt
+  conversation   Conversation @relation(fields: [conversationId], references: [cid], onDelete: Cascade)
+  sender         User         @relation(fields: [senderId], references: [uid])
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model WaitlistTable {
+  id         BigInt   @id @default(autoincrement())
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  full_name  String
+  uvic_email String
+  intent     String
+}
+
+enum ReviewRole {
+  BUYER
+  SELLER
+}

@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getListingByID, updateListing } from "@/db/listings.db";
+import { deleteListing, getListingByID, updateListing } from "@/db/listings.db";
 
 import { ErrorMessage } from "@/app/server-utils/utils";
 
 import { deleteImages } from "@/cloudinary/cloudinary";
-
 
 export async function GET(
   req: NextRequest,
@@ -25,7 +24,6 @@ export async function GET(
       });
     } else {
       listing = await updateListing(lid, {
-        
         views: listing.views + 1,
       });
     }
@@ -115,7 +113,7 @@ export async function DELETE(
     }
 
     // Actually delete the listing from DB
-    // await deleteListing(lid);
+    await deleteListing(lid);
 
     return NextResponse.json(
       { message: "Successfully deleted Listing", success: true },

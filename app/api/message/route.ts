@@ -1,5 +1,5 @@
 import { prisma } from "@/db/db";
-import { getConvos } from "@/lib/conversations.lib";
+
 import { getMessagesForConvo } from "@/lib/messages.lib";
 import { NextRequest, NextResponse } from "next/server";
 import { requireAuth } from "@/lib/auth";

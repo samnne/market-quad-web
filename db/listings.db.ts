@@ -1,10 +1,7 @@
 "use server";
 import { prisma } from "./db";
 
-import {
-  ListingCreateInput,
-  ListingUpdateInput,
-} from "../src/generated/prisma/models";
+
 import { ListingWithIncludes } from "@/app/types";
 
 export async function getListings(): Promise<ListingWithIncludes[]> {
@@ -47,13 +44,13 @@ export async function getListingByID(
   });
 }
 
-export async function createNewListing(listingData: ListingCreateInput) {
+export async function createNewListing(listingData: ListingWithIncludes) {
   return prisma.listing.create({ data: { ...listingData } });
 }
 
 export async function updateListing(
   lid: string,
-  listingData: ListingUpdateInput,
+  listingData: ListingWithIncludes,
 ): Promise<ListingWithIncludes> {
   return prisma.listing.update({
     data: { ...listingData },

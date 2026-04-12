@@ -1,8 +1,8 @@
 "use server";
 
 import { BASEURL } from "@/app/client-utils/constants";
-import { listingFormData } from "@/app/types";
-import { ListingUpdateInput } from "@/src/generated/prisma/models";
+import { listingFormData, ListingWithIncludes } from "@/app/types";
+
 export const safeJson = async (response: Response) => {
   if (!response.ok) {
     throw new Error(`HTTP error: ${response.status} ${response.statusText}`);
@@ -58,7 +58,7 @@ export const newListingAction = async (
   return safeJson(response);
 };
 export const editListingAction = async (
-  listingToEdit: ListingUpdateInput,
+  listingToEdit: ListingWithIncludes,
   sellerId: string,
 ) => {
   const response = await fetch(`${BASEURL}/api/listings/${listingToEdit.lid}`, {

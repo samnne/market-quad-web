@@ -60,7 +60,7 @@ app.prepare().then(() => {
   io.on("connection", (socket) => {
     console.log("Connected", socket.id);
 
-    socket.on("open-convo", ({ cid, uid }) => {
+    socket.on("open-convo", ({ cid }) => {
       socket.join(cid);
 
       socket.to(cid).emit("user_connected");

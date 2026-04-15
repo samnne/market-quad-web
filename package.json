@@ -4,9 +4,9 @@
   "private": true,
  
   "scripts": {
-    "dev": "bun server.ts",
+    "dev": "bunx tsx server.ts",
     "build": "next build",
-    "start": "NODE_ENV=production bun server.ts",
+    "start": "NODE_ENV=production bunx tsx server.ts",
     "lint": "eslint"
   },
   "dependencies": {

@@ -9,8 +9,6 @@ export async function GET(req: NextRequest) {
     return auth.response;
   }
 
-
-
   const convos = await getConvos(auth.user.uid);
   if (!convos) {
     return NextResponse.json(
@@ -31,9 +29,7 @@ export async function POST(req: NextRequest) {
     return auth.response;
   }
 
-
   const body = await req.json();
-
 
   if (
     !body.sellerId ||
@@ -53,10 +49,9 @@ export async function POST(req: NextRequest) {
         sellerId: body.sellerId,
       },
       include: { messages: true },
-    }); 
+    });
 
     if (existing) {
-    
       if (!existing.buyerId || !existing.sellerId) {
         const updated = await prisma.conversation.update({
           where: { cid: existing.cid },
@@ -69,14 +64,12 @@ export async function POST(req: NextRequest) {
         );
       }
 
-     
       return NextResponse.json(
         { success: true, convo: existing },
         { status: 200 },
       );
     }
 
- 
     const convo = await prisma.conversation.create({
       data: {
         listingId: body.listingId,

@@ -74,11 +74,12 @@ const CID = () => {
   const { user, setUser } = useUser();
 
   async function getConvo(cid: string) {
-    const response = await fetch(`${BASEURL}/api/conversations/`, {
-      method: "post",
-      headers: { Authorization: cid || "" },
+    const response = await fetch(`${BASEURL}/api/conversations/${cid}`, {
+      method: "get",
+      headers: { Authorization: user?.id || "" },
     });
     const { convo } = await response.json();
+   
     return convo;
   }
 

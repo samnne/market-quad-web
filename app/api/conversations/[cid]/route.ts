@@ -10,16 +10,7 @@ export async function GET(
   if (!auth.ok) {
     return auth.response;
   }
-  const session = req.headers.get("authorization");
 
-  if (!session) {
-    return NextResponse.json({
-      message: "Not Authorized",
-      status: 500,
-      success: false,
-      convo: null,
-    });
-  }
   const { cid } = await params;
   try {
     const convo = await prisma.conversation.findFirst({
@@ -50,56 +41,10 @@ export async function GET(
     });
   }
 }
-export async function POST(req: NextRequest) {
-  const auth = await requireAuth(req);
-  if (!auth.ok) {
-    return auth.response;
-  }
-  const session = req.headers.get("authorization");
-
-  if (!session) {
-    return NextResponse.json({
-      message: "Not Authorized",
-      status: 500,
-      success: false,
-      convo: null,
-    });
-  }
-
-  try {
-    const convo = await prisma.conversation.findFirst({
-      where: {
-        cid: session,
-      },
-      include: {
-        listing: true,
-        messages: true,
-        seller: true,
-        buyer: true,
-      },
-    });
-
-    return NextResponse.json({
-      message: "Success getting Convo",
-      success: true,
-      convo,
-      status: 200,
-    });
-  } catch (error) {
-    console.log(error);
-    return NextResponse.json({
-      message: "Failed to Get Convo",
-      status: 500,
-      convo: null,
-      success: false,
-    });
-  }
-}
-
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: Promise<{ cid: string }> }
+  { params }: { params: Promise<{ cid: string }> },
 ) {
   const auth = await requireAuth(req);
   if (!auth.ok) {
@@ -109,7 +54,10 @@ export async function DELETE(
 
   const { cid } = await params;
   if (!userId || !cid) {
-    return NextResponse.json({ success: false, message: "Missing params" }, { status: 400 });
+    return NextResponse.json(
+      { success: false, message: "Missing params" },
+      { status: 400 },
+    );
   }
 
   try {
@@ -118,22 +66,28 @@ export async function DELETE(
     });
 
     if (!convo) {
-      return NextResponse.json({ success: false, message: "Convo not found" }, { status: 404 });
+      return NextResponse.json(
+        { success: false, message: "Convo not found" },
+        { status: 404 },
+      );
     }
 
     // Determine which side the user is
-    const isBuyer  = convo.buyerId  === userId;
+    const isBuyer = convo.buyerId === userId;
     const isSeller = convo.sellerId === userId;
-    
+
     if (!isBuyer && !isSeller) {
-      return NextResponse.json({ success: false, message: "Unauthorized" }, { status: 403 });
+      return NextResponse.json(
+        { success: false, message: "Unauthorized" },
+        { status: 403 },
+      );
     }
 
     // Null out the user's reference
     const updated = await prisma.conversation.update({
       where: { cid },
       data: {
-        buyerId:  isBuyer  ? null : convo.buyerId,
+        buyerId: isBuyer ? null : convo.buyerId,
         sellerId: isSeller ? null : convo.sellerId,
       },
     });
@@ -153,9 +107,11 @@ export async function DELETE(
       deleted: false,
       message: "Your reference removed",
     });
-
   } catch (err) {
     console.error("DELETE /api/convos/[cid]:", err);
-    return NextResponse.json({ success: false, message: "Server error" }, { status: 500 });
+    return NextResponse.json(
+      { success: false, message: "Server error" },
+      { status: 500 },
+    );
   }
 }

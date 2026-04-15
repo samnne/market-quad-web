@@ -37,6 +37,14 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+
+  --color-text: #1a2e28;
+  --color-background: #f2f8f6;
+  --color-primary: #3db88a;
+  --color-secondary: #a97bc7;
+  --color-accent: #c9527a;
+  --color-pill: #ffffff;
 }
 
 @theme inline {
@@ -78,12 +86,12 @@
   --color-secondary: #d282f9;
   --color-accent: #f544bd; */
 
-  --color-text: #2D3A30;
-  --color-background: #F5F4F0;
-  --color-primary: #4A7C6A;
-  --color-secondary: #8DB8A8;
-  --color-accent: #3D5478;
-  --color-pill: #FFFFFF;
+  --color-text: var(--color-text);
+  --color-background: var(--color-background);
+  --color-primary: var(--color-primary);
+  --color-secondary: var(--color-secondary);
+  --color-accent: var(--color-accent);
+  --color-pill: var(--color-pill);
 
   --color-text-dark: #e1fef7;
   --color-background-dark: #01130d;
@@ -173,7 +181,7 @@ body {
   }
 
   body {
-    @apply  max-h-screen flex flex-col justify-between overflow-auto;
+    @apply max-h-screen flex flex-col justify-between overflow-auto;
   }
   main {
     @apply grow;

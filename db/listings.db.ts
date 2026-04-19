@@ -1,7 +1,6 @@
 "use server";
 import { prisma } from "./db";
 
-
 import { ListingWithIncludes } from "@/app/types";
 
 export async function getListings(): Promise<ListingWithIncludes[]> {
@@ -9,7 +8,7 @@ export async function getListings(): Promise<ListingWithIncludes[]> {
     orderBy: { createdAt: "asc" },
     take: 10,
     where: { archived: false },
-    include: { seller: true, conversations: true },
+    include: { seller: true, conversations: true, _count: true, likes: true },
   });
 }
 
@@ -20,7 +19,7 @@ export async function getOthersListings(
     orderBy: { createdAt: "asc" },
     take: 10,
     where: { sellerId: { not: uid }, archived: false },
-    include: { seller: true, conversations: true },
+    include: { seller: true, conversations: true, _count: true, likes: true },
   });
 }
 
@@ -31,7 +30,7 @@ export async function getUserListings(
     orderBy: { createdAt: "asc" },
     take: 10,
     where: { sellerId: uid },
-    include: { seller: true, conversations: true },
+    include: { seller: true, conversations: true, _count: true, likes: true },
   });
 }
 
@@ -40,7 +39,7 @@ export async function getListingByID(
 ): Promise<ListingWithIncludes | null> {
   return prisma.listing.findUnique({
     where: { lid },
-    include: { seller: true, conversations: true },
+    include: { seller: true, conversations: true, _count: true, likes: true },
   });
 }
 
@@ -55,7 +54,7 @@ export async function updateListing(
   return prisma.listing.update({
     data: { ...listingData },
     where: { lid },
-    include: { seller: true, conversations: true },
+    include: { seller: true, conversations: true, _count: true, likes: true },
   });
 }
 

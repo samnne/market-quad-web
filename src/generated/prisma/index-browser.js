@@ -137,6 +137,13 @@ exports.Prisma.ListingScalarFieldEnum = {
   category: 'category'
 };
 
+exports.Prisma.LikeScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  listingId: 'listingId',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.UserPreferencesScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -260,6 +267,7 @@ exports.ReportStatus = exports.$Enums.ReportStatus = {
 
 exports.Prisma.ModelName = {
   Listing: 'Listing',
+  Like: 'Like',
   UserPreferences: 'UserPreferences',
   Review: 'Review',
   User: 'User',

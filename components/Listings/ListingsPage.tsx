@@ -8,17 +8,9 @@ import { useSearchParams, useRouter } from "next/navigation";
 import ListingCard from "@/components/Listings/ListingCard";
 import { motion } from "motion/react";
 import ListingModal from "@/components/Listings/ListingByID";
+import { categories } from "@/app/client-utils/constants";
 
-const CATEGORIES = [
-  "All",
-  "Textbooks",
-  "Electronics",
-  "Clothes",
-  "Housing",
-  "Notes",
-  "Sports",
-  "Other",
-];
+
 
 const SkeletonCard = () => (
   <div className="bg-pill rounded-2xl border border-[#e0faf2] overflow-hidden animate-pulse">
@@ -38,7 +30,7 @@ const ListingPage = () => {
   const [searchResults, setSearchResults] = useState<Listing[] | null>(null);
   const [activeCategory, setActiveCategory] = useState("All");
   const [view, setView] = useState<"grid" | "list">("grid");
-  const { setError } = useMessage();
+  const { setError, setMessage } = useMessage();
   const router = useRouter();
 
   const searchParams = useSearchParams();
@@ -74,6 +66,7 @@ const ListingPage = () => {
             setSearchResults(data.listings);
           } else {
             setError(true);
+            setMessage("Failed to Search")
           }
         } else {
           setSearchResults(null);
@@ -83,6 +76,7 @@ const ListingPage = () => {
         }
       } catch (err) {
         console.error("Error fetching listings:", err);
+        setMessage("Error fetching listings")
         setError(true);
       } finally {
         setLoading(false);
@@ -137,7 +131,7 @@ const ListingPage = () => {
 
       {/* Category chips */}
       <div className="flex gap-2 px-4 pb-3 overflow-x-auto no-scrollbar">
-        {CATEGORIES.map((cat) => (
+        {categories.map((cat) => (
           <button
             key={cat}
             onClick={() => setActiveCategory(cat)}

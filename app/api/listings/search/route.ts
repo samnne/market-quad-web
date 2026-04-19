@@ -18,14 +18,14 @@ export async function GET(req: NextRequest) {
         { status: 400 },
       );
     }
-    
+
     if (!query || query.trim().length === 0) {
       return NextResponse.json(
         { message: "Search query is required", listings: [], success: false },
         { status: 400 },
       );
     }
-   
+
     const listings = await prisma.listing.findMany({
       where: {
         archived: false,
@@ -43,17 +43,16 @@ export async function GET(req: NextRequest) {
               mode: "insensitive",
             },
           },
-          {
-            category: {
-              contains: category ? category : "",
-              mode: "insensitive",
-            },
-          },
         ],
+        ...(category
+          ? { category: { equals: category, mode: "insensitive" } }
+          : {}),
       },
       include: {
         seller: true,
         conversations: true,
+        likes: true,
+        _count: true,
       },
       orderBy: {
         createdAt: "desc",

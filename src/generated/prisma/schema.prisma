@@ -23,8 +23,21 @@ model Listing {
   views         Int            @default(0)
   condition     String?
   category      String?
+  likes         Like[]
   conversations Conversation[]
   seller        User           @relation(fields: [sellerId], references: [uid], onDelete: Cascade)
+}
+
+model Like {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  listingId String   @db.Uuid
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [uid], onDelete: Cascade)
+  listing Listing @relation(fields: [listingId], references: [lid], onDelete: Cascade)
+
+  @@unique([userId, listingId])
 }
 
 model UserPreferences {
@@ -67,6 +80,7 @@ model User {
   sellerConversations Conversation[]   @relation("ConversationSeller")
   listings            Listing[]
   messages            Message[]
+  likes               Like[]
   reportsFiled        Report[]         @relation("ReportsFiled")
   reportsReceived     Report[]         @relation("ReportsReceived")
   reviewsReceived     Review[]         @relation("ReviewsReceived")

@@ -56,7 +56,7 @@ export function cleanUP(
 
 export function matchUVIC(email: string) {
   const testerEmail = process.env.NEXT_PUBLIC_EMAIL_TESTER;
-  if (email === testerEmail) {
+  if (email === testerEmail || process.env.NEXT_PUBLIC_EMAIL_TESTER_2) {
     return true;
   }
   return email.includes("@uvic");

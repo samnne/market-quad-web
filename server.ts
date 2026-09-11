@@ -6,7 +6,7 @@ import { prisma } from "./db/db";
 
 const dev = process.env.NODE_ENV !== "production";
 const hostname = dev ? "localhost" : "0.0.0.0";
-const port = parseInt(process.env.PORT || "3000");
+const port = parseInt(process.env.PORT || "3001");
 
 const app = next({ dev, hostname, port });
 const handler = app.getRequestHandler();
@@ -25,8 +25,8 @@ async function sendPushNotification(
       listing: {
         select: {
           title: true,
-          price: true
-        }
+          price: true,
+        },
       },
       buyer: {
         select: { name: true, pushToken: { select: { token: true } } },
@@ -61,8 +61,35 @@ async function sendPushNotification(
 }
 
 app.prepare().then(() => {
-  const httpServer = createServer(handler);
-  const io = new Server(httpServer);
+  const httpServer = createServer((req, res) => {
+    res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+    res.setHeader(
+      "Access-Control-Allow-Methods",
+      "GET, POST, PUT, DELETE, OPTIONS",
+    );
+    res.setHeader(
+      "Access-Control-Allow-Headers",
+      "Content-Type, Authorization",
+    );
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+
+    if (req.method === "OPTIONS") {
+      res.writeHead(200);
+      res.end();
+      return;
+    }
+
+    // 👉 continue to Next.js
+    handler(req, res);
+  });
+  const io = new Server(httpServer, {
+    cors: {
+      origin: dev
+        ? ["http://localhost:3000"]
+        : ["https://app.market-quad.com", "https://market-quad.com"],
+      credentials: true,
+    },
+  });
 
   io.on("connection", (socket) => {
     console.log("Connected", socket.id);
@@ -78,7 +105,7 @@ app.prepare().then(() => {
 
     socket.on("typing", ({ cid, typing }) => {
       if (socket.data.activeCid !== cid) return;
-      socket.to(cid).emit("typing", {cid, typing});
+      socket.to(cid).emit("typing", { cid, typing });
     });
 
     socket.on("message", async ({ cid, message }) => {

@@ -6,7 +6,7 @@ import { prisma } from "./db/db";
 
 const dev = process.env.NODE_ENV !== "production";
 const hostname = dev ? "localhost" : "0.0.0.0";
-const port = parseInt(process.env.PORT || "3001");
+const port = parseInt(process.env.PORT || "3000");
 
 const app = next({ dev, hostname, port });
 const handler = app.getRequestHandler();
@@ -82,6 +82,7 @@ app.prepare().then(() => {
     // 👉 continue to Next.js
     handler(req, res);
   });
+  
   const io = new Server(httpServer, {
     cors: {
       origin: dev

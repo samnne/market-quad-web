@@ -150,7 +150,7 @@ const Profile = () => {
               { num: userListings?.length ?? 0, label: "Listings" },
               { num: soldCount, label: "Sold" },
               {
-                num: (rating as number) ? rating?.toFixed(1) : rating,
+                num: (Number.isNaN(rating)) ? "N/A" : rating?.toFixed(1),
                 label: "Rating",
               },
             ].map(({ num, label }, i) => (

@@ -51,7 +51,8 @@ export async function POST(req: NextRequest) {
     const existing = await prisma.conversation.findFirst({
       where: {
         listingId: body.data.listingId,
-        sellerId: body.data.sellerId,
+        
+        buyerId: body.data.buyerId
       },
       include: { messages: true },
     });

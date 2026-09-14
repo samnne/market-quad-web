@@ -8,16 +8,20 @@ export async function GET(req: NextRequest) {
   if (!auth.ok) {
     return auth.response;
   }
+  
   const userID = auth.user.uid;
 
+  const params = req.nextUrl.searchParams.get("uid");
+ 
   if (!userID) {
     return NextResponse.json({
       message: "Must be Authorized",
       success: false,
+
     });
   }
 
-  const { user, rating, count } = await updateReviewCount(userID);
+  const { user, rating, count } = await updateReviewCount(params ? params : "");
 
   return NextResponse.json({
     message: "Successfully calculated rating",

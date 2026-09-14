@@ -61,7 +61,33 @@ export async function getListings({
           Blocked: true,
         },
       },
-      conversations: true,
+      conversations: userId
+        ? {
+            where: {
+              AND: [
+                {
+                  seller: {
+                    Blocked: { none: { blockerId: userId } },
+                  },
+                },
+                {
+                  buyer: {
+                    Blocked: { none: { blockerId: userId } },
+                  },
+                },
+              ],
+            },
+            include: {
+              buyer: true,
+              seller: true,
+            },
+          }
+        : {
+            include: {
+              buyer: true,
+              seller: true,
+            },
+          },
       _count: true,
       likes: true,
     },
@@ -112,10 +138,42 @@ export async function getUserListings(
 
 export async function getListingByID(
   lid: string,
+  uid: string,
 ): Promise<ListingWithIncludes | null> {
   return prisma.listing.findUnique({
     where: { lid },
-    include: { seller: true, conversations: true, _count: true, likes: true },
+    include: {
+      seller: true,
+      conversations: uid
+        ? {
+            where: {
+              AND: [
+                {
+                  seller: {
+                    Blocked: { none: { blockerId: uid } },
+                  },
+                },
+                {
+                  buyer: {
+                    Blocked: { none: { blockerId: uid } },
+                  },
+                },
+              ],
+            },
+            include: {
+              buyer: true,
+              seller: true,
+            },
+          }
+        : {
+            include: {
+              buyer: true,
+              seller: true,
+            },
+          },
+      _count: true,
+      likes: true,
+    },
   });
 }
 
@@ -126,11 +184,43 @@ export async function createNewListing(listingData: ListingWithIncludes) {
 export async function updateListing(
   lid: string,
   listingData: ListingWithIncludes,
+  uid: string,
 ): Promise<ListingWithIncludes> {
   return prisma.listing.update({
     data: { ...listingData },
     where: { lid },
-    include: { seller: true, conversations: true, _count: true, likes: true },
+    include: {
+      seller: true,
+      conversations: uid
+        ? {
+            where: {
+              AND: [
+                {
+                  seller: {
+                    Blocked: { none: { blockerId: uid } },
+                  },
+                },
+                {
+                  buyer: {
+                    Blocked: { none: { blockerId: uid } },
+                  },
+                },
+              ],
+            },
+            include: {
+              buyer: true,
+              seller: true,
+            },
+          }
+        : {
+            include: {
+              buyer: true,
+              seller: true,
+            },
+          },
+      _count: true,
+      likes: true,
+    },
   });
 }
 

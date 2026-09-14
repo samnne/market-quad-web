@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireAuth } from "@/lib/auth";
+import { getUserId, requireAuth } from "@/lib/auth";
 import { deleteListing, getListingByID, updateListing } from "@/db/listings.db";
 
 import { deleteImages } from "@/cloudinary/cloudinary";
@@ -14,14 +14,16 @@ export async function GET(
   { params }: { params: Promise<{ lid: string }> },
 ) {
   const { lid } = await params;
+  const uid = await getUserId(_req);
+ 
   try {
-    if (!lid) {
+    if (!lid || !uid) {
       return NextResponse.json(ErrorMessage("ID not provided error", 500), {
         status: 500,
       });
     }
-    let listing = await getListingByID(lid);
-
+    let listing = await getListingByID(lid, uid);
+  
     if (!listing) {
     
       return NextResponse.json(ErrorMessage("Failed to Fetch Listing", 500), {
@@ -30,7 +32,7 @@ export async function GET(
     } else {
       listing = await updateListing(lid, {
         views: listing.views + 1,
-      });
+      }, uid);
     }
     return NextResponse.json({
       message: "Successfully found Listing",

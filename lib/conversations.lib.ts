@@ -46,6 +46,7 @@ export async function getConvos(uid: string) {
                 reporterId: uid,
               },
             },
+            
           },
         },
         {
@@ -56,14 +57,43 @@ export async function getConvos(uid: string) {
                 reporterId: uid,
               },
             },
+           
+          },
+        },
+      ],
+      AND: [
+        {
+          seller: {
+            Blocked: {
+              none: {
+                blockerId: uid,
+              },
+            },
+          },
+        },
+        {
+          buyer: {
+            Blocked: {
+              none: {
+                blockerId: uid,
+              },
+            },
           },
         },
       ],
     },
     include: {
       listing: true,
-      buyer: true,
-      seller: true,
+      buyer: {
+        include: {
+          Blocked: true,
+        },
+      },
+      seller: {
+        include: {
+          Blocked: true,
+        },
+      },
       messages: true,
     },
   });

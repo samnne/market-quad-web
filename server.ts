@@ -62,26 +62,31 @@ async function sendPushNotification(
 
 app.prepare().then(() => {
   const httpServer = createServer((req, res) => {
-    res.setHeader("Access-Control-Allow-Origin", "http://localhost:3001");
-    res.setHeader(
-      "Access-Control-Allow-Methods",
-      "GET, POST, PUT, DELETE, OPTIONS",
-    );
-    res.setHeader(
-      "Access-Control-Allow-Headers",
-      "Content-Type, Authorization, x-cloud-folder",
-    );
-    res.setHeader("Access-Control-Allow-Credentials", "true");
+  const allowedOrigins = dev
+    ? ["http://localhost:3001"]
+    : [
+        "https://app.market-quad.com",
+        "https://market-quad.com",
+        "https://web.market-quad.com",
+      ];
 
-    if (req.method === "OPTIONS") {
-      res.writeHead(200);
-      res.end();
-      return;
-    }
+  const requestOrigin = req.headers.origin;
 
-    // 👉 continue to Next.js
-    handler(req, res);
-  });
+  if (requestOrigin && allowedOrigins.includes(requestOrigin)) {
+    res.setHeader("Access-Control-Allow-Origin", requestOrigin);
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, x-client-id");
+  }
+
+  // Handle preflight
+  if (req.method === "OPTIONS") {
+    res.writeHead(204);
+    res.end();
+    return;
+  }
+
+  handler(req, res);
+});
   
   const io = new Server(httpServer, {
     cors: {

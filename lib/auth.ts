@@ -1,12 +1,12 @@
 'use server';
 import { prisma } from "@/db/db";
-import { Prisma, User } from "@/src/generated/prisma";
+import { User } from "@/src/generated/prisma";
 
 import { NextRequest, NextResponse } from "next/server";
 
 
 type AuthResult =
-  | { ok: true; user: User & Prisma.UserInclude }
+  | { ok: true; user: User }
   | { ok: false; response: NextResponse };
 
 /**

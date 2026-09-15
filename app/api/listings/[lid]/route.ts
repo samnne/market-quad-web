@@ -74,7 +74,7 @@ export async function PUT(
         status: 500,
       });
     }
-    const listing = await updateListing(lid, listingFormData);
+    const listing = await updateListing(lid, listingFormData, session);
 
     return NextResponse.json(
       {
@@ -117,7 +117,7 @@ export async function DELETE(
       });
     }
 
-    const listing = await getListingByID(lid);
+    const listing = await getListingByID(lid, session);
 
     if (!listing) {
       return NextResponse.json(ErrorMessage("Listing not found", 404), {

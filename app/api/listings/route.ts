@@ -106,7 +106,7 @@ export async function PUT(req: NextRequest) {
       sold: listing.sold,
       title: listing.title,
       views: listing.views,
-    });
+    }, userID);
 
     return NextResponse.json(
       {

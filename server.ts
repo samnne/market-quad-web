@@ -70,12 +70,11 @@ app.prepare().then(() => {
           "https://web.market-quad.com",
         ];
 
-    res.setHeader("Access-Control-Allow-Origin", [
-      "https://app.market-quad.com",
-      "https://market-quad.com",
-      "https://web.market-quad.com",
-      dev ? "http://localhost:3001" : "",
-    ]);
+    const origin = req.headers.origin;
+
+    if (origin && allowedOrigins.includes(origin)) {
+      res.setHeader("Access-Control-Allow-Origin", origin);
+    }
     res.setHeader("Vary", "Origin");
     res.setHeader(
       "Access-Control-Allow-Methods",

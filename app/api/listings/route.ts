@@ -1,20 +1,18 @@
 import { NextRequest, NextResponse } from "next/server.js";
 import { getUserId, requireAuth } from "@/lib/auth";
-import {
-  createNewListing,
-  getListings,
-  updateListing,
-} from "@/db/listings.db";
+import { createNewListing, getListings, updateListing } from "@/db/listings.db";
 
 import { listingSchema, parseBody } from "@/lib/sanatize.lib";
+import Expo, { ExpoPushMessage } from "expo-server-sdk";
+import { prisma } from "@/db/db";
+import { notifyAfterFiveListings } from "@/server-store/store";
 
 export async function GET(req: NextRequest) {
   const userId = await getUserId(req);
   try {
     if (userId) {
+      const res = await getListings({ userId: userId });
 
-      const res = await getListings({userId: userId})
-   
       return NextResponse.json({
         listings: res.listings,
         success: true,
@@ -27,7 +25,6 @@ export async function GET(req: NextRequest) {
       success: true,
     });
   } catch (error) {
-   
     return NextResponse.json({
       message: "Failed to Fetch Listings",
       status: 500,
@@ -35,6 +32,8 @@ export async function GET(req: NextRequest) {
     });
   }
 }
+
+
 export async function POST(req: NextRequest) {
   const body = await parseBody(req, listingSchema);
 
@@ -43,9 +42,18 @@ export async function POST(req: NextRequest) {
   }
 
   const listingFormData = body.data;
+
   try {
     const createdListing = await createNewListing(listingFormData);
 
+    const pushTokens = await prisma.pushToken.findMany({
+      select: {
+        token: true,
+      },
+      take: 5,
+    });
+    const pushTokenList = pushTokens.map(token => token.token)
+    notifyAfterFiveListings(pushTokenList)
     return NextResponse.json({
       message: "Successfully Created Listing",
       listing: createdListing,
@@ -81,7 +89,6 @@ export async function PUT(req: NextRequest) {
   }
 
   try {
-    
     const result = await parseBody(req, listingSchema);
     if ("error" in result) return result.error;
     const listing = result.data;
@@ -93,20 +100,24 @@ export async function PUT(req: NextRequest) {
       });
     }
 
-    const updatedListing = await updateListing(listing.lid!, {
-      archived: listing.archived,
-      category: listing.category,
-      condition: listing.condition,
-      createdAt: listing.createdAt,
-      description: listing.description,
-      imageUrls: listing.imageUrls,
-      latitude: listing.latitude,
-      longitude: listing.longitude,
-      price: listing.price,
-      sold: listing.sold,
-      title: listing.title,
-      views: listing.views,
-    }, userID);
+    const updatedListing = await updateListing(
+      listing.lid!,
+      {
+        archived: listing.archived,
+        category: listing.category,
+        condition: listing.condition,
+        createdAt: listing.createdAt,
+        description: listing.description,
+        imageUrls: listing.imageUrls,
+        latitude: listing.latitude,
+        longitude: listing.longitude,
+        price: listing.price,
+        sold: listing.sold,
+        title: listing.title,
+        views: listing.views,
+      },
+      userID,
+    );
 
     return NextResponse.json(
       {

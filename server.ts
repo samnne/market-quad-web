@@ -62,14 +62,14 @@ async function sendPushNotification(
 
 app.prepare().then(() => {
   const httpServer = createServer((req, res) => {
-    res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+    res.setHeader("Access-Control-Allow-Origin", "http://localhost:3001");
     res.setHeader(
       "Access-Control-Allow-Methods",
       "GET, POST, PUT, DELETE, OPTIONS",
     );
     res.setHeader(
       "Access-Control-Allow-Headers",
-      "Content-Type, Authorization",
+      "Content-Type, Authorization, x-cloud-folder",
     );
     res.setHeader("Access-Control-Allow-Credentials", "true");
 
@@ -86,8 +86,8 @@ app.prepare().then(() => {
   const io = new Server(httpServer, {
     cors: {
       origin: dev
-        ? ["http://localhost:3000"]
-        : ["https://app.market-quad.com", "https://market-quad.com"],
+        ? ["http://localhost:3001"]
+        : ["https://app.market-quad.com", "https://market-quad.com", "https://web.market-quad.com"],
       credentials: true,
     },
   });

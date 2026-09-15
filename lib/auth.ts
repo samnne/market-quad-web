@@ -1,12 +1,12 @@
 'use server';
 import { prisma } from "@/db/db";
-import { User } from "@/src/generated/prisma";
+import { Prisma, User } from "@/src/generated/prisma";
 
 import { NextRequest, NextResponse } from "next/server";
 
 
 type AuthResult =
-  | { ok: true; user: User }
+  | { ok: true; user: User & Prisma.UserInclude }
   | { ok: false; response: NextResponse };
 
 /**
@@ -31,6 +31,9 @@ export async function requireAuth(req: NextRequest): Promise<AuthResult> {
   
   const user = await prisma.user.findUnique({
     where: { uid: userId },
+    include: {
+      pushToken: true
+    }
   });
 
   if (!user) {

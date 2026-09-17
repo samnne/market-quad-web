@@ -34,6 +34,7 @@ export async function createConvo({
   return convo;
 }
 
+
 export async function getConvos(uid: string) {
   const convos = await prisma.conversation.findMany({
     where: {

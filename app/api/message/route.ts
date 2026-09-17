@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
     const cid = req.nextUrl.searchParams?.get('cid');
 
 
-  const messages = await getMessagesForConvo(cid!);
+  const messages = await getMessagesForConvo(cid!, session);
   if (!messages) {
     return NextResponse.json({
       message: "Failed to Get messages",

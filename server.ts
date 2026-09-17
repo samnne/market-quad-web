@@ -50,7 +50,7 @@ async function sendPushNotification(
     to: pushToken,
     sound: "default",
     title: `You got a message from ${senderName}.`,
-    subtitle: `${convo?.listing?.title} | ${convo?.listing?.price}`,
+    subtitle: `${convo?.listing?.title} | $${convo?.listing?.price}`,
 
     body: text.length > 80 ? text.slice(0, 77) + "…" : text,
     data: { screen: "convos", conversationId: cid },
@@ -63,7 +63,7 @@ async function sendPushNotification(
 app.prepare().then(() => {
   const httpServer = createServer((req, res) => {
     const allowedOrigins = dev
-      ? ["http://localhost:3001"]
+      ? ["http://localhost:8081"]
       : [
           "https://app.market-quad.com",
           "https://market-quad.com",
@@ -98,7 +98,7 @@ app.prepare().then(() => {
   const io = new Server(httpServer, {
     cors: {
       origin: dev
-        ? ["http://localhost:3001"]
+        ? ["http://localhost:8081"]
         : [
             "https://app.market-quad.com",
             "https://market-quad.com",
@@ -117,7 +117,9 @@ app.prepare().then(() => {
       }
       socket.join(cid);
       socket.data.activeCid = cid;
-      socket.to(cid).emit("user_connected");
+      
+      const count =io.sockets.adapter.rooms.get(cid)?.size
+      socket.to(cid).emit("user_connected", {count  });
     });
 
     socket.on("typing", ({ cid, typing }) => {
@@ -127,17 +129,21 @@ app.prepare().then(() => {
 
     socket.on("message", async ({ cid, message }) => {
       socket.to(cid).emit("message", { sender: "chat", message });
-
+      
       const room = io.sockets.adapter.rooms.get(cid);
       const recipientIsActive = room && room.size > 1;
-
+      
       if (!recipientIsActive && message.senderId) {
         await sendPushNotification(cid, message.senderId, message.text).catch(
           (err) => console.error("Push failed:", err),
         );
+
       }
     });
-
+    socket.on("leave-room", async ({cid})=> {
+      socket.leave(cid);
+  
+    })
     socket.on("disconnect", () => {
       console.log("Disconnected", socket.id);
     });

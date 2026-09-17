@@ -59,6 +59,7 @@ export async function getListings({
         include: {
           reportsFiled: true,
           Blocked: true,
+          pushToken: true
         },
       },
       conversations: userId
@@ -90,6 +91,7 @@ export async function getListings({
           },
       _count: true,
       likes: true,
+      
     },
   });
 

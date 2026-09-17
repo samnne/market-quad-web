@@ -120,7 +120,7 @@ const CID = () => {
           setError(true);
           return;
         }
-        const tempMessages = await getMessagesForConvo(cid as string);
+        const tempMessages = await getMessagesForConvo(cid as string, user?.id as string ?? "");
         if (!tempMessages) {
           setError(true);
           return;

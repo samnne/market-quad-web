@@ -57,7 +57,6 @@ export async function POST(req: NextRequest) {
     return auth.response;
   }
   const uid = auth.user.uid;
-
   if (!uid) {
     return NextResponse.json({
       message: "Failed to Fetch Listings, no UID",

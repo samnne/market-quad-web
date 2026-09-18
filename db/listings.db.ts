@@ -134,7 +134,9 @@ export async function getUserListings(
     orderBy: { createdAt: "asc" },
     take: 20,
     where: { sellerId: uid },
-    include: { seller: true, conversations: true, _count: true, likes: true },
+    include: { seller: {
+      include: {pushToken: true}
+    }, conversations: true, _count: true, likes: true },
   });
 }
 

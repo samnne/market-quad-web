@@ -145,7 +145,11 @@ export async function getListingByID(
   return prisma.listing.findUnique({
     where: { lid },
     include: {
-      seller: true,
+      seller: {
+        include: {
+          pushToken: true
+        }
+      },
       conversations: uid
         ? {
             where: {
